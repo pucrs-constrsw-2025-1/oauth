@@ -6,7 +6,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.net.URI;
 
-@RestController("/users")
+@RestController("users")
 public class UsersController
 {
     /**
@@ -49,20 +49,25 @@ public class UsersController
      * @return
      */
     @PutMapping()
-    public ResponseEntity<Object> updateUser(@RequestHeader("Authorization") String accessToken)
+    public ResponseEntity<Void> updateUser(@RequestHeader("Authorization") String accessToken)
     {
-        return ResponseEntity.ok(new Object());
+        return ResponseEntity.ok().build();
     }
 
+    /**
+     * Consumir a rota do Keycloak que atualiza um usuário (método PATCH)
+     * @param accessToken
+     * @return
+     */
     @PatchMapping()
-    public ResponseEntity<Object> updateUserPassword(@RequestHeader("Authorization") String accessToken)
+    public ResponseEntity<Void> updateUserPassword(@RequestHeader("Authorization") String accessToken)
     {
-        return ResponseEntity.ok(new UpdateUserPasswordRequest("password"));
+        return ResponseEntity.ok().build();
     }
 
     @DeleteMapping()
-    public String deleteUser(@RequestHeader("Authorization") String accessToken)
+    public ResponseEntity<Void> deleteUser(@RequestHeader("Authorization") String accessToken)
     {
-        return "test";
+        return ResponseEntity.ok().build();
     }
 }
