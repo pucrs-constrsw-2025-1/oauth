@@ -1,0 +1,24 @@
+services:
+  keycloak:
+    image: jboss/keycloak
+    ports:
+      - "8080:8080"
+    environment:
+      KEYCLOAK_USER: admin
+      KEYCLOAK_PASSWORD: admin
+      DB_VENDOR: H2
+      DB_ADDR: keycloak-db
+      DB_DATABASE: keycloak
+      DB_USER: keycloak
+      DB_PASSWORD: password
+  server:
+    build: .
+    ports:
+      - "8081:8081"
+    environment:
+      KEYCLOAK_URL: http://keycloak:8080/auth
+      KEYCLOAK_REALM: master
+      KEYCLOAK_CLIENT_ID: client
+      KEYCLOAK_CLIENT_SECRET: secret
+    depends_on:
+      - keycloak
