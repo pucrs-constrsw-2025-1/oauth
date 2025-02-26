@@ -1,11 +1,12 @@
 services:
   keycloak:
-    image: keycloak/keycloak
+    build:
+      dockerfile: keycloak/Dockerfile
     ports:
       - "8080:8080"
     environment:
-      KEYCLOAK_USER: admin
-      KEYCLOAK_PASSWORD: admin
+      KC_BOOTSTRAP_ADMIN_USERNAME: admin
+      KC_BOOTSTRAP_ADMIN_PASSWORD: admin
       DB_VENDOR: H2
       DB_ADDR: keycloak-db
       DB_DATABASE: keycloak
@@ -16,9 +17,9 @@ services:
     ports:
       - "8081:8081"
     environment:
-      KEYCLOAK_URL: http://keycloak:8080/auth
-      KEYCLOAK_REALM: master
-      KEYCLOAK_CLIENT_ID: client
-      KEYCLOAK_CLIENT_SECRET: secret
+      KEYCLOAK_URL: http://localhost:8080
+      KEYCLOAK_REALM: keycloack-wrapper-realm
+      KEYCLOAK_CLIENT_ID: keycloak-wrapper
+      KEYCLOAK_CLIENT_SECRET: vb9sCGCg99Ur7P2ELgDMUCc8izbOHVkr
     depends_on:
       - keycloak
