@@ -5,9 +5,11 @@ import org.firpy.keycloakwrapper.adapters.login.keycloak.auth.KeycloakAuthClient
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-@RestController("login")
+@RestController()
+@RequestMapping("login")
 public class LoginController
 {
 	public LoginController(KeycloakAuthClient keycloakClient)

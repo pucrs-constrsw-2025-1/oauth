@@ -6,7 +6,8 @@ import org.firpy.keycloakwrapper.adapters.login.keycloak.auth.KeycloakUser;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-@RestController("users")
+@RestController()
+@RequestMapping("users")
 public class UsersController
 {
 	public UsersController(KeycloakAuthClient keycloakClient, KeycloakAdminClient keycloakAdminClient)

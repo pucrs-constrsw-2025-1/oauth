@@ -1,9 +1,10 @@
 package org.firpy.keycloakwrapper;
 
-import io.github.cdimascio.dotenv.Dotenv;
+import me.paulschwarz.springdotenv.DotenvPropertySource;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.cloud.openfeign.EnableFeignClients;
+import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 
 @SpringBootApplication
 @EnableFeignClients
@@ -11,11 +12,11 @@ public class KeycloakWrapperApplication
 {
     public static void main(String[] args)
     {
-        Dotenv dotenv = Dotenv.configure()
-                              .ignoreIfMissing()
-                              .load();
+        AnnotationConfigApplicationContext applicationContext = new AnnotationConfigApplicationContext();
 
-        dotenv.entries().forEach(entry -> System.setProperty(entry.getKey(), entry.getValue()));
+        DotenvPropertySource.addToEnvironment(applicationContext.getEnvironment());
+
+        applicationContext.refresh();
 
         SpringApplication.run(KeycloakWrapperApplication.class, args);
     }
