@@ -1,6 +1,6 @@
-package org.firpy.keycloakwrapper.users;
+package org.firpy.keycloakwrapper.adapters.users;
 
-import domain.User;
+import org.firpy.keycloakwrapper.domain.User;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 

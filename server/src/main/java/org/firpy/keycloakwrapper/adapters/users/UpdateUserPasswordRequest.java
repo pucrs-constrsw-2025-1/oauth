@@ -1,4 +1,4 @@
-package org.firpy.keycloakwrapper.users;
+package org.firpy.keycloakwrapper.adapters.users;
 
 public record UpdateUserPasswordRequest(String password)
 {

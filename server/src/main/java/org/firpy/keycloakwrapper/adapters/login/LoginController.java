@@ -1,4 +1,4 @@
-package org.firpy.keycloakwrapper.login;
+package org.firpy.keycloakwrapper.adapters.login;
 
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
