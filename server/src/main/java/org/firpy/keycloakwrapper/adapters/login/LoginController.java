@@ -1,8 +1,7 @@
 package org.firpy.keycloakwrapper.adapters.login;
 
-import org.firpy.keycloakwrapper.adapters.login.keycloak_adapter.AccessToken;
-import org.firpy.keycloakwrapper.adapters.login.keycloak_adapter.AccessTokenRequest;
-import org.firpy.keycloakwrapper.adapters.login.keycloak_adapter.KeycloakClient;
+import org.firpy.keycloakwrapper.adapters.login.keycloak.auth.AccessTokenRequest;
+import org.firpy.keycloakwrapper.adapters.login.keycloak.auth.KeycloakAuthClient;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -11,7 +10,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController("login")
 public class LoginController
 {
-	public LoginController(KeycloakClient keycloakClient)
+	public LoginController(KeycloakAuthClient keycloakClient)
 	{
 		this.keycloakClient = keycloakClient;
 	}
@@ -22,35 +21,37 @@ public class LoginController
      * client_id,
      * client_secret,
      * username,
-     * password,
-     * grant_type: password.
-     * @param loginRequest
+     * newPassword,
+     * grant_type: newPassword.
+     * @param request
      * @return
      */
     @PostMapping()
-    public LoginResponse login(@RequestBody LoginRequest loginRequest)
+    public AccessToken login(@RequestBody LoginRequest request)
     {
-	    AccessTokenRequest request = new AccessTokenRequest
+	    AccessTokenRequest tokenPasswordRequest = new AccessTokenRequest
 		(
-			loginRequest.clientId(),
+			clientId,
 			clientSecret,
-			loginRequest.username(),
-			loginRequest.password(),
-	"password"
+			request.username(),
+			request.password(),
+			"newPassword"
 		);
 
-	    AccessToken accessToken = keycloakClient.getAccessToken(request);
-        return new LoginResponse
-		(
-			accessToken.tokenType(),
-			accessToken.accessToken(),
-			accessToken.expiresIn(),
-			accessToken.refreshToken(),
-			accessToken.refreshExpiresIn()
-		);
+	    return keycloakClient.getAccessTokenWithPassword(tokenPasswordRequest);
     }
 
-    private final KeycloakClient keycloakClient;
+	@PostMapping("/refresh")
+	AccessToken loginWithRefreshToken(RefreshTokenRequest request)
+	{
+		KeycloakRefreshTokenRequest keycloakRefreshTokenRequest = new KeycloakRefreshTokenRequest(clientId, request.refreshToken());
+		return keycloakClient.getAccessTokenWithRefreshToken(keycloakRefreshTokenRequest);
+	}
+
+    private final KeycloakAuthClient keycloakClient;
+
+	@Value("${keycloak.client-id}")
+	private String clientId;
 
 	@Value("${keycloak.client-secret}")
 	private String clientSecret;

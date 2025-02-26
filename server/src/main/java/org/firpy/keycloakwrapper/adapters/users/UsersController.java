@@ -1,23 +1,29 @@
 package org.firpy.keycloakwrapper.adapters.users;
 
-import org.firpy.keycloakwrapper.domain.User;
+import org.firpy.keycloakwrapper.adapters.login.keycloak.admin.KeycloakAdminClient;
+import org.firpy.keycloakwrapper.adapters.login.keycloak.auth.KeycloakAuthClient;
+import org.firpy.keycloakwrapper.adapters.login.keycloak.auth.KeycloakUser;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import java.net.URI;
 
 @RestController("users")
 public class UsersController
 {
-    /**
+	public UsersController(KeycloakAuthClient keycloakClient, KeycloakAdminClient keycloakAdminClient)
+	{
+		this.keycloakClient = keycloakClient;
+		this.keycloakAdminClient = keycloakAdminClient;
+	}
+
+	/**
      * Consumir a rota do Keycloak que recupera todos os usuários
      * @param accessToken
      * @return
      */
     @GetMapping()
-    public ResponseEntity<User[]> getUsers(@RequestHeader("Authorization") String accessToken)
+    public KeycloakUser[] getUsers(@RequestHeader("Authorization") String accessToken)
     {
-        return ResponseEntity.ok(new User[0]);
+        return keycloakAdminClient.getUsers(accessToken);
     }
 
     /**
@@ -27,9 +33,15 @@ public class UsersController
      * @return
      */
     @GetMapping("/{id}")
-    public ResponseEntity<User> getUser(@PathVariable("id") String id, @RequestHeader("Authorization") String accessToken)
+    public KeycloakUser getUser(@PathVariable("id") String id, @RequestHeader("Authorization") String accessToken)
     {
-        return ResponseEntity.ok(new User());
+	    return keycloakAdminClient.getUser(accessToken, id);
+    }
+
+    @GetMapping("/current")
+    public KeycloakUser getCurrentUser(@RequestHeader("Authorization") String accessToken)
+    {
+        return keycloakClient.getCurrentUser(accessToken);
     }
 
     /**
@@ -38,9 +50,9 @@ public class UsersController
      * @return
      */
     @PostMapping()
-    public ResponseEntity<User> createUser(@RequestHeader("Authorization") String accessToken)
+    public ResponseEntity<Void> createUser(@RequestHeader("Authorization") String accessToken, @RequestBody KeycloakUser user)
     {
-        return ResponseEntity.created(URI.create("http://localhost:8081/users/1")).body(new User());
+        return keycloakAdminClient.createUser(accessToken, user);
     }
 
     /**
@@ -48,10 +60,10 @@ public class UsersController
      * @param accessToken
      * @return
      */
-    @PutMapping()
-    public ResponseEntity<Void> updateUser(@RequestHeader("Authorization") String accessToken)
+    @PutMapping("/{id}")
+    public ResponseEntity<Void> updateUser( @RequestHeader("Authorization") String accessToken, @PathVariable("id") String id, @RequestBody KeycloakUser user)
     {
-        return ResponseEntity.ok().build();
+        return keycloakAdminClient.updateUser(accessToken,id, user);
     }
 
     /**
@@ -59,15 +71,18 @@ public class UsersController
      * @param accessToken
      * @return
      */
-    @PatchMapping()
-    public ResponseEntity<Void> updateUserPassword(@RequestHeader("Authorization") String accessToken)
+    @PatchMapping("/{id}")
+    public ResponseEntity<Void> updateUserPassword(@RequestHeader("Authorization") String accessToken, @PathVariable("id") String id, @RequestBody UpdateUserPasswordRequest request)
     {
-        return ResponseEntity.ok().build();
+        return keycloakAdminClient.resetPassword(accessToken, id, request);
     }
 
-    @DeleteMapping()
-    public ResponseEntity<Void> deleteUser(@RequestHeader("Authorization") String accessToken)
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deleteUser(@PathVariable String id, @RequestHeader("Authorization") String accessToken)
     {
-        return ResponseEntity.ok().build();
+        return keycloakAdminClient.deleteUser(accessToken, id);
     }
+
+    private final KeycloakAuthClient keycloakClient;
+    private final KeycloakAdminClient keycloakAdminClient;
 }
