@@ -37,7 +37,7 @@ public class LoginController
 			clientSecret,
 			request.username(),
 			request.password(),
-			"newPassword"
+			"password"
 		);
 
 	    return keycloakClient.getAccessTokenWithPassword(tokenPasswordRequest);
