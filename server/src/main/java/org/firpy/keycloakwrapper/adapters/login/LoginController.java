@@ -34,7 +34,7 @@ public class LoginController
     @PostMapping()
     public AccessToken login(@RequestBody LoginRequest request)
     {
-		//Has to be a MultiValueMap otherwise spring cloud feign can't serialize it to www-form-urlencoded
+		//MultiValueMap otherwise spring cloud feign can't serialize it to www-form-urlencoded
 		MultiValueMap<String, Object> params = new LinkedMultiValueMap<>();
 		params.add("client_id", clientId);
 		params.add("client_secret", clientSecret);
@@ -49,8 +49,13 @@ public class LoginController
 	@PostMapping("/refresh")
 	AccessToken loginWithRefreshToken(RefreshTokenRequest request)
 	{
-		KeycloakRefreshTokenRequest keycloakRefreshTokenRequest = new KeycloakRefreshTokenRequest(clientId, request.refreshToken());
-		return keycloakClient.getAccessTokenWithRefreshToken(keycloakRefreshTokenRequest);
+		//MultiValueMap otherwise spring cloud feign can't serialize it to www-form-urlencoded
+		MultiValueMap<String, Object> params = new LinkedMultiValueMap<>();
+		params.add("client_id", clientId);
+		params.add("grant_type", request.refreshToken());
+		params.add("refresh_token", request.refreshToken());
+
+		return keycloakClient.getAccessTokenWithRefreshToken(params);
 	}
 
     private final KeycloakAuthClient keycloakClient;
