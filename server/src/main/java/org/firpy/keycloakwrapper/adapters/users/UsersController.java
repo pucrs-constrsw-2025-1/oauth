@@ -53,7 +53,7 @@ public class UsersController
     @PostMapping()
     public ResponseEntity<Void> createUser(@RequestHeader("Authorization") String accessToken, @RequestBody KeycloakUser user)
     {
-        return keycloakAdminClient.createUser(accessToken, user);
+        return keycloakAdminClient.createUser(accessToken, user.toRequest());
     }
 
     /**
@@ -62,9 +62,9 @@ public class UsersController
      * @return
      */
     @PutMapping("/{id}")
-    public ResponseEntity<Void> updateUser( @RequestHeader("Authorization") String accessToken, @PathVariable("id") String id, @RequestBody KeycloakUser user)
+    public ResponseEntity<Void> updateUser(@RequestHeader("Authorization") String accessToken, @PathVariable("id") String id, @RequestBody KeycloakUser user)
     {
-        return keycloakAdminClient.updateUser(accessToken,id, user);
+        return keycloakAdminClient.updateUser(accessToken,id, user.toRequest());
     }
 
     /**

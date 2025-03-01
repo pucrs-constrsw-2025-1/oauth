@@ -1,14 +1,11 @@
 package org.firpy.keycloakwrapper.adapters.login.keycloak.auth;
 
-public record KeycloakUser
-(
-	String sub,
-	boolean emailVerified,
-	String name,
-	String preferredUsername,
-	String givenName,
-	String familyName,
-	String email
-)
-{
+import org.firpy.keycloakwrapper.adapters.users.CreateUserRequest;
+
+public record KeycloakUser(
+		String username, String firstName, String lastName, String email, String password
+) {
+	public CreateUserRequest toRequest() {
+		return new CreateUserRequest(username, firstName, lastName, email, password);
+	}
 }
