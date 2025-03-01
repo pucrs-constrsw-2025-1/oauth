@@ -14,10 +14,11 @@ public record CreateUserRequest(
 ) {
     public record Credential(
             @JsonProperty("value") String value,
-            @JsonProperty("temporary") boolean temporary
+            @JsonProperty("temporary") boolean temporary,
+            @JsonProperty("type") String type
     ) {}
 
     public CreateUserRequest(String username, String firstName, String lastName, String email, String password) {
-        this(username, firstName, lastName, email, true, true, List.of(new Credential(password, false)) );
+        this(username, firstName, lastName, email, true, true, List.of(new Credential(password, false, "password")) );
     }
 }
