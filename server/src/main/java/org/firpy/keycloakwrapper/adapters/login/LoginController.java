@@ -1,12 +1,15 @@
 package org.firpy.keycloakwrapper.adapters.login;
 
-import org.firpy.keycloakwrapper.adapters.login.keycloak.auth.AccessTokenRequest;
 import org.firpy.keycloakwrapper.adapters.login.keycloak.auth.KeycloakAuthClient;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.util.LinkedMultiValueMap;
+import org.springframework.util.MultiValueMap;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+
+import java.util.HashMap;
 
 @RestController()
 @RequestMapping("login")
@@ -31,16 +34,16 @@ public class LoginController
     @PostMapping()
     public AccessToken login(@RequestBody LoginRequest request)
     {
-	    AccessTokenRequest tokenPasswordRequest = new AccessTokenRequest
-		(
-			clientId,
-			clientSecret,
-			request.username(),
-			request.password(),
-			"password"
-		);
+		//Has to be a MultiValueMap otherwise spring cloud feign can't serialize it to www-form-urlencoded
+		MultiValueMap<String, Object> params = new LinkedMultiValueMap<>();
+		params.add("client_id", clientId);
+		params.add("client_secret", clientSecret);
+		params.add("username", request.username());
+		params.add("password", request.password());
+		params.add("grant_type", "password");
 
-	    return keycloakClient.getAccessTokenWithPassword(tokenPasswordRequest);
+
+	    return keycloakClient.getAccessTokenWithPassword(params);
     }
 
 	@PostMapping("/refresh")
