@@ -36,8 +36,8 @@ public class LoginController
     {
 		//MultiValueMap otherwise spring cloud feign can't serialize it to www-form-urlencoded
 		MultiValueMap<String, Object> params = new LinkedMultiValueMap<>();
-		params.add("client_id", clientId);
-		params.add("client_secret", clientSecret);
+		//admin-cli is keycloak's default client for admin operations
+		params.add("client_id", request.username().equals("admin") ? "admin-cli" : clientId);
 		params.add("username", request.username());
 		params.add("password", request.password());
 		params.add("grant_type", "password");
