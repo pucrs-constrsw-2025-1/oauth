@@ -73,9 +73,10 @@ public class UsersController
      * @return
      */
     @PatchMapping("/{id}")
-    public ResponseEntity<Void> updateUserPassword(@RequestHeader("Authorization") String accessToken, @PathVariable("id") String id, @RequestBody UpdateUserPasswordRequest request)
+    public ResponseEntity<Void> updateUserPassword(@RequestHeader("Authorization") String accessToken, @PathVariable("id") String id, @RequestBody UpdateUserPasswordRequest passwordReset)
     {
-        return keycloakAdminClient.resetPassword(accessToken, id, request);
+        CredentialRequest credentialRequest = new CredentialRequest(passwordReset.newPassword());
+        return keycloakAdminClient.resetPassword(accessToken, id, credentialRequest);
     }
 
     @DeleteMapping("/{id}")

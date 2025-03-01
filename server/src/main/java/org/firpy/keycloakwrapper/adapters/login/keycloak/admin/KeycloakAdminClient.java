@@ -3,7 +3,7 @@ package org.firpy.keycloakwrapper.adapters.login.keycloak.admin;
 import org.firpy.keycloakwrapper.adapters.login.keycloak.CreateClientRequest;
 import org.firpy.keycloakwrapper.adapters.login.keycloak.auth.KeycloakUser;
 import org.firpy.keycloakwrapper.adapters.users.CreateUserRequest;
-import org.firpy.keycloakwrapper.adapters.users.UpdateUserPasswordRequest;
+import org.firpy.keycloakwrapper.adapters.users.CredentialRequest;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -24,7 +24,7 @@ public interface KeycloakAdminClient
 	ResponseEntity<Void> updateUser(@RequestHeader("Authorization") String accessToken, @PathVariable("id") String id, CreateUserRequest user);
 
 	@PutMapping("/admin/realms/${keycloak.realm}/users/{id}/reset-password")
-	ResponseEntity<Void> resetPassword(@RequestHeader("Authorization") String accessToken, @PathVariable("id") String id, @RequestBody UpdateUserPasswordRequest request);
+	ResponseEntity<Void> resetPassword(@RequestHeader("Authorization") String accessToken, @PathVariable("id") String id, @RequestBody CredentialRequest request);
 
 	@DeleteMapping("/admin/realms/${keycloak.realm}/users/{id}")
 	ResponseEntity<Void> deleteUser(@RequestHeader("Authorization") String accessToken, @PathVariable("id") String id);
