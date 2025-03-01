@@ -4,21 +4,22 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import java.util.List;
 
 public record CreateUserRequest(
-        @JsonProperty("username") String username,
-        @JsonProperty("firstName") String firstName,
-        @JsonProperty("lastName") String lastName,
-        @JsonProperty("email") String email,
-        @JsonProperty("emailVerified") boolean emailVerified,
-        @JsonProperty("enabled") boolean enabled,
-        @JsonProperty("credentials") List<Credential> credentials
+        String username,
+        String firstName,
+        String lastName,
+        String email,
+        boolean emailVerified,
+        boolean enabled,
+        List<Credential> credentials
 ) {
     public record Credential(
-            @JsonProperty("value") String value,
-            @JsonProperty("temporary") boolean temporary,
-            @JsonProperty("type") String type
+            String value,
+            boolean temporary,
+            String type,
+            Integer hashIterations
     ) {}
 
     public CreateUserRequest(String username, String firstName, String lastName, String email, String password) {
-        this(username, firstName, lastName, email, true, true, List.of(new Credential(password, false, "password")) );
+        this(username, firstName, lastName, email, true, true, List.of(new Credential(password, false, "password", 10)) );
     }
 }
