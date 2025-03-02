@@ -7,6 +7,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.net.URI;
+
 @RestController()
 @RequestMapping("clients")
 public class ClientController
@@ -22,12 +24,12 @@ public class ClientController
      * @param accessToken
      */
     @PostMapping()
-    public ResponseEntity<?> createClient(@RequestHeader("Authorization") String accessToken)
+    public ResponseEntity<Void> createClient(@RequestHeader("Authorization") String accessToken)
     {
 		CreateClientRequest createClientRequest = new CreateClientRequest(clientId);
 	    keycloakClient.createClient(accessToken, createClientRequest);
 
-		return ResponseEntity.ok(HttpStatus.CREATED);
+		return ResponseEntity.created(URI.create("/admin/realms/${keycloak.realm}/clients/%s".formatted(clientId))).build();
     }
 
 
