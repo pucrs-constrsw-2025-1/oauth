@@ -1,7 +1,7 @@
 Wrapper de autenticação e autorização com o Keycloak
 
 - [ ] Adicionar autorização para Swagger UI
-- [ ] login
+- [ ] Login
 - [ ] Refresh token
 - [ ] Get users
 - [ ] Get user
