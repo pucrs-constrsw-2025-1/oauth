@@ -20,6 +20,7 @@ services:
       KEYCLOAK_URL: http://keycloak:8080
       KEYCLOAK_REALM: master
       KEYCLOAK_CLIENT_ID: keycloak-wrapper
-      KEYCLOAK_CLIENT_SECRET: vb9sCGCg99Ur7P2ELgDMUCc8izbOHVkr
+      KEYCLOAK_ADMIN_USERNAME: admin
+      KEYCLOAK_ADMIN_PASSWORD: admin
     depends_on:
       - keycloak
