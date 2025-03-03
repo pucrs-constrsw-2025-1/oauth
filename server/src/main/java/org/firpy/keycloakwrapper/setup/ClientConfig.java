@@ -16,11 +16,18 @@ import org.springframework.util.MultiValueMap;
 
 @Configuration
 @Slf4j
-public class ClientConfig {
+public class ClientConfig
+{
+    public ClientConfig(KeycloakAuthClient keycloakAuthClient, KeycloakAdminClient keycloakClient)
+    {
+        this.keycloakAuthClient = keycloakAuthClient;
+        this.keycloakAdminClient = keycloakClient;
+    }
 
-    public String getClientSecret() {
-
-        if (clientSecret != null){
+    public String getClientSecret()
+    {
+        if (clientSecret != null)
+        {
             return clientSecret;
         }
         log.info("Client secret not found.");
@@ -50,11 +57,6 @@ public class ClientConfig {
         log.info("Created client secret for client id {}.", clientId);
         clientSecret = credentials.value();
         return clientSecret;
-    }
-
-    public ClientConfig(KeycloakAuthClient keycloakAuthClient, KeycloakAdminClient keycloakClient) {
-        this.keycloakAuthClient = keycloakAuthClient;
-        this.keycloakAdminClient = keycloakClient;
     }
 
     @Getter
