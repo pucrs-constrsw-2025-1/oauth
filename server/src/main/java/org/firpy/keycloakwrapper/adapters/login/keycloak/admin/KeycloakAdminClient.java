@@ -1,5 +1,6 @@
 package org.firpy.keycloakwrapper.adapters.login.keycloak.admin;
 
+import org.firpy.keycloakwrapper.adapters.clients.ClientRepresentation;
 import org.firpy.keycloakwrapper.adapters.login.keycloak.CreateClientRequest;
 import org.firpy.keycloakwrapper.adapters.login.keycloak.auth.KeycloakUser;
 import org.firpy.keycloakwrapper.adapters.users.CreateUserRequest;
@@ -7,6 +8,8 @@ import org.firpy.keycloakwrapper.adapters.users.CredentialRequest;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @FeignClient(name = "keycloak-admin-service", url = "${keycloak.url}")
 public interface KeycloakAdminClient
@@ -31,4 +34,10 @@ public interface KeycloakAdminClient
 
 	@PostMapping("/admin/realms/${keycloak.realm}/clients")
 	ResponseEntity<Void> createClient(@RequestHeader("Authorization") String accessToken, @RequestBody CreateClientRequest request);
+
+	@GetMapping("/admin/realms/${keycloak.realm}/clients")
+	List<ClientRepresentation> getClients(@RequestHeader("Authorization") String accessToken);
+
+	@PostMapping("/admin/realms/${keycloak.realm}/clients/{client-uuid}/client-secret")
+	CredentialRequest createClientSecret(@RequestHeader("Authorization") String accessToken, @PathVariable("client-uuid") String clientUuid);
 }
