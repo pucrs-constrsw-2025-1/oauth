@@ -11,20 +11,23 @@ import org.firpy.keycloakwrapper.adapters.users.CredentialRequest;
 import org.springframework.beans.factory.annotation.Value;
 
 import org.springframework.context.annotation.Configuration;
-import org.springframework.scheduling.annotation.EnableScheduling;
-import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 
 @Configuration
 @Slf4j
-@EnableScheduling
-public class ClientConfig {
+public class ClientConfig
+{
+    public ClientConfig(KeycloakAuthClient keycloakAuthClient, KeycloakAdminClient keycloakClient)
+    {
+        this.keycloakAuthClient = keycloakAuthClient;
+        this.keycloakAdminClient = keycloakClient;
+    }
 
-    @Scheduled(initialDelay = 20000)
-    public String getClientSecret() {
-
-        if (clientSecret != null){
+    public String getClientSecret()
+    {
+        if (clientSecret != null)
+        {
             return clientSecret;
         }
         log.info("Client secret not found.");
@@ -54,11 +57,6 @@ public class ClientConfig {
         log.info("Created client secret for client id {}.", clientId);
         clientSecret = credentials.value();
         return clientSecret;
-    }
-
-    public ClientConfig(KeycloakAuthClient keycloakAuthClient, KeycloakAdminClient keycloakClient) {
-        this.keycloakAuthClient = keycloakAuthClient;
-        this.keycloakAdminClient = keycloakClient;
     }
 
     @Getter
