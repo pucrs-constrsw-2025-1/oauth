@@ -1,5 +1,6 @@
 package org.firpy.keycloakwrapper.adapters.users;
 
+import io.swagger.v3.oas.annotations.media.Schema;
 import org.firpy.keycloakwrapper.adapters.login.keycloak.admin.KeycloakAdminClient;
 import org.firpy.keycloakwrapper.adapters.login.keycloak.auth.KeycloakAuthClient;
 import org.firpy.keycloakwrapper.adapters.login.keycloak.auth.KeycloakUser;
@@ -22,7 +23,7 @@ public class UsersController
      * @return
      */
     @GetMapping()
-    public KeycloakUser[] getUsers(@RequestHeader(value = "Authorization", required = false) String accessToken)
+    public KeycloakUser[] getUsers(@Schema(hidden = true) @RequestHeader(value = "Authorization", required = false) String accessToken)
     {
         return keycloakAdminClient.getUsers(accessToken);
     }
@@ -34,13 +35,13 @@ public class UsersController
      * @return
      */
     @GetMapping("/{id}")
-    public KeycloakUser getUser(@PathVariable("id") String id, @RequestHeader(value = "Authorization", required = false) String accessToken)
+    public KeycloakUser getUser(@PathVariable("id") String id, @Schema(hidden = true) @RequestHeader(value = "Authorization", required = false) String accessToken)
     {
 	    return keycloakAdminClient.getUser(accessToken, id);
     }
 
     @GetMapping("/current")
-    public KeycloakUser getCurrentUser(@RequestHeader(value = "Authorization", required = false) String accessToken)
+    public KeycloakUser getCurrentUser(@Schema(hidden = true) @RequestHeader(value = "Authorization", required = false) String accessToken)
     {
         return keycloakClient.getCurrentUser(accessToken);
     }
@@ -51,7 +52,7 @@ public class UsersController
      * @return
      */
     @PostMapping()
-    public ResponseEntity<Void> createUser(@RequestHeader(value = "Authorization", required = false) String accessToken, @RequestBody KeycloakUser user)
+    public ResponseEntity<Void> createUser(@Schema(hidden = true) @RequestHeader(value = "Authorization", required = false) String accessToken, @RequestBody KeycloakUser user)
     {
         return keycloakAdminClient.createUser(accessToken, user.toRequest());
     }
@@ -62,7 +63,7 @@ public class UsersController
      * @return
      */
     @PutMapping("/{id}")
-    public ResponseEntity<Void> updateUser(@RequestHeader(value = "Authorization", required = false) String accessToken, @PathVariable("id") String id, @RequestBody KeycloakUser user)
+    public ResponseEntity<Void> updateUser(@Schema(hidden = true) @RequestHeader(value = "Authorization", required = false) String accessToken, @PathVariable("id") String id, @RequestBody KeycloakUser user)
     {
         return keycloakAdminClient.updateUser(accessToken,id, user.toRequest());
     }
@@ -73,14 +74,14 @@ public class UsersController
      * @return
      */
     @PatchMapping("/{id}")
-    public ResponseEntity<Void> updateUserPassword(@RequestHeader(value = "Authorization", required = false) String accessToken, @PathVariable("id") String id, @RequestBody UpdateUserPasswordRequest passwordReset)
+    public ResponseEntity<Void> updateUserPassword(@Schema(hidden = true) @RequestHeader(value = "Authorization", required = false) String accessToken, @PathVariable("id") String id, @RequestBody UpdateUserPasswordRequest passwordReset)
     {
         CredentialRequest credentialRequest = new CredentialRequest(passwordReset.newPassword());
         return keycloakAdminClient.resetPassword(accessToken, id, credentialRequest);
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteUser(@PathVariable String id, @RequestHeader(value = "Authorization", required = false) String accessToken)
+    public ResponseEntity<Void> deleteUser(@PathVariable String id, @Schema(hidden = true) @RequestHeader(value = "Authorization", required = false) String accessToken)
     {
         return keycloakAdminClient.deleteUser(accessToken, id);
     }
