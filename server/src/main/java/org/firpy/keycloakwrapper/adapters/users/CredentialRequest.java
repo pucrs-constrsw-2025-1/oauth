@@ -5,8 +5,10 @@ public record CredentialRequest(
         boolean temporary,
         String type,
         Integer hashIterations
-) {
-    public CredentialRequest(String value) {
+)
+{
+    public CredentialRequest(String value)
+    {
         this(value, false, "password", 10);
     }
 }

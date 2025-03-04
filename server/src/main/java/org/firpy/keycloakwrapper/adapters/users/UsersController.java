@@ -52,9 +52,9 @@ public class UsersController
      * @return
      */
     @PostMapping()
-    public ResponseEntity<Void> createUser(@Schema(hidden = true) @RequestHeader(value = "Authorization", required = false) String accessToken, @RequestBody KeycloakUser user)
+    public ResponseEntity<Void> createUser(@Schema(hidden = true) @RequestHeader(value = "Authorization", required = false) String accessToken, @RequestBody CreateUserRequest createKeycloakUserRequest)
     {
-        return keycloakAdminClient.createUser(accessToken, user.toRequest());
+        return keycloakAdminClient.createUser(accessToken, createKeycloakUserRequest.toCreateKeycloakUserRequest());
     }
 
     /**
@@ -63,9 +63,9 @@ public class UsersController
      * @return
      */
     @PutMapping("/{id}")
-    public ResponseEntity<Void> updateUser(@Schema(hidden = true) @RequestHeader(value = "Authorization", required = false) String accessToken, @PathVariable("id") String id, @RequestBody KeycloakUser user)
+    public ResponseEntity<Void> updateUser(@Schema(hidden = true) @RequestHeader(value = "Authorization", required = false) String accessToken, @PathVariable("id") String id, @RequestBody UpdateUserRequest updateUserRequest)
     {
-        return keycloakAdminClient.updateUser(accessToken,id, user.toRequest());
+        return keycloakAdminClient.updateUser(accessToken,id, updateUserRequest.toUpdateKeycloakUserRequest());
     }
 
     /**
