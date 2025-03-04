@@ -23,6 +23,7 @@ public class LoginUtils {
         MultiValueMap<String, Object> params = new LinkedMultiValueMap<>();
 
         params.add("client_id", request.username().equals(clientConfig.getAdminUsername()) ? clientConfig.getAdminClientId() : clientConfig.getClientId());
+        params.add("client_secret", request.username().equals(clientConfig.getAdminUsername()) ? null : clientConfig.getClientSecret());
         params.add("username", request.username());
         params.add("password", request.password());
         params.add("grant_type", "password");
@@ -41,6 +42,7 @@ public class LoginUtils {
         boolean isAdmin = azp.equals(clientConfig.getAdminClientId());
 
         params.add("client_id", isAdmin ? clientConfig.getAdminClientId() : clientConfig.getClientId());
+        params.add("client_secret", isAdmin ? null : clientConfig.getClientSecret());
         params.add("grant_type", "refresh_token");
         params.add("refresh_token", request.refreshToken());
         params.add("scope", "openid");
