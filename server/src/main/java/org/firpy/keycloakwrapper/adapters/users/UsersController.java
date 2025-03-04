@@ -4,6 +4,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import org.firpy.keycloakwrapper.adapters.login.keycloak.admin.KeycloakAdminClient;
 import org.firpy.keycloakwrapper.adapters.login.keycloak.auth.KeycloakAuthClient;
 import org.firpy.keycloakwrapper.adapters.login.keycloak.auth.KeycloakUser;
+import org.firpy.keycloakwrapper.adapters.login.keycloak.auth.KeycloakUserInfo;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -41,7 +42,7 @@ public class UsersController
     }
 
     @GetMapping("/current")
-    public KeycloakUser getCurrentUser(@Schema(hidden = true) @RequestHeader(value = "Authorization", required = false) String accessToken)
+    public KeycloakUserInfo getCurrentUser(@Schema(hidden = true) @RequestHeader(value = "Authorization", required = false) String accessToken)
     {
         return keycloakClient.getCurrentUser(accessToken);
     }
