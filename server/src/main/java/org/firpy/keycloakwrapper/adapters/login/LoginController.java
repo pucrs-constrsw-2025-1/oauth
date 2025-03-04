@@ -2,10 +2,13 @@ package org.firpy.keycloakwrapper.adapters.login;
 
 import org.firpy.keycloakwrapper.adapters.login.keycloak.auth.KeycloakAuthClient;
 import org.firpy.keycloakwrapper.utils.LoginUtils;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+
+import java.text.ParseException;
 
 @RestController()
 @RequestMapping("login")
@@ -35,7 +38,7 @@ public class LoginController
     }
 
 	@PostMapping("/refresh")
-	AccessToken loginWithRefreshToken(RefreshTokenRequest request)
+	AccessToken loginWithRefreshToken(RefreshTokenRequest request) throws ParseException
 	{
 		return keycloakClient.getAccessTokenWithRefreshToken(loginUtils.getRefreshParameters(request));
 	}

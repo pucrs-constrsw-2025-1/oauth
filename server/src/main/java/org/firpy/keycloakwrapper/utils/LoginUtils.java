@@ -1,11 +1,14 @@
 package org.firpy.keycloakwrapper.utils;
 
+import com.nimbusds.jwt.SignedJWT;
 import org.firpy.keycloakwrapper.adapters.login.LoginRequest;
 import org.firpy.keycloakwrapper.adapters.login.RefreshTokenRequest;
 import org.firpy.keycloakwrapper.setup.ClientConfig;
 import org.springframework.stereotype.Component;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
+
+import java.text.ParseException;
 
 @Component
 public class LoginUtils {
@@ -28,11 +31,16 @@ public class LoginUtils {
         return params;
     }
 
-    public MultiValueMap<String, ?> getRefreshParameters(RefreshTokenRequest request)
+    public MultiValueMap<String, ?> getRefreshParameters(RefreshTokenRequest request) throws ParseException
     {
         MultiValueMap<String, Object> params = new LinkedMultiValueMap<>();
+        SignedJWT jwt = SignedJWT.parse(request.refreshToken());
 
-        params.add("client_id", request.isAdmin() ? clientConfig.getAdminClientId() : clientConfig.getClientId());
+        //Authorized party
+        String azp = jwt.getJWTClaimsSet().getStringClaim("azp");
+        boolean isAdmin = azp.equals(clientConfig.getAdminClientId());
+
+        params.add("client_id", isAdmin ? clientConfig.getAdminClientId() : clientConfig.getClientId());
         params.add("grant_type", "refresh_token");
         params.add("refresh_token", request.refreshToken());
         params.add("scope", "openid");
