@@ -21,12 +21,13 @@ public interface KeycloakAuthClient
 	AccessToken getAccessTokenWithRefreshToken(@RequestBody MultiValueMap<String, ?> request);
 
 	@GetMapping("/realms/${keycloak.realm}/protocol/openid-connect/userinfo")
-	KeycloakUser getCurrentUser(@RequestHeader("Authorization") String accessToken);
+	KeycloakUserInfo getCurrentUser(@RequestHeader("Authorization") String accessToken);
 
-
-	class Configuration {
+	class Configuration
+	{
 		@Bean
-		Encoder formEncoder() {
+		Encoder formEncoder()
+		{
 			return new feign.form.FormEncoder();
 		}
 	}
