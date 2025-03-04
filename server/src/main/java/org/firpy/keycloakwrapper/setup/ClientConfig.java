@@ -72,6 +72,11 @@ public class ClientConfig
     @Getter
     @Value("${keycloak.client-id}")
     private String clientId;
+
+    @Getter
+    @Value("${keycloak.admin-client-id}")
+    private String adminClientId;
+
     private String clientSecret;
 
     private final KeycloakAuthClient keycloakAuthClient;

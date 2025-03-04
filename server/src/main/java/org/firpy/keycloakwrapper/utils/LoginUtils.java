@@ -1,19 +1,25 @@
 package org.firpy.keycloakwrapper.utils;
 
-import lombok.NoArgsConstructor;
 import org.firpy.keycloakwrapper.adapters.login.LoginRequest;
 import org.firpy.keycloakwrapper.adapters.login.RefreshTokenRequest;
+import org.firpy.keycloakwrapper.setup.ClientConfig;
+import org.springframework.stereotype.Component;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 
-@NoArgsConstructor(access = lombok.AccessLevel.PRIVATE)
+@Component
 public class LoginUtils {
 
-    public static MultiValueMap<String, ?> getLoginParameters(LoginRequest request, String adminUsername, String clientId)
+	public LoginUtils(ClientConfig clientConfig)
+	{
+		this.clientConfig = clientConfig;
+	}
+
+	public MultiValueMap<String, ?> getLoginParameters(LoginRequest request)
     {
         MultiValueMap<String, Object> params = new LinkedMultiValueMap<>();
 
-        params.add("client_id", request.username().equals(adminUsername) ? "admin-cli" : clientId);
+        params.add("client_id", request.username().equals(clientConfig.getAdminUsername()) ? clientConfig.getAdminClientId() : clientConfig.getClientId());
         params.add("username", request.username());
         params.add("password", request.password());
         params.add("grant_type", "password");
@@ -22,15 +28,17 @@ public class LoginUtils {
         return params;
     }
 
-    public static MultiValueMap<String, ?> getRefreshParameters(RefreshTokenRequest request, String clientId)
+    public MultiValueMap<String, ?> getRefreshParameters(RefreshTokenRequest request)
     {
         MultiValueMap<String, Object> params = new LinkedMultiValueMap<>();
 
-        params.add("client_id", clientId);
+        params.add("client_id", request.isAdmin() ? clientConfig.getAdminClientId() : clientConfig.getClientId());
         params.add("grant_type", "refresh_token");
         params.add("refresh_token", request.refreshToken());
         params.add("scope", "openid");
 
         return params;
     }
+
+    private final ClientConfig clientConfig;
 }
