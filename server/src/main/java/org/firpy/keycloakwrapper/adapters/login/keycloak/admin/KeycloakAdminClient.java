@@ -41,4 +41,34 @@ public interface KeycloakAdminClient
 
 	@PostMapping("/admin/realms/${keycloak.realm}/clients/{client-uuid}/client-secret")
 	CredentialRequest createClientSecret(@RequestHeader("Authorization") String accessToken, @PathVariable("client-uuid") String clientUuid);
+
+	@GetMapping("/admin/realms/${keycloak.realm}/clients/{client-uuid}/roles")
+	RoleRepresentation[] getClientRoles(@RequestHeader("Authorization") String accessToken, @PathVariable("client-uuid") String clientUuid);
+
+	@GetMapping("/admin/realms/${keycloak.realm}/clients/{client-uuid}/roles/{role-name}")
+	RoleRepresentation getClientRole(@RequestHeader("Authorization") String accessToken, @PathVariable("client-uuid") String clientUuid, @PathVariable("role-name") String roleName);
+
+	@PostMapping("/admin/realms/${keycloak.realm}/clients/{client-uuid}/roles")
+	void createClientRole(@RequestHeader("Authorization") String accessToken, @PathVariable("client-uuid") String clientUuid, @RequestBody RoleRepresentation role);
+
+	@DeleteMapping("/admin/realms/${keycloak.realm}/clients/{client-uuid}/roles/{role-name}")
+	void deleteClientRole(@RequestHeader("Authorization") String accessToken, @PathVariable("client-uuid") String clientUuid, @PathVariable("role-name") String roleName);
+
+	@PutMapping("/admin/realms/${keycloak.realm}/clients/{client-uuid}/roles/{role-name}")
+	void updateClientRole(@RequestHeader("Authorization") String accessToken, @PathVariable("client-uuid") String clientUuid, @PathVariable("role-name") String roleName, @RequestBody RoleRepresentation role);
+
+	@GetMapping("/admin/realms/${keycloak.realm}/roles")
+	RoleRepresentation[] getRealmRoles(@RequestHeader("Authorization") String accessToken);
+
+	@GetMapping("/admin/realms/${keycloak.realm}/roles/{role-name}")
+	RoleRepresentation getRealmRole(@RequestHeader("Authorization") String accessToken, @PathVariable("role-name") String roleName);
+
+	@PostMapping("/admin/realms/${keycloak.realm}/roles")
+	void createRealmRole(@RequestHeader("Authorization") String accessToken, @RequestBody RoleRepresentation role);
+
+	@DeleteMapping("/admin/realms/${keycloak.realm}/roles/{role-name}")
+	void deleteRealmRole(@RequestHeader("Authorization") String accessToken, @PathVariable("role-name") String roleName);
+
+	@PutMapping("/admin/realms/${keycloak.realm}/roles/{role-name}")
+	void updateRealmRole(@RequestHeader("Authorization") String accessToken, @PathVariable("role-name") String roleName, @RequestBody RoleRepresentation role);
 }
