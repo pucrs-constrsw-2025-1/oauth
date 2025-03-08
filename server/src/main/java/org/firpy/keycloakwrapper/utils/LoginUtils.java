@@ -58,5 +58,13 @@ public class LoginUtils {
         return params;
     }
 
+    public static MultiValueMap<String, Object> getIntrospectParameters(String accessToken)
+    {
+        MultiValueMap<String, Object> params = new LinkedMultiValueMap<>();
+        params.add("token_type_hint", "requesting_party_token");
+        params.add("token", accessToken);
+        return params;
+    }
+
     private final ClientConfig clientConfig;
 }

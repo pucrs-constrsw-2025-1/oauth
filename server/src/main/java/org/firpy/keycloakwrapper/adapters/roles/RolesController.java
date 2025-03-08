@@ -1,5 +1,6 @@
 package org.firpy.keycloakwrapper.adapters.roles;
 
+import io.swagger.v3.oas.annotations.media.Schema;
 import org.firpy.keycloakwrapper.adapters.login.keycloak.admin.KeycloakAdminClient;
 import org.firpy.keycloakwrapper.adapters.login.keycloak.admin.RoleRepresentation;
 import org.springframework.http.ResponseEntity;
@@ -17,19 +18,19 @@ public class RolesController
 	}
 
 	@GetMapping
-	public RoleRepresentation[] getRoles(@RequestHeader(value = "Authorization", required = false) String accessToken)
+	public RoleRepresentation[] getRoles(@Schema(hidden = true) @RequestHeader(value = "Authorization", required = false) String accessToken)
 	{
 		return keycloakAdminClient.getRealmRoles(accessToken);
 	}
 
 	@GetMapping("/{role-name}")
-	public RoleRepresentation getRole(@RequestHeader(value = "Authorization", required = false) String accessToken, @PathVariable("role-name") String roleName)
+	public RoleRepresentation getRole(@Schema(hidden = true) @RequestHeader(value = "Authorization", required = false) String accessToken, @PathVariable("role-name") String roleName)
 	{
 		return keycloakAdminClient.getRealmRole(accessToken, roleName);
 	}
 
 	@PostMapping
-	public ResponseEntity<Void> createRole(@RequestHeader(value = "Authorization", required = false) String accessToken, @RequestBody RoleRepresentation role)
+	public ResponseEntity<Void> createRole(@Schema(hidden = true) @RequestHeader(value = "Authorization", required = false) String accessToken, @RequestBody RoleRepresentation role)
 	{
 		keycloakAdminClient.createRealmRole(accessToken, role);
 		return ResponseEntity.created(URI.create("/roles/%s".formatted(role.name())))
@@ -37,7 +38,7 @@ public class RolesController
 	}
 
 	@DeleteMapping("/{role-name}")
-	public ResponseEntity<Void> deleteRole(@RequestHeader(value = "Authorization", required = false) String accessToken, @PathVariable("role-name") String roleName)
+	public ResponseEntity<Void> deleteRole(@Schema(hidden = true) @RequestHeader(value = "Authorization", required = false) String accessToken, @PathVariable("role-name") String roleName)
 	{
 		keycloakAdminClient.deleteRealmRole(accessToken, roleName);
 		return ResponseEntity.noContent()
@@ -45,7 +46,7 @@ public class RolesController
 	}
 
 	@PutMapping("/{role-name}")
-	public void updateRole(@RequestHeader(value = "Authorization", required = false) String accessToken, @PathVariable("role-name") String roleName, @RequestBody RoleRepresentation role)
+	public void updateRole(@Schema(hidden = true) @RequestHeader(value = "Authorization", required = false) String accessToken, @PathVariable("role-name") String roleName, @RequestBody RoleRepresentation role)
 	{
 		keycloakAdminClient.updateRealmRole(accessToken, roleName, role);
 	}

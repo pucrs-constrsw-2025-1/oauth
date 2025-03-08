@@ -1,5 +1,6 @@
 package org.firpy.keycloakwrapper.adapters.login.keycloak.auth;
 
+import org.apache.tomcat.util.http.parser.Authorization;
 import org.firpy.keycloakwrapper.adapters.login.AccessToken;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.http.MediaType;
@@ -22,6 +23,9 @@ public interface KeycloakAuthClient
 
 	@GetMapping("/realms/${keycloak.realm}/protocol/openid-connect/userinfo")
 	KeycloakUserInfo getCurrentUser(@RequestHeader("Authorization") String accessToken);
+
+	@PostMapping(value ="/realms/${keycloak.realm}/protocol/openid-connect/token/introspect", consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE)
+	IntrospectionResponse introspectToken(@RequestHeader("Authorization") String accessToken, @RequestBody MultiValueMap<String, ?> request);
 
 	class Configuration
 	{

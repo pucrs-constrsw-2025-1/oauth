@@ -1,12 +1,10 @@
 package org.firpy.keycloakwrapper.adapters.login;
 
+import io.swagger.v3.oas.annotations.media.Schema;
+import org.firpy.keycloakwrapper.adapters.login.keycloak.auth.IntrospectionResponse;
 import org.firpy.keycloakwrapper.adapters.login.keycloak.auth.KeycloakAuthClient;
 import org.firpy.keycloakwrapper.utils.LoginUtils;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.text.ParseException;
 
@@ -36,6 +34,12 @@ public class LoginController
     {
 	    return keycloakClient.getAccessTokenWithPassword(loginUtils.getLoginParameters(request));
     }
+
+	@PostMapping("/introspect")
+	public IntrospectionResponse introspectToken(@Schema(hidden = true) @RequestHeader("Authorization") String accessToken, String accessTokenToInspect)
+	{
+		return keycloakClient.introspectToken(accessToken, LoginUtils.getIntrospectParameters(accessTokenToInspect));
+	}
 
 	@PostMapping("/refresh")
 	AccessToken loginWithRefreshToken(RefreshTokenRequest request) throws ParseException
