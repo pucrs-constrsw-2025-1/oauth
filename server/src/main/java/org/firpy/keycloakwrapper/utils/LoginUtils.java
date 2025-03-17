@@ -39,11 +39,8 @@ public class LoginUtils {
     public MultiValueMap<String, ?> getRefreshParameters(RefreshTokenRequest request) throws ParseException
     {
         MultiValueMap<String, Object> params = new LinkedMultiValueMap<>();
-        SignedJWT jwt = SignedJWT.parse(request.refreshToken());
-
-        //Authorized party
-        String azp = jwt.getJWTClaimsSet().getStringClaim("azp");
-        boolean isAdmin = azp.equals(clientConfig.getAdminClientId());
+        String token = request.refreshToken();
+        boolean isAdmin = isAdmin(token);
 
         params.add("client_id", isAdmin ? clientConfig.getAdminClientId() : clientConfig.getClientId());
         if (!isAdmin)
@@ -52,16 +49,27 @@ public class LoginUtils {
         }
 
         params.add("grant_type", "refresh_token");
-        params.add("refresh_token", request.refreshToken());
+        params.add("refresh_token", token);
         params.add("scope", "openid");
 
         return params;
     }
 
-    public static MultiValueMap<String, Object> getIntrospectParameters(String accessToken)
+    private boolean isAdmin(String token) throws ParseException
     {
+        SignedJWT jwt = SignedJWT.parse(token);
+
+        String authorizedParty = jwt.getJWTClaimsSet().getStringClaim("azp");
+	    return authorizedParty.equals(clientConfig.getAdminClientId());
+    }
+
+    public MultiValueMap<String, Object> getIntrospectParameters(String accessToken)
+    {
+        //Introspect doesn't work on confidential clients (admin-cli)
         MultiValueMap<String, Object> params = new LinkedMultiValueMap<>();
         params.add("token_type_hint", "requesting_party_token");
+        params.add("client_secret", clientConfig.getClientSecret());
+        params.add("client_id", clientConfig.getClientId());
         params.add("token", accessToken);
         return params;
     }

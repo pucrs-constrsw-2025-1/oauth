@@ -36,9 +36,9 @@ public class LoginController
     }
 
 	@PostMapping("/introspect")
-	public IntrospectionResponse introspectToken(@Schema(hidden = true) @RequestHeader("Authorization") String accessToken, String accessTokenToInspect)
+	public IntrospectionResponse introspectToken(@Schema(hidden = true) @RequestHeader("Authorization") String accessToken, String accessTokenToInspect) throws ParseException
 	{
-		return keycloakClient.introspectToken(accessToken, LoginUtils.getIntrospectParameters(accessTokenToInspect));
+		return keycloakClient.introspectToken(accessToken, loginUtils.getIntrospectParameters(accessTokenToInspect));
 	}
 
 	@PostMapping("/refresh")
