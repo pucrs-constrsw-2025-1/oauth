@@ -105,9 +105,9 @@ public class UsersController
     }
 
     @DeleteMapping("/{id}/role-mappings")
-    public ResponseEntity<Void> deleteUserRoleMappings(@Schema(hidden = true) @RequestHeader(value = "Authorization", required = false) String accessToken, @PathVariable("id") String id, @RequestBody RoleRepresentation roleMapping)
+    public ResponseEntity<Void> deleteUserRoleMappings(@Schema(hidden = true) @RequestHeader(value = "Authorization", required = false) String accessToken, @PathVariable("id") String id, @RequestBody RoleRepresentation[] roleMappings)
     {
-        keycloakAdminClient.deleteUserRoleMappings(accessToken, id, roleMapping);
+        keycloakAdminClient.deleteUserRoleMappings(accessToken, id, roleMappings);
         return ResponseEntity.noContent().build();
     }
 
