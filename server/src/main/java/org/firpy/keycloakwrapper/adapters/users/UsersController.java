@@ -2,11 +2,14 @@ package org.firpy.keycloakwrapper.adapters.users;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import org.firpy.keycloakwrapper.adapters.login.keycloak.admin.KeycloakAdminClient;
+import org.firpy.keycloakwrapper.adapters.login.keycloak.admin.RoleRepresentation;
 import org.firpy.keycloakwrapper.adapters.login.keycloak.auth.KeycloakAuthClient;
 import org.firpy.keycloakwrapper.adapters.login.keycloak.auth.KeycloakUser;
 import org.firpy.keycloakwrapper.adapters.login.keycloak.auth.KeycloakUserInfo;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.net.URI;
 
 @RestController()
 @RequestMapping("users")
@@ -85,6 +88,27 @@ public class UsersController
     public ResponseEntity<Void> deleteUser(@PathVariable String id, @Schema(hidden = true) @RequestHeader(value = "Authorization", required = false) String accessToken)
     {
         return keycloakAdminClient.deleteUser(accessToken, id);
+    }
+
+    @GetMapping("/{id}/role-mappings")
+    public RoleRepresentation[] getUserRoleMappings(@Schema(hidden = true) @RequestHeader(value = "Authorization", required = false) String accessToken, @PathVariable("id") String id)
+    {
+        return keycloakAdminClient.getUserRoleMappings(accessToken, id);
+    }
+
+    @PostMapping("/{id}/role-mappings")
+    public ResponseEntity<Void> createUserRoleMappings(@Schema(hidden = true) @RequestHeader(value = "Authorization", required = false) String accessToken, @PathVariable("id") String id, @RequestBody RoleRepresentation[] roleMappings)
+    {
+        keycloakAdminClient.createUserRoleMappings(accessToken, id, roleMappings);
+        return ResponseEntity.created(URI.create("/users/%s/role-mappings".formatted(id)))
+                            .build();
+    }
+
+    @DeleteMapping("/{id}/role-mappings")
+    public ResponseEntity<Void> deleteUserRoleMappings(@Schema(hidden = true) @RequestHeader(value = "Authorization", required = false) String accessToken, @PathVariable("id") String id, @RequestBody RoleRepresentation roleMapping)
+    {
+        keycloakAdminClient.deleteUserRoleMappings(accessToken, id, roleMapping);
+        return ResponseEntity.noContent().build();
     }
 
     private final KeycloakAuthClient keycloakClient;

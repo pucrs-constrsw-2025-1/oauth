@@ -71,4 +71,13 @@ public interface KeycloakAdminClient
 
 	@PutMapping("/admin/realms/${keycloak.realm}/roles/{role-name}")
 	void updateRealmRole(@RequestHeader("Authorization") String accessToken, @PathVariable("role-name") String roleName, @RequestBody RoleRepresentation role);
+
+	@GetMapping("/admin/realms/${keycloak.realm}/users/{user-id}/role-mappings/realm")
+	RoleRepresentation[] getUserRoleMappings(@RequestHeader("Authorization") String accessToken, @PathVariable("user-id") String userId);
+
+	@PostMapping("/admin/realms/${keycloak.realm}/users/{user-id}/role-mappings/realm")
+	void createUserRoleMappings(@RequestHeader("Authorization") String accessToken, @PathVariable("user-id") String userId, @RequestBody RoleRepresentation[] roleMapping);
+
+	@DeleteMapping("/admin/realms/${keycloak.realm}/users/{user-id}/role-mappings/realm")
+	void deleteUserRoleMappings(@RequestHeader("Authorization") String accessToken, @PathVariable("user-id") String userId, @RequestBody RoleRepresentation roleMapping);
 }
