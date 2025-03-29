@@ -1,18 +1,25 @@
 package org.firpy.keycloakwrapper.adapters.login.keycloak.admin;
 
+import feign.codec.Encoder;
+import feign.form.spring.SpringFormEncoder;
 import org.firpy.keycloakwrapper.adapters.clients.ClientRepresentation;
 import org.firpy.keycloakwrapper.adapters.login.keycloak.CreateClientRequest;
 import org.firpy.keycloakwrapper.adapters.login.keycloak.auth.KeycloakUser;
 import org.firpy.keycloakwrapper.adapters.users.CreateKeycloakUserRequest;
 import org.firpy.keycloakwrapper.adapters.users.CredentialRequest;
 import org.firpy.keycloakwrapper.adapters.users.UpdateKeycloakUserRequest;
+import org.springframework.beans.factory.ObjectFactory;
+import org.springframework.boot.autoconfigure.http.HttpMessageConverters;
 import org.springframework.cloud.openfeign.FeignClient;
+import org.springframework.cloud.openfeign.support.SpringEncoder;
+import org.springframework.context.annotation.Bean;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
-@FeignClient(name = "keycloak-admin-service", url = "${keycloak.url}")
+@FeignClient(name = "keycloak-admin-service", url = "${keycloak.url}", configuration = KeycloakAdminClient.Configuration.class)
 public interface KeycloakAdminClient
 {
 	@PostMapping("/admin/realms/${keycloak.realm}/users")
@@ -80,4 +87,26 @@ public interface KeycloakAdminClient
 
 	@DeleteMapping("/admin/realms/${keycloak.realm}/users/{user-id}/role-mappings/realm")
 	void deleteUserRoleMappings(@RequestHeader("Authorization") String accessToken, @PathVariable("user-id") String userId, @RequestBody RoleRepresentation[] roleMapping);
+
+	@GetMapping("/admin/realms/{realm-name}")
+	ResponseEntity<RealmRepresentation> getRealm(@RequestHeader("Authorization") String accessToken, @PathVariable("realm-name") String realmName);
+
+	@PostMapping(value = "/admin/realms/{realm-name}", consumes = "multipart/form-data")
+	void createRealm(@RequestHeader("Authorization") String accessToken, @PathVariable("realm-name") String realmName, @RequestPart("realm") MultipartFile realm);
+
+	class Configuration
+	{
+		public Configuration(ObjectFactory<HttpMessageConverters> messageConverters)
+		{
+			this.messageConverters = messageConverters;
+		}
+
+		private final ObjectFactory<HttpMessageConverters> messageConverters;
+
+		@Bean
+		public Encoder feignFormEncoder ()
+		{
+			return new SpringFormEncoder(new SpringEncoder(messageConverters));
+		}
+	}
 }
