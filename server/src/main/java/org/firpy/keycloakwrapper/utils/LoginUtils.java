@@ -8,6 +8,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 
+import java.io.IOException;
 import java.text.ParseException;
 
 @Component
@@ -18,8 +19,8 @@ public class LoginUtils {
 		this.clientConfig = clientConfig;
 	}
 
-	public MultiValueMap<String, ?> getLoginParameters(LoginRequest request)
-    {
+	public MultiValueMap<String, ?> getLoginParameters(LoginRequest request) throws IOException
+	{
         MultiValueMap<String, Object> params = new LinkedMultiValueMap<>();
 
         params.add("client_id", request.username().equals(clientConfig.getAdminUsername()) ? clientConfig.getAdminClientId() : clientConfig.getClientId());
@@ -36,7 +37,7 @@ public class LoginUtils {
         return params;
     }
 
-    public MultiValueMap<String, ?> getRefreshParameters(RefreshTokenRequest request) throws ParseException
+    public MultiValueMap<String, ?> getRefreshParameters(RefreshTokenRequest request) throws ParseException, IOException
     {
         MultiValueMap<String, Object> params = new LinkedMultiValueMap<>();
         String token = request.refreshToken();
@@ -63,7 +64,7 @@ public class LoginUtils {
 	    return authorizedParty.equals(clientConfig.getAdminClientId());
     }
 
-    public MultiValueMap<String, Object> getIntrospectParameters(String accessToken)
+    public MultiValueMap<String, Object> getIntrospectParameters(String accessToken) throws IOException
     {
         //Introspect doesn't work on confidential clients (admin-cli)
         MultiValueMap<String, Object> params = new LinkedMultiValueMap<>();
