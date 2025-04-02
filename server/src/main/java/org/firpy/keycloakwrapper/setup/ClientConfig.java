@@ -44,7 +44,7 @@ public class ClientConfig
         log.info("Client secret not found.");
 
         MultiValueMap<String, Object> params = new LinkedMultiValueMap<>();
-        params.add("client_id", "admin-cli");
+        params.add("client_id", adminClientId);
         params.add("username", adminUsername);
         params.add("password", adminPassword);
         params.add("grant_type", "password");
