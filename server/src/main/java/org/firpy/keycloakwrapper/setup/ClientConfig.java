@@ -76,7 +76,8 @@ public class ClientConfig
         return clientSecret;
     }
 
-    @Scheduled(initialDelay = 35000)
+    //@Scheduled(initialDelay = 35000)
+    //TODO make this work
     public void createAdminUser() throws IOException {
         AccessToken adminCliAccessToken = keycloakAuthClient.getAccessTokenWithPassword(getAdminLoginParameters(), "master");
 
