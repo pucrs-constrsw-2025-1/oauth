@@ -93,13 +93,13 @@ public class UsersController
     @GetMapping("/{id}/role-mappings")
     public RoleRepresentation[] getUserRoleMappings(@Schema(hidden = true) @RequestHeader(value = "Authorization", required = false) String accessToken, @PathVariable("id") String id)
     {
-        return keycloakAdminClient.getUserRoleMappings(accessToken, id);
+        return keycloakAdminClient.getUserRealmRoleMappings(accessToken, id);
     }
 
     @PostMapping("/{id}/role-mappings")
     public ResponseEntity<Void> createUserRoleMappings(@Schema(hidden = true) @RequestHeader(value = "Authorization", required = false) String accessToken, @PathVariable("id") String id, @RequestBody RoleRepresentation[] roleMappings)
     {
-        keycloakAdminClient.createUserRoleMappings(accessToken, id, roleMappings);
+        keycloakAdminClient.createUserRealmRoleMappings(accessToken, id, roleMappings);
         return ResponseEntity.created(URI.create("/users/%s/role-mappings".formatted(id)))
                             .build();
     }
@@ -107,7 +107,7 @@ public class UsersController
     @DeleteMapping("/{id}/role-mappings")
     public ResponseEntity<Void> deleteUserRoleMappings(@Schema(hidden = true) @RequestHeader(value = "Authorization", required = false) String accessToken, @PathVariable("id") String id, @RequestBody RoleRepresentation[] roleMappings)
     {
-        keycloakAdminClient.deleteUserRoleMappings(accessToken, id, roleMappings);
+        keycloakAdminClient.deleteUserRealmRoleMappings(accessToken, id, roleMappings);
         return ResponseEntity.noContent().build();
     }
 

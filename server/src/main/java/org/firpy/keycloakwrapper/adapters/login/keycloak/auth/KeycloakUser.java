@@ -4,6 +4,7 @@ import org.firpy.keycloakwrapper.adapters.users.CreateKeycloakUserRequest;
 
 public record KeycloakUser
 (
+	String id,
 	String username,
 	String firstName,
 	String lastName,

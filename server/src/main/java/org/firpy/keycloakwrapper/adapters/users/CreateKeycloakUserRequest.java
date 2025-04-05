@@ -15,6 +15,11 @@ public record CreateKeycloakUserRequest
 {
     public CreateKeycloakUserRequest(String username, String firstName, String lastName, String email, String password)
     {
-        this(username, firstName, lastName, email, true, true, List.of(new CredentialRequest(password)) );
+        this(username, firstName, lastName, email, false, true, List.of(new CredentialRequest(password)) );
+    }
+
+    public CreateKeycloakUserRequest(String username, String firstName, String lastName, String password)
+    {
+        this(username, firstName, lastName, null, true, true, List.of(new CredentialRequest(password)) );
     }
 }
