@@ -37,11 +37,11 @@ public interface KeycloakAdminClient
 	@PostMapping("/admin/realms/${keycloak.realm}/clients")
 	ResponseEntity<Void> createClient(@RequestHeader("Authorization") String accessToken, @RequestBody CreateClientRequest request);
 
-	@GetMapping("/admin/realms/${keycloak.realm}/clients")
-	List<ClientRepresentation> getClients(@RequestHeader("Authorization") String accessToken);
+	@GetMapping("/admin/realms/{realm}/clients")
+	List<ClientRepresentation> getClients(@RequestHeader("Authorization") String accessToken, @PathVariable String realm);
 
-	@PostMapping("/admin/realms/${keycloak.realm}/clients/{client-uuid}/client-secret")
-	CredentialRequest createClientSecret(@RequestHeader("Authorization") String accessToken, @PathVariable("client-uuid") String clientUuid);
+	@PostMapping("/admin/realms/{realm}/clients/{client-uuid}/client-secret")
+	CredentialRequest createClientSecret(@RequestHeader("Authorization") String accessToken, @PathVariable("client-uuid") String clientUuid, @PathVariable String realm);
 
 	@GetMapping("/admin/realms/${keycloak.realm}/clients/{client-uuid}/roles")
 	RoleRepresentation[] getClientRoles(@RequestHeader("Authorization") String accessToken, @PathVariable("client-uuid") String clientUuid);
