@@ -2,8 +2,9 @@ Wrapper de autenticação e autorização com o Keycloak
 
 - [ ] Use form data for the login endpoint
 - [X] Use client roles instead of realm roles
-- Double-check if roles are correctly configured
-- Login endpoint
+- [ ] Double-check if roles are correctly configured
+- [ ] Add read and write scopes support and update permissions
+- [ ] Login endpoint
   - [ ] Ensure that the login endpoint returns 400 on a bad request
   - [ ] Ensure that the login endpoint returns 401 on an invalid username or password
 - Create user endpoint
