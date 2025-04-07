@@ -2,6 +2,7 @@ package org.firpy.keycloakwrapper.adapters;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import org.firpy.keycloakwrapper.services.AuthorizationService;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -14,9 +15,9 @@ public class AuthorizationController
 	}
 
 	@PostMapping("/{resource}")
-	public boolean isAuthorized(@Schema(hidden = true) @RequestHeader("Authorization") String accessToken, @PathVariable("resource") String resource)
+	public ResponseEntity<Void> isAuthorized(@Schema(hidden = true) @RequestHeader("Authorization") String accessToken, @PathVariable("resource") String resource)
 	{
-		return authorizationService.isAuthorized(accessToken, resource);
+		return authorizationService.isAuthorized(accessToken, resource) ? ResponseEntity.ok().build() : ResponseEntity.status(403).build();
 	}
 
 	private final AuthorizationService authorizationService;
