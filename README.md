@@ -1,7 +1,8 @@
 Wrapper de autenticação e autorização com o Keycloak
 
 - [ ] Use form data for the login endpoint
-- [ ] Use client roles instead of realm roles
+- [X] Use client roles instead of realm roles
+- Double-check if roles are correctly configured
 - Login endpoint
   - [ ] Ensure that the login endpoint returns 400 on a bad request
   - [ ] Ensure that the login endpoint returns 401 on an invalid username or password
@@ -56,11 +57,11 @@ Wrapper de autenticação e autorização com o Keycloak
         - errorDescription: descrição do erro provida pelo desenvolvedor (grupo)
         - errorSource: origem do erro final (exemplos: OAuthAPI, CoursesAPI, BuildingsAPI etc.)
         - errorStack: pilha de todos os erros até o erro final 
-- [ ] Autocreate realm if not present
-- [ ] Token introspection for admin accounts
-- [ ] Endpoint authorization through Keycloak's OAuth2 endpoint (given a token and a resource, check if the user is authorized to access it)
+- [X] Autocreate realm if not present
+- [X] Token introspection for admin accounts
+- [X] Endpoint authorization through Keycloak's OAuth2 endpoint (given a token and a resource, check if the user is authorized to access it)
     - We can probably use the token introspection endpoint to get all authorized resources for a user
     - [ ] Return 200 if the user is authorized to access the resource
     - [ ] Return 403 if the user is not authorized to access the resource
-- [ ] Recreate and store our client's secret (client is already created in the realm, we just need to autocreate the secret now)
+- [X] Recreate and store our client's secret (client is already created in the realm, we just need to autocreate the secret now)
 - [ ] OAuth2 Swagger UI authorization? maybe..?
