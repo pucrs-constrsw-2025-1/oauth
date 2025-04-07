@@ -7,7 +7,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import jakarta.ws.rs.core.Response;
 import org.firpy.keycloakwrapper.adapters.login.keycloak.admin.KeycloakAdminClient;
-import org.firpy.keycloakwrapper.adapters.login.keycloak.auth.KeycloakOIDCClient;
+import org.firpy.keycloakwrapper.adapters.login.keycloak.auth.KeycloakAuthClient;
 import org.firpy.keycloakwrapper.adapters.login.keycloak.auth.KeycloakUserInfo;
 import org.firpy.keycloakwrapper.setup.ClientConfig;
 import org.firpy.keycloakwrapper.utils.WebApplicationResponseUtils;
@@ -23,17 +23,15 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
-import static org.firpy.keycloakwrapper.utils.WebApplicationResponseUtils.toSpringResponseEntity;
-
 @RestController()
 @RequestMapping("users")
 public class UsersController
 {
-	public UsersController(ClientConfig clientConfig, KeycloakAdminClient keycloakAdminClient, KeycloakOIDCClient keycloakOIDCClient)
+	public UsersController(ClientConfig clientConfig, KeycloakAdminClient keycloakAdminClient, KeycloakAuthClient keycloakAuthClient)
 	{
 		this.clientConfig = clientConfig;
 		this.keycloakAdminClient = keycloakAdminClient;
-		this.keycloakOIDCClient = keycloakOIDCClient;
+		this.keycloakAuthClient = keycloakAuthClient;
 	}
 
 	/**
@@ -81,7 +79,7 @@ public class UsersController
     @GetMapping("/current")
     public KeycloakUserInfo getCurrentUser(@Schema(hidden = true) @RequestHeader(value = "Authorization", required = false) String accessToken)
     {
-        return keycloakOIDCClient.getCurrentUser(accessToken);
+        return keycloakAuthClient.getCurrentUser(accessToken);
     }
 
     /**
@@ -193,5 +191,5 @@ public class UsersController
     private final ClientConfig clientConfig;
 
     private final KeycloakAdminClient keycloakAdminClient;
-    private final KeycloakOIDCClient keycloakOIDCClient;
+    private final KeycloakAuthClient keycloakAuthClient;
 }

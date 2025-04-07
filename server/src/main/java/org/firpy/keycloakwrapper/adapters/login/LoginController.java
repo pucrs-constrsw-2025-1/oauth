@@ -2,22 +2,27 @@ package org.firpy.keycloakwrapper.adapters.login;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import org.firpy.keycloakwrapper.adapters.login.keycloak.auth.IntrospectionResponse;
-import org.firpy.keycloakwrapper.adapters.login.keycloak.auth.KeycloakOIDCClient;
+import org.firpy.keycloakwrapper.adapters.login.keycloak.auth.KeycloakAuthClient;
+import org.firpy.keycloakwrapper.services.AuthorizationService;
+import org.firpy.keycloakwrapper.setup.ClientConfig;
 import org.firpy.keycloakwrapper.utils.LoginUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
 import java.text.ParseException;
+import java.util.Base64;
 
 @RestController()
 @RequestMapping("login")
 public class LoginController
 {
-	public LoginController(KeycloakOIDCClient keycloakClient, LoginUtils loginUtils)
+	public LoginController(KeycloakAuthClient keycloakClient, AuthorizationService authorizationService, LoginUtils loginUtils, ClientConfig clientConfig)
 	{
-		this.keycloakOIDCClient = keycloakClient;
+		this.keycloakAuthClient = keycloakClient;
+		this.authorizationService = authorizationService;
 		this.loginUtils = loginUtils;
+		this.clientConfig = clientConfig;
 	}
 
 	/**
@@ -34,23 +39,32 @@ public class LoginController
     @PostMapping()
     public AccessToken login(@RequestBody LoginRequest request) throws IOException
     {
-	    return keycloakOIDCClient.getAccessTokenWithPassword(loginUtils.getLoginParameters(request), realmName);
+	    return keycloakAuthClient.getAccessTokenWithPassword(loginUtils.getLoginParameters(request), realmName);
     }
 
 	@PostMapping("/introspect")
-	public IntrospectionResponse introspectToken(@Schema(hidden = true) @RequestHeader("Authorization") String accessToken, String accessTokenToInspect) throws ParseException, IOException
+	public IntrospectionResponse introspectToken(String accessTokenToInspect) throws IOException
 	{
-		return keycloakOIDCClient.introspectToken(accessToken, loginUtils.getIntrospectParameters(accessTokenToInspect));
+		byte[] basicAuthBytes = ("%s:%s".formatted(clientConfig.getClientId(), clientConfig.getClientSecret())).getBytes();
+		return keycloakAuthClient.introspectToken("Basic %s".formatted(Base64.getEncoder().encodeToString(basicAuthBytes)), loginUtils.getIntrospectParameters(accessTokenToInspect));
 	}
 
 	@PostMapping("/refresh")
 	AccessToken loginWithRefreshToken(RefreshTokenRequest request) throws ParseException, IOException
 	{
-		return keycloakOIDCClient.getAccessTokenWithRefreshToken(loginUtils.getRefreshParameters(request));
+		return keycloakAuthClient.getAccessTokenWithRefreshToken(loginUtils.getRefreshParameters(request));
 	}
 
-    private final KeycloakOIDCClient keycloakOIDCClient;
+	@PostMapping("/authorization")
+	public boolean isAuthorized(@Schema(hidden = true) @RequestHeader("Authorization") String accessToken, @RequestBody String resource)
+	{
+		return authorizationService.isAuthorized(accessToken, resource);
+	}
+
+    private final KeycloakAuthClient keycloakAuthClient;
+	private final AuthorizationService authorizationService;
 	private final LoginUtils loginUtils;
+	private final ClientConfig clientConfig;
 
 	@Value("${keycloak.realm}")
 	private String realmName;

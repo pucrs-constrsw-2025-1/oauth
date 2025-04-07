@@ -111,10 +111,10 @@ public class ClientConfig
                 }
             }
 
-            String clientUUID = realmResource.clients().findByClientId(clientId).getFirst().getId();
-            ClientResource clientResource = realmResource.clients().get(clientUUID);
+            ClientResource clientResource = realmResource.clients().get(getClientUUID(keycloak));
 
-            clientSecret = clientResource.generateNewSecret().getSecretData();
+            CredentialRepresentation newSecret = clientResource.generateNewSecret();
+            clientSecret = newSecret.getValue();
             log.info("Created client secret for client id {}.", clientId);
 
             return clientSecret;

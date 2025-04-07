@@ -8,8 +8,10 @@ import org.springframework.web.bind.annotation.*;
 import feign.codec.Encoder;
 import org.springframework.context.annotation.Bean;
 
-@FeignClient(name = "keycloak-auth-service", url = "${keycloak.url}", configuration = KeycloakOIDCClient.Configuration.class)
-public interface KeycloakOIDCClient
+import java.util.Map;
+
+@FeignClient(name = "keycloak-auth-service", url = "${keycloak.url}", configuration = KeycloakAuthClient.Configuration.class)
+public interface KeycloakAuthClient
 {
 	@PostMapping(value ="/realms/{realm}/protocol/openid-connect/token", consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE)
 	AccessToken getAccessTokenWithPassword(@RequestBody MultiValueMap<String, ?> request, @PathVariable("realm") String realm);
@@ -21,7 +23,10 @@ public interface KeycloakOIDCClient
 	KeycloakUserInfo getCurrentUser(@RequestHeader("Authorization") String accessToken);
 
 	@PostMapping(value ="/realms/${keycloak.realm}/protocol/openid-connect/token/introspect", consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE)
-	IntrospectionResponse introspectToken(@RequestHeader("Authorization") String accessToken, @RequestBody MultiValueMap<String, ?> request);
+	IntrospectionResponse introspectToken(@RequestHeader("Authorization") String authorization, @RequestBody MultiValueMap<String, ?> request);
+
+	@PostMapping(value = "/realms/${keycloak.realm}/protocol/openid-connect/token", consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE)
+	Map<String, Object> requestAuthorization(@RequestHeader("Authorization") String basicAuth, @RequestBody MultiValueMap<String, ?> request);
 
 	class Configuration
 	{
