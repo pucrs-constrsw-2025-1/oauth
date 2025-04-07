@@ -1,12 +1,12 @@
 package org.firpy.keycloakwrapper.setup;
 
-import feign.FeignException;
+import jakarta.ws.rs.NotFoundException;
+import jakarta.ws.rs.core.Response;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
-import org.firpy.keycloakwrapper.adapters.login.AccessToken;
-import org.firpy.keycloakwrapper.adapters.login.keycloak.admin.KeycloakAdminClient;
-import org.firpy.keycloakwrapper.adapters.login.keycloak.auth.KeycloakAuthClient;
+import org.firpy.keycloakwrapper.adapters.login.keycloak.admin.KeycloakRealmAdminClient;
 import org.jboss.resteasy.client.jaxrs.internal.ResteasyClientBuilderImpl;
+import org.keycloak.OAuth2Constants;
 import org.keycloak.admin.client.Keycloak;
 import org.keycloak.admin.client.KeycloakBuilder;
 import org.keycloak.admin.client.resource.ClientResource;
@@ -22,8 +22,6 @@ import org.springframework.core.io.Resource;
 import org.springframework.core.io.ResourceLoader;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.Scheduled;
-import org.springframework.util.LinkedMultiValueMap;
-import org.springframework.util.MultiValueMap;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
@@ -35,10 +33,9 @@ import java.util.List;
 @EnableScheduling
 public class ClientConfig
 {
-    public ClientConfig(KeycloakAuthClient keycloakAuthClient, KeycloakAdminClient keycloakClient, ResourceLoader resourceLoader)
+    public ClientConfig(KeycloakRealmAdminClient keycloakRealmAdminClient, ResourceLoader resourceLoader)
     {
-        this.keycloakAuthClient = keycloakAuthClient;
-        this.keycloakAdminClient = keycloakClient;
+	    this.keycloakRealmAdminClient = keycloakRealmAdminClient;
 	    this.resourceLoader = resourceLoader;
     }
 
@@ -52,70 +49,88 @@ public class ClientConfig
 
         log.info("Client secret not found.");
 
-        MultiValueMap<String, Object> params = new LinkedMultiValueMap<>();
-        params.add("client_id", adminClientId);
-        params.add("username", adminUsername);
-        params.add("password", adminPassword);
-        params.add("grant_type", "password");
-
-        log.info("Logging in as admin.");
-        AccessToken token = keycloakAuthClient.getAccessTokenWithPassword(params, "master");
-        String accessToken = "Bearer %s".formatted(token.accessToken());
-
-        try
+        try (Keycloak keycloak = KeycloakBuilder.builder()
+                       .username(adminUsername)
+                       .password(adminPassword)
+                       .serverUrl(keycloakUrl)
+                       .realm("master")
+                       .clientId(adminClientId)
+                       .scope(OAuth2Constants.SCOPE_OPENID)
+                       .grantType(OAuth2Constants.PASSWORD)
+                       .resteasyClient(
+                               new ResteasyClientBuilderImpl()
+                                       .connectionPoolSize(10)
+                                       .build())
+                       .build())
         {
-            keycloakAdminClient.getRealm(accessToken, realmName);
+            log.info("Logged in as admin.");
+
+            try
+            {
+                keycloak.realm(realmName).clients().findAll();
+            }
+            catch (NotFoundException notFoundException)
+            {
+                log.info("Realm {} doesn't exist, creating it.", realmName);
+                Resource realmExport = resourceLoader.getResource("classpath:realm-export.json");
+                String accessTokenString = keycloak.tokenManager().getAccessTokenString();
+                keycloakRealmAdminClient.createRealm("Bearer %s".formatted(accessTokenString), realmExport.getContentAsString(StandardCharsets.UTF_8));
+            }
+
+            UserRepresentation adminUser = createAdminUser();
+
+            RealmResource realmResource = keycloak.realm(realmName);
+
+	        List<UserRepresentation> foundAdminUser = realmResource.users().searchByUsername(adminUser.getUsername(), true);
+
+            if (foundAdminUser.isEmpty())
+            {
+                try (Response response = realmResource.users().create(adminUser))
+                {
+                    if (response.getStatusInfo().toEnum() != Response.Status.CREATED)
+                    {
+                        throw new RuntimeException("Failed to create admin user.");
+                    }
+
+                    String realmManagementClientId = "realm-management";
+                    String realmManagementClientUUID = realmResource.clients().findByClientId(realmManagementClientId).getFirst().getId();
+                    ClientResource realmManagementClient = realmResource.clients().get(realmManagementClientUUID);
+
+                    RoleRepresentation realmAdminRole = realmManagementClient
+                                                                .roles()
+                                                                .get("realm-admin")
+                                                                .toRepresentation();
+
+                    String userUUID = realmResource.users().searchByUsername(adminUsername, true).getFirst().getId();
+                    UserResource userResource = realmResource.users().get(userUUID);
+
+                    userResource.roles()
+                                .clientLevel(realmManagementClientUUID)
+                                .add(Collections.singletonList(realmAdminRole));
+
+                }
+            }
+
+            String clientUUID = realmResource.clients().findByClientId(clientId).getFirst().getId();
+            ClientResource clientResource = realmResource.clients().get(clientUUID);
+
+            clientSecret = clientResource.generateNewSecret().getSecretData();
+            log.info("Created client secret for client id {}.", clientId);
+
+            return clientSecret;
         }
-        catch (FeignException.NotFound exception)
-        {
-            log.info("Realm {} doesn't exist, creating it.", realmName);
-            Resource realmExport = resourceLoader.getResource("classpath:realm-export.json");
-	        keycloakAdminClient.createRealm(accessToken, realmExport.getContentAsString(StandardCharsets.UTF_8));
-        }
-
-        log.info("Client secret not found.");
-
-        Keycloak keycloakClient = KeycloakBuilder.builder()
-                                          .serverUrl(keycloakUrl)
-                                          .realm("master")
-                                          .username("admin")
-                                          .password("admin")
-                                          .clientId("admin-cli")
-                                          .resteasyClient(
-                                                  new ResteasyClientBuilderImpl()
-                                                          .connectionPoolSize(10)
-                                                          .build()
-                                          ).build();
-
-        UserRepresentation user = createAdminUser();
-
-        RealmResource realmResource = keycloakClient.realm(realmName);
-	    realmResource.users().create(user);
-
-        String realmManagementClientId = "realm-management";
-        String realmManagementClientUUID = realmResource.clients().findByClientId(realmManagementClientId).getFirst().getId();
-        ClientResource realmManagementClient = realmResource.clients().get(realmManagementClientUUID);
-
-        RoleRepresentation realmAdminRole = realmManagementClient
-                                                    .roles()
-                                                    .get("realm-admin")
-                                                    .toRepresentation();
-
-	    String userUUID = realmResource.users().searchByUsername("admin", true).getFirst().getId();
-        UserResource userResource = realmResource.users().get(userUUID);
-
-        userResource.roles()
-                    .clientLevel(realmManagementClientUUID)
-                    .add(Collections.singletonList(realmAdminRole));
-
-        String clientUUID = realmResource.clients().findByClientId(clientId).getFirst().getId();
-        ClientResource clientResource = realmResource.clients().get(clientUUID);
-
-        clientSecret = clientResource.generateNewSecret().getSecretData();
-        log.info("Created client secret for client id {}.", clientId);
-
-        return clientSecret;
     }
+
+    public String getClientUUID(Keycloak keycloakClient)
+    {
+	    if (clientUUID == null)
+	    {
+		    clientUUID = keycloakClient.realm(realmName).clients().findByClientId(clientId).getFirst().getId();
+	    }
+
+        return clientUUID;
+    }
+
 
     private static UserRepresentation createAdminUser()
     {
@@ -146,6 +161,8 @@ public class ClientConfig
     @Value("${keycloak.client-id}")
     private String clientId;
 
+    private String clientUUID = null;
+
     @Getter
     @Value("${keycloak.realm}")
     private String realmName;
@@ -159,7 +176,6 @@ public class ClientConfig
     @Value("${keycloak.url}")
     private String keycloakUrl;
 
-    private final KeycloakAuthClient keycloakAuthClient;
-    private final KeycloakAdminClient keycloakAdminClient;
+    private final KeycloakRealmAdminClient keycloakRealmAdminClient;
     private final ResourceLoader resourceLoader;
 }

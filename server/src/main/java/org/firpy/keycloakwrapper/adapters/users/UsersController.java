@@ -1,24 +1,39 @@
 package org.firpy.keycloakwrapper.adapters.users;
 
+import io.swagger.v3.oas.annotations.media.ArraySchema;
+import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import jakarta.ws.rs.core.Response;
 import org.firpy.keycloakwrapper.adapters.login.keycloak.admin.KeycloakAdminClient;
-import org.firpy.keycloakwrapper.adapters.login.keycloak.admin.RoleRepresentation;
-import org.firpy.keycloakwrapper.adapters.login.keycloak.auth.KeycloakAuthClient;
-import org.firpy.keycloakwrapper.adapters.login.keycloak.auth.KeycloakUser;
+import org.firpy.keycloakwrapper.adapters.login.keycloak.auth.KeycloakOIDCClient;
 import org.firpy.keycloakwrapper.adapters.login.keycloak.auth.KeycloakUserInfo;
+import org.firpy.keycloakwrapper.setup.ClientConfig;
+import org.firpy.keycloakwrapper.utils.WebApplicationResponseUtils;
+import org.keycloak.admin.client.Keycloak;
+import org.keycloak.admin.client.resource.UsersResource;
+import org.keycloak.representations.idm.*;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.net.URI;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
+
+import static org.firpy.keycloakwrapper.utils.WebApplicationResponseUtils.toSpringResponseEntity;
 
 @RestController()
 @RequestMapping("users")
 public class UsersController
 {
-	public UsersController(KeycloakAuthClient keycloakClient, KeycloakAdminClient keycloakAdminClient)
+	public UsersController(ClientConfig clientConfig, KeycloakAdminClient keycloakAdminClient, KeycloakOIDCClient keycloakOIDCClient)
 	{
-		this.keycloakClient = keycloakClient;
+		this.clientConfig = clientConfig;
 		this.keycloakAdminClient = keycloakAdminClient;
+		this.keycloakOIDCClient = keycloakOIDCClient;
 	}
 
 	/**
@@ -27,9 +42,24 @@ public class UsersController
      * @return
      */
     @GetMapping()
-    public KeycloakUser[] getUsers(@Schema(hidden = true) @RequestHeader(value = "Authorization", required = false) String accessToken)
+    @ApiResponses(value = {
+        @ApiResponse(
+            responseCode = "200",
+            description = "Users retrieved",
+            content = @Content(array = @ArraySchema(schema = @Schema(implementation = UserRepresentation.class)))),
+        @ApiResponse(
+            responseCode = "500",
+            description = "An unexpected error occurred",
+            content = @Content(schema = @Schema(implementation = String.class)))
+        }
+    )
+    public ResponseEntity<?> getUsers(@Schema(hidden = true) @RequestHeader(value = "Authorization", required = false) String accessToken)
     {
-        return keycloakAdminClient.getUsers(accessToken);
+        try (Keycloak keycloakClient = this.keycloakAdminClient.fromAdminAccessToken(accessToken))
+        {
+            UsersResource users = keycloakClient.realm(realmName).users();
+            return ResponseEntity.ok(users.list().toArray(UserRepresentation[]::new));
+        }
     }
 
     /**
@@ -39,15 +69,19 @@ public class UsersController
      * @return
      */
     @GetMapping("/{id}")
-    public KeycloakUser getUser(@PathVariable("id") String id, @Schema(hidden = true) @RequestHeader(value = "Authorization", required = false) String accessToken)
+    public ResponseEntity<?> getUser(@PathVariable("id") String id, @Schema(hidden = true) @RequestHeader(value = "Authorization", required = false) String accessToken)
     {
-	    return keycloakAdminClient.getUser(accessToken, id);
+        try (Keycloak keycloakClient = keycloakAdminClient.fromAdminAccessToken(accessToken))
+        {
+	        UserRepresentation user = keycloakClient.realm(realmName).users().get(id).toRepresentation();
+            return ResponseEntity.ok(user);
+        }
     }
 
     @GetMapping("/current")
     public KeycloakUserInfo getCurrentUser(@Schema(hidden = true) @RequestHeader(value = "Authorization", required = false) String accessToken)
     {
-        return keycloakClient.getCurrentUser(accessToken);
+        return keycloakOIDCClient.getCurrentUser(accessToken);
     }
 
     /**
@@ -56,9 +90,15 @@ public class UsersController
      * @return
      */
     @PostMapping()
-    public ResponseEntity<Void> createUser(@Schema(hidden = true) @RequestHeader(value = "Authorization", required = false) String accessToken, @RequestBody CreateUserRequest createKeycloakUserRequest)
+    public ResponseEntity<?> createUser(@Schema(hidden = true) @RequestHeader(value = "Authorization", required = false) String accessToken, @RequestBody CreateUserRequest createUserRequest)
     {
-        return keycloakAdminClient.createUser(accessToken, createKeycloakUserRequest.toCreateKeycloakUserRequest());
+        try (Keycloak keycloakClient = keycloakAdminClient.fromAdminAccessToken(accessToken))
+        {
+            try (Response response = keycloakClient.realm(realmName).users().create(createUserRequest.toKeycloakUserRepresentation()))
+            {
+                return WebApplicationResponseUtils.toSpringResponseEntity(response);
+            }
+        }
     }
 
     /**
@@ -67,9 +107,13 @@ public class UsersController
      * @return
      */
     @PutMapping("/{id}")
-    public ResponseEntity<Void> updateUser(@Schema(hidden = true) @RequestHeader(value = "Authorization", required = false) String accessToken, @PathVariable("id") String id, @RequestBody UpdateUserRequest updateUserRequest)
+    public ResponseEntity<?> updateUser(@Schema(hidden = true) @RequestHeader(value = "Authorization", required = false) String accessToken, @PathVariable("id") String id, @RequestBody UpdateUserRequest updateUserRequest)
     {
-        return keycloakAdminClient.updateUser(accessToken,id, updateUserRequest.toUpdateKeycloakUserRequest());
+        try (Keycloak keycloakClient = keycloakAdminClient.fromAdminAccessToken(accessToken))
+        {
+            keycloakClient.realm(realmName).users().get(id).update(updateUserRequest.toKeycloakUserRepresentation());
+            return ResponseEntity.noContent().build();
+        }
     }
 
     /**
@@ -78,39 +122,76 @@ public class UsersController
      * @return
      */
     @PatchMapping("/{id}")
-    public ResponseEntity<Void> updateUserPassword(@Schema(hidden = true) @RequestHeader(value = "Authorization", required = false) String accessToken, @PathVariable("id") String id, @RequestBody UpdateUserPasswordRequest passwordReset)
+    public ResponseEntity<?> updateUserPassword(@Schema(hidden = true) @RequestHeader(value = "Authorization", required = false) String accessToken, @PathVariable("id") String id, @RequestBody UpdateUserPasswordRequest passwordReset)
     {
-        CredentialRequest credentialRequest = new CredentialRequest(passwordReset.newPassword());
-        return keycloakAdminClient.resetPassword(accessToken, id, credentialRequest);
+        try (Keycloak keycloakClient = keycloakAdminClient.fromAdminAccessToken(accessToken))
+        {
+            CredentialRepresentation credentialRepresentation = new CredentialRepresentation();
+            credentialRepresentation.setValue(passwordReset.newPassword());
+            credentialRepresentation.setType(CredentialRepresentation.PASSWORD);
+            credentialRepresentation.setTemporary(false);
+            keycloakClient.realm(realmName).users().get(id).resetPassword(credentialRepresentation);
+            return ResponseEntity.noContent().build();
+        }
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteUser(@PathVariable String id, @Schema(hidden = true) @RequestHeader(value = "Authorization", required = false) String accessToken)
+    public ResponseEntity<?> deleteUser(@PathVariable String id, @Schema(hidden = true) @RequestHeader(value = "Authorization", required = false) String accessToken)
     {
-        return keycloakAdminClient.deleteUser(accessToken, id);
+        try (Keycloak keycloakClient = keycloakAdminClient.fromAdminAccessToken(accessToken))
+        {
+            try (Response response = keycloakClient.realm(realmName).users().delete(id))
+            {
+                return WebApplicationResponseUtils.toSpringResponseEntity(response);
+            }
+        }
     }
 
     @GetMapping("/{id}/role-mappings")
-    public RoleRepresentation[] getUserRoleMappings(@Schema(hidden = true) @RequestHeader(value = "Authorization", required = false) String accessToken, @PathVariable("id") String id)
+    public ResponseEntity<?> getUserRoleMappings(@Schema(hidden = true) @RequestHeader(value = "Authorization", required = false) String accessToken, @PathVariable("id") String id)
     {
-        return keycloakAdminClient.getUserRealmRoleMappings(accessToken, id);
+        try (Keycloak keycloakClient = keycloakAdminClient.fromAdminAccessToken(accessToken))
+        {
+            MappingsRepresentation allRoles = keycloakClient.realm(realmName).users().get(id).roles().getAll();
+            Map<String, ClientMappingsRepresentation> clientRoleMappings = allRoles.getClientMappings();
+            List<RoleRepresentation> allRolesList = (clientRoleMappings != null ? clientRoleMappings.values().stream().flatMap(clientMappings -> clientMappings.getMappings().stream()).toList() : List.of());
+
+            return ResponseEntity.ok(allRolesList.toArray(RoleRepresentation[]::new));
+        }
     }
 
     @PostMapping("/{id}/role-mappings")
-    public ResponseEntity<Void> createUserRoleMappings(@Schema(hidden = true) @RequestHeader(value = "Authorization", required = false) String accessToken, @PathVariable("id") String id, @RequestBody RoleRepresentation[] roleMappings)
+    @ApiResponses(value = {@ApiResponse(responseCode = "201", description = "Role mappings created")})
+    public ResponseEntity<?> createUserRoleMappings(@Schema(hidden = true) @RequestHeader(value = "Authorization", required = false) String accessToken, @PathVariable("id") String id, @RequestBody String[] roleNamesToAdd)
     {
-        keycloakAdminClient.createUserRealmRoleMappings(accessToken, id, roleMappings);
-        return ResponseEntity.created(URI.create("/users/%s/role-mappings".formatted(id)))
-                            .build();
+        try (Keycloak keycloakClient = keycloakAdminClient.fromAdminAccessToken(accessToken))
+        {
+            String clientUUID = clientConfig.getClientUUID(keycloakClient);
+            List<RoleRepresentation> availableRoles = keycloakClient.realm(realmName).users().get(id).roles().clientLevel(clientUUID).listAvailable();
+            List<RoleRepresentation> availableRolesToAdd = availableRoles.stream().filter(role -> Arrays.stream(roleNamesToAdd).toList().contains(role.getName())).toList();
+            keycloakClient.realm(realmName).users().get(id).roles().clientLevel(clientUUID).add(availableRolesToAdd);
+            return ResponseEntity.created(URI.create("/users/%s/role-mappings".formatted(id))).build();
+        }
     }
 
     @DeleteMapping("/{id}/role-mappings")
-    public ResponseEntity<Void> deleteUserRoleMappings(@Schema(hidden = true) @RequestHeader(value = "Authorization", required = false) String accessToken, @PathVariable("id") String id, @RequestBody RoleRepresentation[] roleMappings)
+    public ResponseEntity<?> deleteUserRoleMappings(@Schema(hidden = true) @RequestHeader(value = "Authorization", required = false) String accessToken, @PathVariable("id") String id, @RequestBody String[] roleNamesToRemove)
     {
-        keycloakAdminClient.deleteUserRealmRoleMappings(accessToken, id, roleMappings);
-        return ResponseEntity.noContent().build();
+        try (Keycloak keycloakClient = keycloakAdminClient.fromAdminAccessToken(accessToken))
+        {
+            String clientUUID = clientConfig.getClientUUID(keycloakClient);
+            List<RoleRepresentation> roleMappings = keycloakClient.realm(realmName).users().get(id).roles().clientLevel(clientUUID).listAll();
+            List<RoleRepresentation> roleMappingsToRemove = roleMappings.stream().filter(role -> Arrays.stream(roleNamesToRemove).toList().contains(role.getName())).toList();
+            keycloakClient.realm(realmName).users().get(id).roles().clientLevel(clientUUID).remove(roleMappingsToRemove);
+            return ResponseEntity.noContent().build();
+        }
     }
 
-    private final KeycloakAuthClient keycloakClient;
+    @Value("${keycloak.realm}")
+    private String realmName;
+
+    private final ClientConfig clientConfig;
+
     private final KeycloakAdminClient keycloakAdminClient;
+    private final KeycloakOIDCClient keycloakOIDCClient;
 }

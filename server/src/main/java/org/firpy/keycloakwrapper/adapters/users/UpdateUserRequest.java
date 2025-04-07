@@ -1,15 +1,23 @@
 package org.firpy.keycloakwrapper.adapters.users;
 
+import org.keycloak.representations.idm.UserRepresentation;
+
 public record UpdateUserRequest
-		(
-			String firstName,
-			String lastName,
-			String email,
-			String password
-		)
+(
+	String firstName,
+	String lastName,
+	String email,
+	String password
+)
 {
-	public UpdateKeycloakUserRequest toUpdateKeycloakUserRequest()
+	UserRepresentation toKeycloakUserRepresentation()
 	{
-		return new UpdateKeycloakUserRequest(firstName, lastName, email, password);
+		UserRepresentation newUser = new UserRepresentation();
+		newUser.setFirstName(firstName);
+		newUser.setLastName(lastName);
+		newUser.setEmail(email);
+		newUser.setEnabled(true);
+
+		return newUser;
 	}
 }

@@ -1,5 +1,7 @@
 package org.firpy.keycloakwrapper.adapters.users;
 
+import org.keycloak.representations.idm.UserRepresentation;
+
 public record CreateUserRequest
 (
 	String username,
@@ -9,8 +11,15 @@ public record CreateUserRequest
 	String password
 )
 {
-	public CreateKeycloakUserRequest toCreateKeycloakUserRequest()
+	UserRepresentation toKeycloakUserRepresentation()
 	{
-		return new CreateKeycloakUserRequest(username, firstName, lastName, email, password);
+		UserRepresentation newUser = new UserRepresentation();
+		newUser.setUsername(username);
+		newUser.setFirstName(firstName);
+		newUser.setLastName(lastName);
+		newUser.setEmail(email);
+		newUser.setEnabled(true);
+
+		return newUser;
 	}
 }

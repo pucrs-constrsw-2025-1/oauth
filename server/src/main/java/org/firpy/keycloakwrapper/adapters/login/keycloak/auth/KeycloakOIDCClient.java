@@ -8,8 +8,8 @@ import org.springframework.web.bind.annotation.*;
 import feign.codec.Encoder;
 import org.springframework.context.annotation.Bean;
 
-@FeignClient(name = "keycloak-auth-service", url = "${keycloak.url}", configuration = KeycloakAuthClient.Configuration.class)
-public interface KeycloakAuthClient
+@FeignClient(name = "keycloak-auth-service", url = "${keycloak.url}", configuration = KeycloakOIDCClient.Configuration.class)
+public interface KeycloakOIDCClient
 {
 	@PostMapping(value ="/realms/{realm}/protocol/openid-connect/token", consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE)
 	AccessToken getAccessTokenWithPassword(@RequestBody MultiValueMap<String, ?> request, @PathVariable("realm") String realm);

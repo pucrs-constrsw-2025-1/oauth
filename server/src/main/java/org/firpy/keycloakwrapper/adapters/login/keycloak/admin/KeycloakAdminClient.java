@@ -1,99 +1,60 @@
 package org.firpy.keycloakwrapper.adapters.login.keycloak.admin;
 
-import org.firpy.keycloakwrapper.adapters.clients.ClientRepresentation;
-import org.firpy.keycloakwrapper.adapters.login.keycloak.CreateClientRequest;
-import org.firpy.keycloakwrapper.adapters.login.keycloak.auth.KeycloakUser;
-import org.firpy.keycloakwrapper.adapters.users.CreateKeycloakUserRequest;
-import org.firpy.keycloakwrapper.adapters.users.CredentialRequest;
-import org.firpy.keycloakwrapper.adapters.users.UpdateKeycloakUserRequest;
-import org.springframework.cloud.openfeign.FeignClient;
-import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.firpy.keycloakwrapper.setup.ClientConfig;
+import org.jboss.resteasy.client.jaxrs.internal.ResteasyClientBuilderImpl;
+import org.keycloak.admin.client.Keycloak;
+import org.keycloak.admin.client.KeycloakBuilder;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Component;
 
-import java.util.List;
+import java.io.IOException;
 
-@FeignClient(name = "keycloak-admin-service", url = "${keycloak.url}")
-public interface KeycloakAdminClient
+@Component
+public class KeycloakAdminClient
 {
-	@PostMapping("/admin/realms/${keycloak.realm}/users")
-	ResponseEntity<Void> createUser(@RequestHeader("Authorization") String accessToken, CreateKeycloakUserRequest user);
+	public KeycloakAdminClient(ClientConfig clientConfig)
+	{
+		this.clientConfig = clientConfig;
+	}
 
-	@GetMapping("/admin/realms/${keycloak.realm}/users")
-	KeycloakUser[] getUsers(@RequestHeader("Authorization") String accessToken);
+	public Keycloak fromAdminAccessToken(String accessToken)
+	{
+		return KeycloakBuilder.builder()
+						      .authorization(accessToken)
+							  .serverUrl(keycloakUrl)
+							  .realm(realmName)
+							  .clientId(adminClientId)
+							  .resteasyClient(
+									  new ResteasyClientBuilderImpl()
+										  .connectionPoolSize(10)
+										  .build())
+							  .build();
+	}
 
-	@GetMapping("/admin/realms/${keycloak.realm}/users/{id}")
-	KeycloakUser getUser(@RequestHeader("Authorization") String accessToken, @PathVariable("id") String id);
+	public Keycloak fromClientSecret() throws IOException
+	{
+		return KeycloakBuilder.builder()
+							  .clientId(clientId)
+						      .clientSecret(clientConfig.getClientSecret())
+							  .serverUrl(keycloakUrl)
+							  .realm(realmName)
+							  .resteasyClient(
+									  new ResteasyClientBuilderImpl()
+										  .connectionPoolSize(10)
+										  .build()).build();
+	}
 
-	@PutMapping("/admin/realms/${keycloak.realm}/users/{id}")
-	ResponseEntity<Void> updateUser(@RequestHeader("Authorization") String accessToken, @PathVariable("id") String id, UpdateKeycloakUserRequest user);
+	private final ClientConfig clientConfig;
 
-	@PutMapping("/admin/realms/${keycloak.realm}/users/{id}/reset-password")
-	ResponseEntity<Void> resetPassword(@RequestHeader("Authorization") String accessToken, @PathVariable("id") String id, @RequestBody CredentialRequest request);
+	@Value("${keycloak.realm}")
+	private String realmName;
 
-	@DeleteMapping("/admin/realms/${keycloak.realm}/users/{id}")
-	ResponseEntity<Void> deleteUser(@RequestHeader("Authorization") String accessToken, @PathVariable("id") String id);
+	@Value("${keycloak.admin-client-id}")
+	private String adminClientId;
 
-	@PostMapping("/admin/realms/${keycloak.realm}/clients")
-	ResponseEntity<Void> createClient(@RequestHeader("Authorization") String accessToken, @RequestBody CreateClientRequest request);
+	@Value("${keycloak.client-id}")
+	private String clientId;
 
-	@GetMapping("/admin/realms/{realm}/clients")
-	List<ClientRepresentation> getClients(@RequestHeader("Authorization") String accessToken, @PathVariable String realm);
-
-	@PostMapping("/admin/realms/{realm}/clients/{client-uuid}/client-secret")
-	CredentialRequest createClientSecret(@RequestHeader("Authorization") String accessToken, @PathVariable("client-uuid") String clientUuid, @PathVariable String realm);
-
-	@GetMapping("/admin/realms/${keycloak.realm}/clients/{client-uuid}/roles")
-	RoleRepresentation[] getClientRoles(@RequestHeader("Authorization") String accessToken, @PathVariable("client-uuid") String clientUuid);
-
-	@GetMapping("/admin/realms/${keycloak.realm}/clients/{client-uuid}/roles/{role-name}")
-	RoleRepresentation getClientRole(@RequestHeader("Authorization") String accessToken, @PathVariable("client-uuid") String clientUuid, @PathVariable("role-name") String roleName);
-
-	@PostMapping("/admin/realms/${keycloak.realm}/clients/{client-uuid}/roles")
-	void createClientRole(@RequestHeader("Authorization") String accessToken, @PathVariable("client-uuid") String clientUuid, @RequestBody RoleRepresentation role);
-
-	@DeleteMapping("/admin/realms/${keycloak.realm}/clients/{client-uuid}/roles/{role-name}")
-	void deleteClientRole(@RequestHeader("Authorization") String accessToken, @PathVariable("client-uuid") String clientUuid, @PathVariable("role-name") String roleName);
-
-	@PutMapping("/admin/realms/${keycloak.realm}/clients/{client-uuid}/roles/{role-name}")
-	void updateClientRole(@RequestHeader("Authorization") String accessToken, @PathVariable("client-uuid") String clientUuid, @PathVariable("role-name") String roleName, @RequestBody RoleRepresentation role);
-
-	@GetMapping("/admin/realms/${keycloak.realm}/roles")
-	RoleRepresentation[] getRealmRoles(@RequestHeader("Authorization") String accessToken);
-
-	@GetMapping("/admin/realms/${keycloak.realm}/roles/{role-name}")
-	RoleRepresentation getRealmRole(@RequestHeader("Authorization") String accessToken, @PathVariable("role-name") String roleName);
-
-	@PostMapping("/admin/realms/${keycloak.realm}/roles")
-	void createRealmRole(@RequestHeader("Authorization") String accessToken, @RequestBody RoleRepresentation role);
-
-	@DeleteMapping("/admin/realms/${keycloak.realm}/roles/{role-name}")
-	void deleteRealmRole(@RequestHeader("Authorization") String accessToken, @PathVariable("role-name") String roleName);
-
-	@PutMapping("/admin/realms/${keycloak.realm}/roles/{role-name}")
-	void updateRealmRole(@RequestHeader("Authorization") String accessToken, @PathVariable("role-name") String roleName, @RequestBody RoleRepresentation role);
-
-	@GetMapping("/admin/realms/${keycloak.realm}/users/{user-id}/role-mappings/realm")
-	RoleRepresentation[] getUserRealmRoleMappings(@RequestHeader("Authorization") String accessToken, @PathVariable("user-id") String userId);
-
-	@PostMapping("/admin/realms/${keycloak.realm}/users/{user-id}/role-mappings/realm")
-	void createUserRealmRoleMappings(@RequestHeader("Authorization") String accessToken, @PathVariable("user-id") String userId, @RequestBody RoleRepresentation[] roleMapping);
-
-	@DeleteMapping("/admin/realms/${keycloak.realm}/users/{user-id}/role-mappings/realm")
-	void deleteUserRealmRoleMappings(@RequestHeader("Authorization") String accessToken, @PathVariable("user-id") String userId, @RequestBody RoleRepresentation[] roleMapping);
-
-	@GetMapping("/admin/realms/${keycloak.realm}/users/{user-id}/role-mappings/clients/{client-id}")
-	RoleRepresentation[] getUserClientRoleMappings(@RequestHeader("Authorization") String accessToken, @PathVariable("user-id") String userId, @PathVariable("client-id") String clientId);
-
-	@PostMapping("/admin/realms/${keycloak.realm}/users/{user-id}/role-mappings/clients/{client-id}")
-	void createUserClientRoleMappings(@RequestHeader("Authorization") String accessToken, @PathVariable("user-id") String userId, @PathVariable("client-id") String clientId, @RequestBody RoleRepresentation[] roleMapping);
-
-	@DeleteMapping("/admin/realms/${keycloak.realm}/users/{user-id}/role-mappings/clients/{client-id}")
-	void deleteUserClientRoleMappings(@RequestHeader("Authorization") String accessToken, @PathVariable("user-id") String userId, @PathVariable("client-id") String clientId, @RequestBody RoleRepresentation[] roleMapping);
-
-	@GetMapping("/admin/realms/{realm-name}")
-	RealmRepresentation getRealm(@RequestHeader("Authorization") String accessToken, @PathVariable("realm-name") String realmName);
-
-	@PostMapping(value = "/admin/realms", consumes = MediaType.APPLICATION_JSON_VALUE)
-	void createRealm(@RequestHeader("Authorization") String accessToken, @RequestBody String realmJson);
+	@Value("${keycloak.url}")
+	private String keycloakUrl;
 }

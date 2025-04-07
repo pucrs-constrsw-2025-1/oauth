@@ -2,7 +2,7 @@ package org.firpy.keycloakwrapper.adapters.login;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import org.firpy.keycloakwrapper.adapters.login.keycloak.auth.IntrospectionResponse;
-import org.firpy.keycloakwrapper.adapters.login.keycloak.auth.KeycloakAuthClient;
+import org.firpy.keycloakwrapper.adapters.login.keycloak.auth.KeycloakOIDCClient;
 import org.firpy.keycloakwrapper.utils.LoginUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.*;
@@ -14,9 +14,9 @@ import java.text.ParseException;
 @RequestMapping("login")
 public class LoginController
 {
-	public LoginController(KeycloakAuthClient keycloakClient, LoginUtils loginUtils)
+	public LoginController(KeycloakOIDCClient keycloakClient, LoginUtils loginUtils)
 	{
-		this.keycloakClient = keycloakClient;
+		this.keycloakOIDCClient = keycloakClient;
 		this.loginUtils = loginUtils;
 	}
 
@@ -34,22 +34,22 @@ public class LoginController
     @PostMapping()
     public AccessToken login(@RequestBody LoginRequest request) throws IOException
     {
-	    return keycloakClient.getAccessTokenWithPassword(loginUtils.getLoginParameters(request), realmName);
+	    return keycloakOIDCClient.getAccessTokenWithPassword(loginUtils.getLoginParameters(request), realmName);
     }
 
 	@PostMapping("/introspect")
 	public IntrospectionResponse introspectToken(@Schema(hidden = true) @RequestHeader("Authorization") String accessToken, String accessTokenToInspect) throws ParseException, IOException
 	{
-		return keycloakClient.introspectToken(accessToken, loginUtils.getIntrospectParameters(accessTokenToInspect));
+		return keycloakOIDCClient.introspectToken(accessToken, loginUtils.getIntrospectParameters(accessTokenToInspect));
 	}
 
 	@PostMapping("/refresh")
 	AccessToken loginWithRefreshToken(RefreshTokenRequest request) throws ParseException, IOException
 	{
-		return keycloakClient.getAccessTokenWithRefreshToken(loginUtils.getRefreshParameters(request));
+		return keycloakOIDCClient.getAccessTokenWithRefreshToken(loginUtils.getRefreshParameters(request));
 	}
 
-    private final KeycloakAuthClient keycloakClient;
+    private final KeycloakOIDCClient keycloakOIDCClient;
 	private final LoginUtils loginUtils;
 
 	@Value("${keycloak.realm}")
