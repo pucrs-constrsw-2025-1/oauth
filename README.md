@@ -1,20 +1,20 @@
 Wrapper de autenticação e autorização com o Keycloak
 
-- [ ] Use form data for the login endpoint
+- [ ] Use form data for the login endpoint (Santiago)
 - [X] Use client roles instead of realm roles
-- [ ] Double-check if roles are correctly configured
-- [ ] Add read and write scopes support and update permissions
-- [ ] Login endpoint
+- [ ] Double-check if roles are correctly configured (Santiago)
+- [ ] Add read and write scopes support and update permissions (Santiago)
+- [ ] Login endpoint (Santiago)
   - [ ] Ensure that the login endpoint returns 400 on a bad request
   - [ ] Ensure that the login endpoint returns 401 on an invalid username or password
-- Create user endpoint
+- [ ] Create user endpoint (Lucas)
   - [ ] Return the user id using the LOCATION header from the create user keycloak endpoint
   - [ ] Ensure that the response body has the correct format
   - [ ] Ensure that it returns 400 on a bad request or a bad email
   - [ ] Ensure that it returns 401 if the access token is invalid
   - [ ] Ensure that it returns 403 if the access token doesn't have the necessary scopes (not admin)
   - [ ] Ensure that it returns 409 if the user already exists
-- Get users endpoint
+- [ ] Get users endpoint (Lucas)
     - [ ] Ensure that it returns a list of JSON objects with the id, username, firstName, lastName, and enabled fields
     - [ ] Ensure that it returns 400 on a bad request
     - [ ] Ensure that it returns 401 if the access token is invalid
@@ -25,33 +25,33 @@ Wrapper de autenticação e autorização com o Keycloak
         - [ ] lastName
         - [ ] email
         - [ ] enabled
-- Get user endpoint
+- Get user endpoint (Henrique)
     - [ ] Ensure that it returns a JSON object with the id, username, firstName, lastName, and enabled fields
     - [ ] Ensure that it returns 400 on a bad request
     - [ ] Ensure that it returns 401 if the access token is invalid
     - [ ] Ensure that it returns 403 if the access token doesn't have the necessary scopes (not admin)
     - [ ] Ensure that it returns 404 if the user doesn't exist
-- Update user endpoint
+- Update user endpoint (Henrique)
     - [ ] Ensure that it receives a JSON object with the id, username, firstName, lastName, and enabled fields
     - [ ] Ensure that it returns 400 on a bad request
     - [ ] Ensure that it returns 401 if the access token is invalid
     - [ ] Ensure that it returns 403 if the access token doesn't have the necessary scopes (not admin)
     - [ ] Ensure that it returns 404 if the user doesn't exist
     - [ ] Ensure that it updates the user's fields
-- Update user password endpoint
+- Update user password endpoint (Leonardo)
     - [ ] Ensure that it receives a JSON object with the newPassword field
     - [ ] Ensure that it returns 400 on a bad request
     - [ ] Ensure that it returns 401 if the access token is invalid
     - [ ] Ensure that it returns 403 if the access token doesn't have the necessary scopes (not admin)
     - [ ] Ensure that it returns 404 if the user doesn't exist
     - [ ] Ensure that it updates the user's password
-- Delete user endpoint
+- Delete user endpoint (Leonardo)
     - [ ] Ensure that it returns 400 on a bad request
     - [ ] Ensure that it returns 401 if the access token is invalid
     - [ ] Ensure that it returns 403 if the access token doesn't have the necessary scopes (not admin)
     - [ ] Ensure that it returns 404 if the user doesn't exist
     - [ ] Ensure that it deletes the user
-- General error handling
+- General error handling (Santiago)
     - [ ] Document errors on Swagger UI
     - [ ] Ensure that all endpoints have the following response body on errors:
         - errorCode: não havendo uma instrução em sentido contrário, repassar o response code do Keycloak
@@ -60,7 +60,7 @@ Wrapper de autenticação e autorização com o Keycloak
         - errorStack: pilha de todos os erros até o erro final 
 - [X] Autocreate realm if not present
 - [X] Token introspection for admin accounts
-- [X] Endpoint authorization through Keycloak's OAuth2 endpoint (given a token and a resource, check if the user is authorized to access it)
+- [ ] Endpoint authorization through Keycloak's OAuth2 endpoint (given a token and a resource, check if the user is authorized to access it) (Santiago)
     - We can probably use the token introspection endpoint to get all authorized resources for a user
     - [ ] Return 200 if the user is authorized to access the resource
     - [ ] Return 403 if the user is not authorized to access the resource
