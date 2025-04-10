@@ -65,4 +65,3 @@ Wrapper de autenticação e autorização com o Keycloak
     - [ ] Return 200 if the user is authorized to access the resource
     - [ ] Return 403 if the user is not authorized to access the resource
 - [X] Recreate and store our client's secret (client is already created in the realm, we just need to autocreate the secret now)
-- [ ] OAuth2 Swagger UI authorization? maybe..?
