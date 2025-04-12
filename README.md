@@ -7,24 +7,24 @@ Wrapper de autenticação e autorização com o Keycloak
 - [ ] Login endpoint (Santiago)
   - [ ] Ensure that the login endpoint returns 400 on a bad request
   - [ ] Ensure that the login endpoint returns 401 on an invalid username or password
-- [ ] Create user endpoint (Lucas)
-  - [ ] Return the user id using the LOCATION header from the create user keycloak endpoint
-  - [ ] Ensure that the response body has the correct format
-  - [ ] Ensure that it returns 400 on a bad request or a bad email
-  - [ ] Ensure that it returns 401 if the access token is invalid
-  - [ ] Ensure that it returns 403 if the access token doesn't have the necessary scopes (not admin)
-  - [ ] Ensure that it returns 409 if the user already exists
-- [ ] Get users endpoint (Lucas)
-    - [ ] Ensure that it returns a list of JSON objects with the id, username, firstName, lastName, and enabled fields
-    - [ ] Ensure that it returns 400 on a bad request
-    - [ ] Ensure that it returns 401 if the access token is invalid
-    - [ ] Ensure that it returns 403 if the access token doesn't have the necessary scopes (not admin)
-    - [ ] Add query parameters to filter the results
-        - [ ] username
-        - [ ] firstName
-        - [ ] lastName
-        - [ ] email
-        - [ ] enabled
+- [X] Create user endpoint (Lucas)
+  - [X] Return the user id using the LOCATION header from the create user keycloak endpoint
+  - [X] Ensure that the response body has the correct format
+  - [X] Ensure that it returns 400 on a bad request or a bad email
+  - [X] Ensure that it returns 401 if the access token is invalid
+  - [X] Ensure that it returns 403 if the access token doesn't have the necessary scopes (not admin)
+  - [X] Ensure that it returns 409 if the user already exists
+- [X] Get users endpoint (Lucas)
+    - [X] Ensure that it returns a list of JSON objects with the id, username, firstName, lastName, and enabled fields
+    - [X] Ensure that it returns 400 on a bad request
+    - [X] Ensure that it returns 401 if the access token is invalid
+    - [X] Ensure that it returns 403 if the access token doesn't have the necessary scopes (not admin)
+    - [X] Add query parameters to filter the results
+        - [X] username
+        - [X] firstName
+        - [X] lastName
+        - [X] email
+        - [X] enabled
 - Get user endpoint (Henrique)
     - [ ] Ensure that it returns a JSON object with the id, username, firstName, lastName, and enabled fields
     - [ ] Ensure that it returns 400 on a bad request
