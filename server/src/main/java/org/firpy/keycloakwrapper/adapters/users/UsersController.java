@@ -91,13 +91,16 @@ public class UsersController
 
             return ResponseEntity.ok(users);
         }
-        catch (NotAuthorizedException e) {
+        catch (NotAuthorizedException e)
+        {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid access token");
         }
-        catch (ForbiddenException e) {
+        catch (ForbiddenException e)
+        {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Access token lacks required admin scopes");
         }
-        catch (Exception e) {
+        catch (Exception e)
+        {
             return ResponseEntity.internalServerError().body("An unexpected error occurred: " + e.getMessage());
         }
     }
@@ -160,19 +163,23 @@ public class UsersController
     @PostMapping()
     public ResponseEntity<?> createUser(@Schema(hidden = true) @RequestHeader(value = "Authorization", required = false) String accessToken, @RequestBody CreateUserRequest createUserRequest)
     {
-        try (Keycloak keycloakClient = keycloakAdminClient.fromAdminAccessToken(accessToken)) {
-            try (Response response = keycloakClient.realm(realmName).users().create(createUserRequest.toKeycloakUserRepresentation())) {
+        try (Keycloak keycloakClient = keycloakAdminClient.fromAdminAccessToken(accessToken))
+        {
+            try (Response response = keycloakClient.realm(realmName).users().create(createUserRequest.toKeycloakUserRepresentation()))
+            {
                 int status = response.getStatus();
                 URI location = response.getLocation();
 
-                if (status == 201 && location != null) {
+                if (status == 201 && location != null)
+                {
                     String[] segments = location.getPath().split("/");
                     String userId = segments[segments.length - 1];
 
                     return ResponseEntity.created(location).body(createUserRequest.toResponse(userId));
                 }
 
-                return switch (status) {
+                return switch (status)
+                {
                     case 400 -> ResponseEntity.badRequest().body("Invalid request or email");
                     case 409 -> ResponseEntity.status(HttpStatus.CONFLICT).body("User already exists");
                     case 401 -> ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid access token");
@@ -263,13 +270,16 @@ public class UsersController
 
             return ResponseEntity.ok("User disabled successfully");
         }
-        catch (NotAuthorizedException e) {
+        catch (NotAuthorizedException e)
+        {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid access token");
         }
-        catch (ForbiddenException e) {
+        catch (ForbiddenException e)
+        {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Access token lacks required admin scopes");
         }
-        catch (Exception e) {
+        catch (Exception e)
+        {
             return ResponseEntity.internalServerError().body("Failed to disable user: " + e.getMessage());
         }
     }

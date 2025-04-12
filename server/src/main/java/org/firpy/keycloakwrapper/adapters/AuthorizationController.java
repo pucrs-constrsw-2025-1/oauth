@@ -15,9 +15,33 @@ public class AuthorizationController
 	}
 
 	@PostMapping("/{resource}")
-	public ResponseEntity<Void> isAuthorized(@Schema(hidden = true) @RequestHeader("Authorization") String accessToken, @PathVariable("resource") String resource)
+	public ResponseEntity<Void> isAuthorizedToCreate(@Schema(hidden = true) @RequestHeader("Authorization") String accessToken, @PathVariable("resource") String resource)
 	{
-		return authorizationService.isAuthorized(accessToken, resource) ? ResponseEntity.ok().build() : ResponseEntity.status(403).build();
+		return authorizationService.isAuthorized(accessToken, resource, "write") ? ResponseEntity.ok().build() : ResponseEntity.status(403).build();
+	}
+
+	@PatchMapping("/{resource}")
+	public ResponseEntity<Void> isAuthorizedToPatch(@Schema(hidden = true) @RequestHeader("Authorization") String accessToken, @PathVariable("resource") String resource)
+	{
+		return authorizationService.isAuthorized(accessToken, resource, "write") ? ResponseEntity.ok().build() : ResponseEntity.status(403).build();
+	}
+
+	@PutMapping("/{resource}")
+	public ResponseEntity<Void> isAuthorizedToPut(@Schema(hidden = true) @RequestHeader("Authorization") String accessToken, @PathVariable("resource") String resource)
+	{
+		return authorizationService.isAuthorized(accessToken, resource, "write") ? ResponseEntity.ok().build() : ResponseEntity.status(403).build();
+	}
+
+	@DeleteMapping("/{resource}")
+	public ResponseEntity<Void> isAuthorizedToDelete(@Schema(hidden = true) @RequestHeader("Authorization") String accessToken, @PathVariable("resource") String resource)
+	{
+		return authorizationService.isAuthorized(accessToken, resource, "write") ? ResponseEntity.ok().build() : ResponseEntity.status(403).build();
+	}
+
+	@GetMapping("/{resource}")
+	public ResponseEntity<Void> isAuthorizedToGet(@Schema(hidden = true) @RequestHeader("Authorization") String accessToken, @PathVariable("resource") String resource)
+	{
+		return authorizationService.isAuthorized(accessToken, resource, "read") ? ResponseEntity.ok().build() : ResponseEntity.status(403).build();
 	}
 
 	private final AuthorizationService authorizationService;
