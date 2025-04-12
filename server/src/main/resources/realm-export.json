@@ -673,7 +673,8 @@
       "protocol": "openid-connect",
       "attributes": {
         "realm_client": "false",
-        "client.use.lightweight.access.token.enabled": "true"
+        "client.use.lightweight.access.token.enabled": "true",
+        "post.logout.redirect.uris": "+"
       },
       "authenticationFlowBindingOverrides": {},
       "fullScopeAllowed": true,
@@ -715,7 +716,8 @@
       "frontchannelLogout": false,
       "protocol": "openid-connect",
       "attributes": {
-        "realm_client": "true"
+        "realm_client": "true",
+        "post.logout.redirect.uris": "+"
       },
       "authenticationFlowBindingOverrides": {},
       "fullScopeAllowed": false,
@@ -769,9 +771,10 @@
       "attributes": {
         "realm_client": "false",
         "oidc.ciba.grant.enabled": "false",
-        "client.secret.creation.time": "1742953820",
+        "client.secret.creation.time": "1744068128",
         "backchannel.logout.session.required": "true",
         "frontchannel.logout.session.required": "true",
+        "post.logout.redirect.uris": "+",
         "oauth2.device.authorization.grant.enabled": "false",
         "display.on.consent.screen": "false",
         "backchannel.logout.revoke.offline.tokens": "false"
@@ -779,6 +782,23 @@
       "authenticationFlowBindingOverrides": {},
       "fullScopeAllowed": true,
       "nodeReRegistrationTimeout": -1,
+      "protocolMappers": [
+        {
+          "id": "d7b425e7-2c60-438d-984f-adabebfdf213",
+          "name": "client roles",
+          "protocol": "openid-connect",
+          "protocolMapper": "oidc-usermodel-client-role-mapper",
+          "consentRequired": false,
+          "config": {
+            "user.attribute": "foo",
+            "introspection.token.claim": "true",
+            "access.token.claim": "true",
+            "claim.name": "resource_access.${client_id}.roles",
+            "jsonType.label": "String",
+            "multivalued": "true"
+          }
+        }
+      ],
       "defaultClientScopes": [
         "web-origins",
         "service_account",
@@ -809,7 +829,10 @@
             ],
             "scopes": [
               {
-                "name": "main-scope"
+                "name": "read"
+              },
+              {
+                "name": "write"
               }
             ],
             "icon_uri": ""
@@ -824,7 +847,10 @@
             ],
             "scopes": [
               {
-                "name": "main-scope"
+                "name": "read"
+              },
+              {
+                "name": "write"
               }
             ],
             "icon_uri": ""
@@ -839,7 +865,10 @@
             ],
             "scopes": [
               {
-                "name": "main-scope"
+                "name": "read"
+              },
+              {
+                "name": "write"
               }
             ],
             "icon_uri": ""
@@ -854,7 +883,10 @@
             ],
             "scopes": [
               {
-                "name": "main-scope"
+                "name": "read"
+              },
+              {
+                "name": "write"
               }
             ],
             "icon_uri": ""
@@ -869,7 +901,10 @@
             ],
             "scopes": [
               {
-                "name": "main-scope"
+                "name": "read"
+              },
+              {
+                "name": "write"
               }
             ],
             "icon_uri": ""
@@ -884,7 +919,10 @@
             ],
             "scopes": [
               {
-                "name": "main-scope"
+                "name": "read"
+              },
+              {
+                "name": "write"
               }
             ],
             "icon_uri": ""
@@ -899,7 +937,10 @@
             ],
             "scopes": [
               {
-                "name": "main-scope"
+                "name": "read"
+              },
+              {
+                "name": "write"
               }
             ],
             "icon_uri": ""
@@ -914,7 +955,10 @@
             ],
             "scopes": [
               {
-                "name": "main-scope"
+                "name": "read"
+              },
+              {
+                "name": "write"
               }
             ],
             "icon_uri": ""
@@ -966,54 +1010,64 @@
             }
           },
           {
-            "name": "administrator-permissions",
-            "description": "",
-            "type": "resource",
-            "logic": "POSITIVE",
-            "decisionStrategy": "UNANIMOUS",
-            "config": {
-              "resources": "[\"rooms\",\"resources\",\"students\",\"professors\"]",
-              "applyPolicies": "[\"administrator-policy\"]"
-            }
-          },
-          {
-            "name": "coordinator-permissions",
-            "description": "",
-            "type": "resource",
-            "logic": "POSITIVE",
-            "decisionStrategy": "UNANIMOUS",
-            "config": {
-              "resources": "[\"classes\",\"courses\"]",
-              "applyPolicies": "[\"coordinator-policy\"]"
-            }
-          },
-          {
             "name": "professor-permissions",
             "description": "",
-            "type": "resource",
+            "type": "scope",
             "logic": "POSITIVE",
             "decisionStrategy": "UNANIMOUS",
             "config": {
-              "resources": "[\"lessons\",\"reservations\"]",
+              "resources": "[\"reservations\"]",
+              "scopes": "[\"write\",\"read\"]",
               "applyPolicies": "[\"professor-policy\"]"
             }
           },
           {
             "name": "student-permissions",
             "description": "",
-            "type": "resource",
+            "type": "scope",
             "logic": "POSITIVE",
             "decisionStrategy": "UNANIMOUS",
             "config": {
-              "resources": "[\"classes\",\"lessons\",\"courses\",\"professors\"]",
+              "resources": "[\"students\"]",
+              "scopes": "[\"read\"]",
               "applyPolicies": "[\"student-policy\"]"
+            }
+          },
+          {
+            "name": "coordinator-permissions",
+            "description": "",
+            "type": "scope",
+            "logic": "POSITIVE",
+            "decisionStrategy": "UNANIMOUS",
+            "config": {
+              "resources": "[\"classes\"]",
+              "scopes": "[\"write\",\"read\"]",
+              "applyPolicies": "[\"coordinator-policy\"]"
+            }
+          },
+          {
+            "name": "administrator-permissions",
+            "description": "",
+            "type": "scope",
+            "logic": "POSITIVE",
+            "decisionStrategy": "UNANIMOUS",
+            "config": {
+              "resources": "[\"students\"]",
+              "scopes": "[\"write\",\"read\"]",
+              "applyPolicies": "[\"administrator-policy\"]"
             }
           }
         ],
         "scopes": [
           {
-            "name": "main-scope",
-            "iconUri": ""
+            "name": "read",
+            "iconUri": "",
+            "displayName": "Read"
+          },
+          {
+            "name": "write",
+            "iconUri": "",
+            "displayName": "Write"
           }
         ],
         "decisionStrategy": "UNANIMOUS"
@@ -1040,7 +1094,8 @@
       "frontchannelLogout": false,
       "protocol": "openid-connect",
       "attributes": {
-        "realm_client": "true"
+        "realm_client": "true",
+        "post.logout.redirect.uris": "+"
       },
       "authenticationFlowBindingOverrides": {},
       "fullScopeAllowed": false,
@@ -1151,7 +1206,8 @@
           "config": {
             "id.token.claim": "true",
             "introspection.token.claim": "true",
-            "access.token.claim": "true"
+            "access.token.claim": "true",
+            "userinfo.token.claim": "true"
           }
         }
       ]
@@ -1174,8 +1230,9 @@
           "consentRequired": false,
           "config": {
             "user.session.note": "AUTH_TIME",
-            "id.token.claim": "true",
             "introspection.token.claim": "true",
+            "userinfo.token.claim": "true",
+            "id.token.claim": "true",
             "access.token.claim": "true",
             "claim.name": "auth_time",
             "jsonType.label": "long"
@@ -1229,6 +1286,7 @@
           "config": {
             "introspection.token.claim": "true",
             "multivalued": "true",
+            "userinfo.token.claim": "true",
             "user.attribute": "foo",
             "id.token.claim": "true",
             "access.token.claim": "true",
@@ -1522,12 +1580,13 @@
           "protocolMapper": "oidc-organization-membership-mapper",
           "consentRequired": false,
           "config": {
-            "id.token.claim": "true",
             "introspection.token.claim": "true",
+            "multivalued": "true",
+            "userinfo.token.claim": "true",
+            "id.token.claim": "true",
             "access.token.claim": "true",
             "claim.name": "organization",
-            "jsonType.label": "String",
-            "multivalued": "true"
+            "jsonType.label": "String"
           }
         }
       ]
@@ -1560,8 +1619,9 @@
           "consentRequired": false,
           "config": {
             "user.session.note": "clientAddress",
-            "id.token.claim": "true",
             "introspection.token.claim": "true",
+            "userinfo.token.claim": "true",
+            "id.token.claim": "true",
             "access.token.claim": "true",
             "claim.name": "clientAddress",
             "jsonType.label": "String"
@@ -1575,8 +1635,9 @@
           "consentRequired": false,
           "config": {
             "user.session.note": "client_id",
-            "id.token.claim": "true",
             "introspection.token.claim": "true",
+            "userinfo.token.claim": "true",
+            "id.token.claim": "true",
             "access.token.claim": "true",
             "claim.name": "client_id",
             "jsonType.label": "String"
@@ -1590,8 +1651,9 @@
           "consentRequired": false,
           "config": {
             "user.session.note": "clientHost",
-            "id.token.claim": "true",
             "introspection.token.claim": "true",
+            "userinfo.token.claim": "true",
+            "id.token.claim": "true",
             "access.token.claim": "true",
             "claim.name": "clientHost",
             "jsonType.label": "String"
@@ -1866,14 +1928,14 @@
         "subComponents": {},
         "config": {
           "allowed-protocol-mapper-types": [
-            "oidc-usermodel-attribute-mapper",
+            "oidc-sha256-pairwise-sub-mapper",
             "saml-role-list-mapper",
             "saml-user-attribute-mapper",
-            "oidc-sha256-pairwise-sub-mapper",
+            "oidc-usermodel-attribute-mapper",
+            "oidc-usermodel-property-mapper",
             "oidc-full-name-mapper",
             "oidc-address-mapper",
-            "saml-user-property-mapper",
-            "oidc-usermodel-property-mapper"
+            "saml-user-property-mapper"
           ]
         }
       },
@@ -1917,13 +1979,13 @@
         "subComponents": {},
         "config": {
           "allowed-protocol-mapper-types": [
-            "oidc-usermodel-property-mapper",
-            "oidc-usermodel-attribute-mapper",
-            "oidc-address-mapper",
-            "saml-user-attribute-mapper",
             "oidc-sha256-pairwise-sub-mapper",
+            "saml-user-attribute-mapper",
             "oidc-full-name-mapper",
+            "oidc-usermodel-attribute-mapper",
+            "oidc-usermodel-property-mapper",
             "saml-user-property-mapper",
+            "oidc-address-mapper",
             "saml-role-list-mapper"
           ]
         }
@@ -2744,8 +2806,8 @@
   "attributes": {
     "cibaBackchannelTokenDeliveryMode": "poll",
     "cibaAuthRequestedUserHint": "login_hint",
-    "oauth2DevicePollingInterval": "5",
     "clientOfflineSessionMaxLifespan": "0",
+    "oauth2DevicePollingInterval": "5",
     "clientSessionIdleTimeout": "0",
     "actionTokenGeneratedByUserLifespan.verify-email": "",
     "actionTokenGeneratedByUserLifespan.idp-verify-account-via-email": "",

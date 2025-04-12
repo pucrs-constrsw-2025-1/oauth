@@ -16,14 +16,14 @@ public class AuthorizationService
 		this.keycloakAuthClient = client;
 	}
 
-	public boolean isAuthorized(String authorization, String resource)
+	public boolean isAuthorized(String authorization, String resource, String scope)
 	{
 		try
 		{
 			MultiValueMap<String, String> form = new LinkedMultiValueMap<>();
 			form.add("grant_type", "urn:ietf:params:oauth:grant-type:uma-ticket");
 			form.add("audience", clientId);
-			form.add("permission", "%s#main-scope".formatted(resource));
+			form.add("permission", "%s#%s".formatted(resource, scope));
 
 			Map<String, Object> response = keycloakAuthClient.requestAuthorization(authorization, form);
 
