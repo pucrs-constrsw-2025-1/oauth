@@ -30,4 +30,15 @@ public record CreateUserRequest
 
 		return newUser;
 	}
+
+	CreateUserResponse toResponse(String id) {
+        return new CreateUserResponse(
+                username,
+                firstName,
+                lastName,
+                email,
+                password,
+                id
+        );
+	}
 }
