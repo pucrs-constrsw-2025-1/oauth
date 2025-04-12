@@ -14,6 +14,7 @@ import org.firpy.keycloakwrapper.adapters.login.keycloak.auth.KeycloakUserInfo;
 import org.firpy.keycloakwrapper.setup.ClientConfig;
 import org.firpy.keycloakwrapper.utils.WebApplicationResponseUtils;
 import org.keycloak.admin.client.Keycloak;
+import org.keycloak.admin.client.resource.UserResource;
 import org.keycloak.admin.client.resource.UsersResource;
 import org.keycloak.representations.idm.*;
 import org.springframework.beans.factory.annotation.Value;
@@ -190,12 +191,24 @@ public class UsersController
     @DeleteMapping("/{id}")
     public ResponseEntity<?> deleteUser(@PathVariable String id, @Schema(hidden = true) @RequestHeader(value = "Authorization", required = false) String accessToken)
     {
-        try (Keycloak keycloakClient = keycloakAdminClient.fromAdminAccessToken(accessToken))
-        {
-            try (Response response = keycloakClient.realm(realmName).users().delete(id))
-            {
-                return WebApplicationResponseUtils.toSpringResponseEntity(response);
-            }
+        try (Keycloak keycloakClient = keycloakAdminClient.fromAdminAccessToken(accessToken)) {
+            UserResource userResource = keycloakClient.realm(realmName).users().get(id);
+            UserRepresentation user = userResource.toRepresentation();
+
+
+            user.setEnabled(false);
+            userResource.update(user);
+
+            return ResponseEntity.ok("User disabled successfully");
+        }
+        catch (NotAuthorizedException e) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid access token");
+        }
+        catch (ForbiddenException e) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Access token lacks required admin scopes");
+        }
+        catch (Exception e) {
+            return ResponseEntity.internalServerError().body("Failed to disable user: " + e.getMessage());
         }
     }
 
