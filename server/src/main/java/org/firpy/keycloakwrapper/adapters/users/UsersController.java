@@ -5,8 +5,10 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import jakarta.ws.rs.BadRequestException;
 import jakarta.ws.rs.ForbiddenException;
 import jakarta.ws.rs.NotAuthorizedException;
+import jakarta.ws.rs.NotFoundException;
 import jakarta.ws.rs.core.Response;
 import org.firpy.keycloakwrapper.adapters.login.keycloak.admin.KeycloakAdminClient;
 import org.firpy.keycloakwrapper.adapters.login.keycloak.auth.KeycloakAuthClient;
@@ -100,7 +102,6 @@ public class UsersController
         }
     }
 
-
     /**
      * Consumir a rota do Keycloak que recupera um usuário a partir do seu id
      * @param id
@@ -108,12 +109,40 @@ public class UsersController
      * @return
      */
     @GetMapping("/{id}")
-    public ResponseEntity<?> getUser(@PathVariable("id") String id, @Schema(hidden = true) @RequestHeader(value = "Authorization", required = false) String accessToken)
-    {
-        try (Keycloak keycloakClient = keycloakAdminClient.fromAdminAccessToken(accessToken))
-        {
-	        UserRepresentation user = keycloakClient.realm(realmName).users().get(id).toRepresentation();
-            return ResponseEntity.ok(user);
+    public ResponseEntity<?> getUser(
+            @PathVariable("id") String id,
+            @Schema(hidden = true) @RequestHeader(value = "Authorization", required = false) String accessToken
+    ) {
+        if (id == null || id.trim().isEmpty()) {
+            return ResponseEntity.badRequest().body("User ID is required");
+        }
+
+        if (accessToken == null || accessToken.trim().isEmpty()) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Access token is missing");
+        }
+
+        try (Keycloak keycloakClient = keycloakAdminClient.fromAdminAccessToken(accessToken)) {
+            UserRepresentation user = keycloakClient.realm(realmName).users().get(id).toRepresentation();
+
+            return ResponseEntity.ok(Map.of(
+                    "id", user.getId(),
+                    "username", user.getUsername(),
+                    "firstName", user.getFirstName(),
+                    "lastName", user.getLastName(),
+                    "enabled", user.isEnabled()
+            ));
+        }
+        catch (NotAuthorizedException e) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid access token");
+        }
+        catch (ForbiddenException e) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Access token lacks required admin scopes");
+        }
+        catch (NotFoundException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User not found");
+        }
+        catch (Exception e) {
+            return ResponseEntity.internalServerError().body("An unexpected error occurred: " + e.getMessage());
         }
     }
 
@@ -160,12 +189,45 @@ public class UsersController
      * @return
      */
     @PutMapping("/{id}")
-    public ResponseEntity<?> updateUser(@Schema(hidden = true) @RequestHeader(value = "Authorization", required = false) String accessToken, @PathVariable("id") String id, @RequestBody UpdateUserRequest updateUserRequest)
-    {
-        try (Keycloak keycloakClient = keycloakAdminClient.fromAdminAccessToken(accessToken))
-        {
+    public ResponseEntity<?> updateUser(
+            @Schema(hidden = true) @RequestHeader(value = "Authorization", required = false) String accessToken,
+            @PathVariable("id") String id,
+            @RequestBody UpdateUserRequest updateUserRequest
+    ) {
+        if (id == null || id.trim().isEmpty()) {
+            return ResponseEntity.badRequest().body("User ID is required");
+        }
+
+        if (updateUserRequest == null ||
+                updateUserRequest.firstName() == null ||
+                updateUserRequest.lastName() == null ||
+                updateUserRequest.email() == null) {
+            return ResponseEntity.badRequest().body("Invalid request body: missing required fields");
+        }
+
+        if (accessToken == null || accessToken.trim().isEmpty()) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Access token is missing");
+        }
+
+        try (Keycloak keycloakClient = keycloakAdminClient.fromAdminAccessToken(accessToken)) {
             keycloakClient.realm(realmName).users().get(id).update(updateUserRequest.toKeycloakUserRepresentation());
+
             return ResponseEntity.noContent().build();
+        }
+        catch (NotAuthorizedException e) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid access token");
+        }
+        catch (ForbiddenException e) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Access token lacks required admin scopes");
+        }
+        catch (NotFoundException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User not found");
+        }
+        catch (BadRequestException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Invalid request or invalid email");
+        }
+        catch (Exception e) {
+            return ResponseEntity.internalServerError().body("An unexpected error occurred: " + e.getMessage());
         }
     }
 

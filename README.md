@@ -26,18 +26,18 @@ Wrapper de autenticação e autorização com o Keycloak
         - [X] email
         - [X] enabled
 - Get user endpoint (Henrique)
-    - [ ] Ensure that it returns a JSON object with the id, username, firstName, lastName, and enabled fields
-    - [ ] Ensure that it returns 400 on a bad request
-    - [ ] Ensure that it returns 401 if the access token is invalid
-    - [ ] Ensure that it returns 403 if the access token doesn't have the necessary scopes (not admin)
-    - [ ] Ensure that it returns 404 if the user doesn't exist
+    - [X] Ensure that it returns a JSON object with the id, username, firstName, lastName, and enabled fields
+    - [X] Ensure that it returns 400 on a bad request
+    - [X] Ensure that it returns 401 if the access token is invalid
+    - [X] Ensure that it returns 403 if the access token doesn't have the necessary scopes (not admin)
+    - [X] Ensure that it returns 404 if the user doesn't exist
 - Update user endpoint (Henrique)
-    - [ ] Ensure that it receives a JSON object with the id, username, firstName, lastName, and enabled fields
-    - [ ] Ensure that it returns 400 on a bad request
-    - [ ] Ensure that it returns 401 if the access token is invalid
-    - [ ] Ensure that it returns 403 if the access token doesn't have the necessary scopes (not admin)
-    - [ ] Ensure that it returns 404 if the user doesn't exist
-    - [ ] Ensure that it updates the user's fields
+    - [X] Ensure that it receives a JSON object with the id, username, firstName, lastName, and enabled fields
+    - [X] Ensure that it returns 400 on a bad request
+    - [X] Ensure that it returns 401 if the access token is invalid
+    - [X] Ensure that it returns 403 if the access token doesn't have the necessary scopes (not admin)
+    - [X] Ensure that it returns 404 if the user doesn't exist
+    - [X] Ensure that it updates the user's fields
 - Update user password endpoint (Leonardo)
     - [ ] Ensure that it receives a JSON object with the newPassword field
     - [ ] Ensure that it returns 400 on a bad request
