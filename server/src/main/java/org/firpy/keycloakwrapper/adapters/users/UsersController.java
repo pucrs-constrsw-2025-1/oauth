@@ -5,6 +5,8 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import jakarta.ws.rs.ForbiddenException;
+import jakarta.ws.rs.NotAuthorizedException;
 import jakarta.ws.rs.core.Response;
 import org.firpy.keycloakwrapper.adapters.login.keycloak.admin.KeycloakAdminClient;
 import org.firpy.keycloakwrapper.adapters.login.keycloak.auth.KeycloakAuthClient;
@@ -12,14 +14,17 @@ import org.firpy.keycloakwrapper.adapters.login.keycloak.auth.KeycloakUserInfo;
 import org.firpy.keycloakwrapper.setup.ClientConfig;
 import org.firpy.keycloakwrapper.utils.WebApplicationResponseUtils;
 import org.keycloak.admin.client.Keycloak;
+import org.keycloak.admin.client.resource.UserResource;
 import org.keycloak.admin.client.resource.UsersResource;
 import org.keycloak.representations.idm.*;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.net.URI;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -44,21 +49,57 @@ public class UsersController
         @ApiResponse(
             responseCode = "200",
             description = "Users retrieved",
-            content = @Content(array = @ArraySchema(schema = @Schema(implementation = UserRepresentation.class)))),
+            content = @Content(array = @ArraySchema(schema = @Schema(implementation = GetUsersResponse.class)))),
         @ApiResponse(
             responseCode = "500",
             description = "An unexpected error occurred",
             content = @Content(schema = @Schema(implementation = String.class)))
         }
     )
-    public ResponseEntity<?> getUsers(@Schema(hidden = true) @RequestHeader(value = "Authorization", required = false) String accessToken)
+    public ResponseEntity<?> getUsers(
+            @Schema(hidden = true)
+            @RequestHeader(value = "Authorization", required = false) String accessToken,
+            @RequestParam(required = false) String username,
+            @RequestParam(required = false) String firstName,
+            @RequestParam(required = false) String lastName,
+            @RequestParam(required = false) String email,
+            @RequestParam(required = false) Boolean enabled)
     {
-        try (Keycloak keycloakClient = this.keycloakAdminClient.fromAdminAccessToken(accessToken))
+        try (Keycloak keycloakClient = keycloakAdminClient.fromAdminAccessToken(accessToken))
         {
-            UsersResource users = keycloakClient.realm(realmName).users();
-            return ResponseEntity.ok(users.list().toArray(UserRepresentation[]::new));
+            UsersResource usersResource = keycloakClient.realm(realmName).users();
+
+            List<GetUsersResponse> users = usersResource.search(
+                    username,
+                    firstName,
+                    lastName,
+                    email,
+                    0, 10000,
+                    enabled,
+                    null
+            ).stream().map( x -> new GetUsersResponse(
+                    x.getUsername(),
+                    x.getFirstName(),
+                    x.getLastName(),
+                    x.getEmail(),
+                    x.isEnabled(),
+                    x.getId()
+                    )
+            ).toList();
+
+            return ResponseEntity.ok(users);
+        }
+        catch (NotAuthorizedException e) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid access token");
+        }
+        catch (ForbiddenException e) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Access token lacks required admin scopes");
+        }
+        catch (Exception e) {
+            return ResponseEntity.internalServerError().body("An unexpected error occurred: " + e.getMessage());
         }
     }
+
 
     /**
      * Consumir a rota do Keycloak que recupera um usuário a partir do seu id
@@ -90,11 +131,25 @@ public class UsersController
     @PostMapping()
     public ResponseEntity<?> createUser(@Schema(hidden = true) @RequestHeader(value = "Authorization", required = false) String accessToken, @RequestBody CreateUserRequest createUserRequest)
     {
-        try (Keycloak keycloakClient = keycloakAdminClient.fromAdminAccessToken(accessToken))
-        {
-            try (Response response = keycloakClient.realm(realmName).users().create(createUserRequest.toKeycloakUserRepresentation()))
-            {
-                return WebApplicationResponseUtils.toSpringResponseEntity(response);
+        try (Keycloak keycloakClient = keycloakAdminClient.fromAdminAccessToken(accessToken)) {
+            try (Response response = keycloakClient.realm(realmName).users().create(createUserRequest.toKeycloakUserRepresentation())) {
+                int status = response.getStatus();
+                URI location = response.getLocation();
+
+                if (status == 201 && location != null) {
+                    String[] segments = location.getPath().split("/");
+                    String userId = segments[segments.length - 1];
+
+                    return ResponseEntity.created(location).body(createUserRequest.toResponse(userId));
+                }
+
+                return switch (status) {
+                    case 400 -> ResponseEntity.badRequest().body("Invalid request or email");
+                    case 409 -> ResponseEntity.status(HttpStatus.CONFLICT).body("User already exists");
+                    case 401 -> ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid access token");
+                    case 403 -> ResponseEntity.status(HttpStatus.FORBIDDEN).body("Access token lacks required admin scopes");
+                    default -> ResponseEntity.status(status).body("Unexpected error");
+                };
             }
         }
     }
@@ -136,12 +191,24 @@ public class UsersController
     @DeleteMapping("/{id}")
     public ResponseEntity<?> deleteUser(@PathVariable String id, @Schema(hidden = true) @RequestHeader(value = "Authorization", required = false) String accessToken)
     {
-        try (Keycloak keycloakClient = keycloakAdminClient.fromAdminAccessToken(accessToken))
-        {
-            try (Response response = keycloakClient.realm(realmName).users().delete(id))
-            {
-                return WebApplicationResponseUtils.toSpringResponseEntity(response);
-            }
+        try (Keycloak keycloakClient = keycloakAdminClient.fromAdminAccessToken(accessToken)) {
+            UserResource userResource = keycloakClient.realm(realmName).users().get(id);
+            UserRepresentation user = userResource.toRepresentation();
+
+
+            user.setEnabled(false);
+            userResource.update(user);
+
+            return ResponseEntity.ok("User disabled successfully");
+        }
+        catch (NotAuthorizedException e) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid access token");
+        }
+        catch (ForbiddenException e) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Access token lacks required admin scopes");
+        }
+        catch (Exception e) {
+            return ResponseEntity.internalServerError().body("Failed to disable user: " + e.getMessage());
         }
     }
 
