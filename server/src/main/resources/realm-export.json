@@ -771,7 +771,7 @@
       "attributes": {
         "realm_client": "false",
         "oidc.ciba.grant.enabled": "false",
-        "client.secret.creation.time": "1744068128",
+        "client.secret.creation.time": "1744579967",
         "backchannel.logout.session.required": "true",
         "frontchannel.logout.session.required": "true",
         "post.logout.redirect.uris": "+",
@@ -1014,11 +1014,11 @@
             "description": "",
             "type": "scope",
             "logic": "POSITIVE",
-            "decisionStrategy": "UNANIMOUS",
+            "decisionStrategy": "AFFIRMATIVE",
             "config": {
               "resources": "[\"reservations\",\"lessons\"]",
-              "scopes": "[\"write\",\"read\"]",
-              "applyPolicies": "[\"professor-policy\"]"
+              "scopes": "[\"write\"]",
+              "applyPolicies": "[\"professor-policy\",\"coordinator-policy\",\"administrator-policy\"]"
             }
           },
           {
@@ -1026,11 +1026,11 @@
             "description": "",
             "type": "scope",
             "logic": "POSITIVE",
-            "decisionStrategy": "UNANIMOUS",
+            "decisionStrategy": "AFFIRMATIVE",
             "config": {
-              "resources": "[\"courses\",\"lessons\"]",
+              "resources": "[\"courses\",\"lessons\",\"reservations\",\"classes\"]",
               "scopes": "[\"read\"]",
-              "applyPolicies": "[\"student-policy\"]"
+              "applyPolicies": "[\"professor-policy\",\"coordinator-policy\",\"administrator-policy\",\"student-policy\"]"
             }
           },
           {
@@ -1038,11 +1038,11 @@
             "description": "",
             "type": "scope",
             "logic": "POSITIVE",
-            "decisionStrategy": "UNANIMOUS",
+            "decisionStrategy": "AFFIRMATIVE",
             "config": {
               "resources": "[\"classes\",\"courses\"]",
-              "scopes": "[\"write\",\"read\"]",
-              "applyPolicies": "[\"coordinator-policy\"]"
+              "scopes": "[\"write\"]",
+              "applyPolicies": "[\"coordinator-policy\",\"administrator-policy\"]"
             }
           },
           {
@@ -1050,7 +1050,7 @@
             "description": "",
             "type": "scope",
             "logic": "POSITIVE",
-            "decisionStrategy": "UNANIMOUS",
+            "decisionStrategy": "AFFIRMATIVE",
             "config": {
               "resources": "[\"students\",\"professors\",\"resources\",\"rooms\"]",
               "scopes": "[\"write\",\"read\"]",
@@ -1928,14 +1928,14 @@
         "subComponents": {},
         "config": {
           "allowed-protocol-mapper-types": [
-            "oidc-sha256-pairwise-sub-mapper",
-            "saml-role-list-mapper",
-            "saml-user-attribute-mapper",
-            "oidc-usermodel-attribute-mapper",
-            "oidc-usermodel-property-mapper",
-            "oidc-full-name-mapper",
             "oidc-address-mapper",
-            "saml-user-property-mapper"
+            "oidc-full-name-mapper",
+            "oidc-sha256-pairwise-sub-mapper",
+            "saml-user-attribute-mapper",
+            "oidc-usermodel-property-mapper",
+            "saml-user-property-mapper",
+            "saml-role-list-mapper",
+            "oidc-usermodel-attribute-mapper"
           ]
         }
       },
@@ -1979,14 +1979,14 @@
         "subComponents": {},
         "config": {
           "allowed-protocol-mapper-types": [
-            "oidc-sha256-pairwise-sub-mapper",
             "saml-user-attribute-mapper",
-            "oidc-full-name-mapper",
-            "oidc-usermodel-attribute-mapper",
+            "oidc-address-mapper",
             "oidc-usermodel-property-mapper",
             "saml-user-property-mapper",
-            "oidc-address-mapper",
-            "saml-role-list-mapper"
+            "saml-role-list-mapper",
+            "oidc-usermodel-attribute-mapper",
+            "oidc-full-name-mapper",
+            "oidc-sha256-pairwise-sub-mapper"
           ]
         }
       },
@@ -2822,7 +2822,7 @@
     "shortVerificationUri": "",
     "actionTokenGeneratedByUserLifespan.reset-credentials": ""
   },
-  "keycloakVersion": "26.1.2",
+  "keycloakVersion": "26.1.4",
   "userManagedAccessAllowed": false,
   "organizationsEnabled": false,
   "verifiableCredentialsEnabled": false,
