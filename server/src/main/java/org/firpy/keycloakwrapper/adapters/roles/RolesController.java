@@ -1,7 +1,6 @@
 package org.firpy.keycloakwrapper.adapters.roles;
 
 import io.swagger.v3.oas.annotations.media.Schema;
-import jakarta.ws.rs.WebApplicationException;
 import org.firpy.keycloakwrapper.adapters.login.keycloak.admin.CreateRoleRequest;
 import org.firpy.keycloakwrapper.adapters.login.keycloak.admin.KeycloakAdminClient;
 import org.firpy.keycloakwrapper.setup.ClientConfig;
@@ -11,8 +10,6 @@ import org.keycloak.representations.idm.RoleRepresentation;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import static org.firpy.keycloakwrapper.utils.WebApplicationResponseUtils.toSpringResponseEntity;
 
 @RestController
 @RequestMapping("roles")
