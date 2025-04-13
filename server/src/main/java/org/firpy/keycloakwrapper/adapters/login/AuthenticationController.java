@@ -1,10 +1,17 @@
 package org.firpy.keycloakwrapper.adapters.login;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+import feign.FeignException;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import org.firpy.keycloakwrapper.adapters.login.keycloak.auth.IntrospectionResponse;
 import org.firpy.keycloakwrapper.adapters.login.keycloak.auth.KeycloakAuthClient;
 import org.firpy.keycloakwrapper.setup.ClientConfig;
 import org.firpy.keycloakwrapper.utils.LoginUtils;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
@@ -34,22 +41,120 @@ public class AuthenticationController
      * @return
      */
     @PostMapping()
-    public AccessToken login(@RequestBody LoginRequest request) throws IOException
+    @ApiResponses(value = {
+        @ApiResponse
+		(
+            responseCode = "200",
+            description = "Login successful",
+            content = @Content(schema = @Schema(implementation = AccessToken.class))
+		),
+        @ApiResponse
+		(
+            responseCode = "401",
+            description = "Invalid username or password",
+            content = @Content(schema = @Schema(implementation = String.class, defaultValue = "Invalid username or password"))
+		)
+    })
+    public ResponseEntity<?> login(@RequestBody LoginRequest request) throws IOException
     {
-	    return keycloakAuthClient.getAccessTokenWithPassword(loginUtils.getLoginParameters(request), realmName);
+		try
+		{
+			AccessToken accessToken = keycloakAuthClient.getAccessTokenWithPassword(loginUtils.getLoginParameters(request), realmName);
+			return ResponseEntity.ok(accessToken);
+		}
+		catch (FeignException.Unauthorized unauthorized)
+		{
+			return ResponseEntity.status(401).body("Invalid username or password");
+		}
     }
 
 	@PostMapping("/introspect")
-	public IntrospectionResponse introspectToken(String accessTokenToInspect) throws IOException
+	@ApiResponses(value = {
+		@ApiResponse
+		(
+			responseCode = "200",
+			description = "Introspect successful",
+			content = @Content(schema = @Schema(implementation = IntrospectionResponse.class))
+		),
+		@ApiResponse
+		(
+			responseCode = "401",
+			description = "Invalid access token",
+			content = @Content(schema = @Schema(implementation = String.class, defaultValue = "Invalid access token"))
+		),
+		@ApiResponse
+		(
+			responseCode = "500",
+			description = "An unexpected error occurred",
+			content = @Content(schema = @Schema(implementation = String.class, format = "An unexpected error occurred: {error message}"))
+		)
+	})
+	public ResponseEntity<?> introspectToken(@JsonProperty(required = true) String accessTokenToInspect) throws IOException
 	{
 		byte[] basicAuthBytes = ("%s:%s".formatted(clientConfig.getClientId(), clientConfig.getClientSecret())).getBytes();
-		return keycloakAuthClient.introspectToken("Basic %s".formatted(Base64.getEncoder().encodeToString(basicAuthBytes)), loginUtils.getIntrospectParameters(accessTokenToInspect));
+		try
+		{
+			return ResponseEntity.ok(keycloakAuthClient.introspectToken("Basic %s".formatted(Base64.getEncoder().encodeToString(basicAuthBytes)), loginUtils.getIntrospectParameters(accessTokenToInspect)));
+		}
+		catch (FeignException.Unauthorized unauthorized)
+		{
+			return ResponseEntity.status(401).body("Invalid access token");
+		}
+		catch (Exception exception)
+		{
+			return ResponseEntity.internalServerError().body("An unexpected error occurred: %s".formatted(exception.getMessage()));
+		}
 	}
 
 	@PostMapping("/refresh")
-	AccessToken loginWithRefreshToken(RefreshTokenRequest request) throws ParseException, IOException
+	@ApiResponses(value = {
+		@ApiResponse
+		(
+			responseCode = "200",
+			description = "Login with refresh token successful",
+			content = @Content(schema = @Schema(implementation = AccessToken.class))
+		),
+		@ApiResponse
+		(
+			responseCode = "400",
+			description = "Could not parse refresh token",
+			content = @Content(schema = @Schema(implementation = String.class, allowableValues = {"Could not parse refresh token", "Refresh token is required"}))
+		),
+		@ApiResponse
+		(
+			responseCode = "401",
+			description = "Invalid refresh token",
+			content = @Content(schema = @Schema(implementation = String.class, defaultValue = "Invalid refresh token"))
+		),
+		@ApiResponse
+		(
+			responseCode = "500",
+			description = "An unexpected error occurred",
+			content = @Content(schema = @Schema(implementation = String.class, format = "An unexpected error occurred: {error message}"))
+		)
+	})
+	public ResponseEntity<?> loginWithRefreshToken(RefreshTokenRequest request)
 	{
-		return keycloakAuthClient.getAccessTokenWithRefreshToken(loginUtils.getRefreshParameters(request));
+		if (request.refreshToken() == null)
+		{
+			return ResponseEntity.badRequest().body("Refresh token is required");
+		}
+		try
+		{
+			return ResponseEntity.ok(keycloakAuthClient.getAccessTokenWithRefreshToken(loginUtils.getRefreshParameters(request)));
+		}
+		catch (ParseException parseException)
+		{
+			return ResponseEntity.badRequest().body("Could not parse refresh token");
+		}
+		catch (FeignException.Unauthorized unauthorized)
+		{
+			return ResponseEntity.status(401).body("Invalid refresh token");
+		}
+		catch (Exception exception)
+		{
+			return ResponseEntity.internalServerError().body("An unexpected error occurred: %s".formatted(exception.getMessage()));
+		}
 	}
 
     private final KeycloakAuthClient keycloakAuthClient;

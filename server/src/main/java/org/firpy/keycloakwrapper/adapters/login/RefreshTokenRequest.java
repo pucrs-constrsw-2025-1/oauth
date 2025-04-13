@@ -1,5 +1,7 @@
 package org.firpy.keycloakwrapper.adapters.login;
 
-public record RefreshTokenRequest(String refreshToken)
+import com.fasterxml.jackson.annotation.JsonProperty;
+
+public record RefreshTokenRequest(@JsonProperty(required = true) String refreshToken)
 {
 }

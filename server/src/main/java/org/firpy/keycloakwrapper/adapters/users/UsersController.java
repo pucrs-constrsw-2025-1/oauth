@@ -101,7 +101,7 @@ public class UsersController
         }
         catch (Exception e)
         {
-            return ResponseEntity.internalServerError().body("An unexpected error occurred: " + e.getMessage());
+            return ResponseEntity.internalServerError().body("An unexpected error occurred: %s".formatted(e.getMessage()));
         }
     }
 
