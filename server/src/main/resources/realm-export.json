@@ -1016,7 +1016,7 @@
             "logic": "POSITIVE",
             "decisionStrategy": "UNANIMOUS",
             "config": {
-              "resources": "[\"reservations\"]",
+              "resources": "[\"reservations\",\"lessons\"]",
               "scopes": "[\"write\",\"read\"]",
               "applyPolicies": "[\"professor-policy\"]"
             }
@@ -1028,7 +1028,7 @@
             "logic": "POSITIVE",
             "decisionStrategy": "UNANIMOUS",
             "config": {
-              "resources": "[\"students\"]",
+              "resources": "[\"courses\",\"lessons\"]",
               "scopes": "[\"read\"]",
               "applyPolicies": "[\"student-policy\"]"
             }
@@ -1040,7 +1040,7 @@
             "logic": "POSITIVE",
             "decisionStrategy": "UNANIMOUS",
             "config": {
-              "resources": "[\"classes\"]",
+              "resources": "[\"classes\",\"courses\"]",
               "scopes": "[\"write\",\"read\"]",
               "applyPolicies": "[\"coordinator-policy\"]"
             }
@@ -1052,7 +1052,7 @@
             "logic": "POSITIVE",
             "decisionStrategy": "UNANIMOUS",
             "config": {
-              "resources": "[\"students\"]",
+              "resources": "[\"students\",\"professors\",\"resources\",\"rooms\"]",
               "scopes": "[\"write\",\"read\"]",
               "applyPolicies": "[\"administrator-policy\"]"
             }
