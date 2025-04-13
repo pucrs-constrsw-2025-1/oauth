@@ -1,6 +1,5 @@
 Wrapper de autenticação e autorização com o Keycloak
 
-- [ ] Use form data for the login endpoint (Santiago)
 - [X] Use client roles instead of realm roles
 - [ ] Double-check if roles are correctly configured (Santiago)
 - [ ] Add read and write scopes support and update permissions (Santiago)
