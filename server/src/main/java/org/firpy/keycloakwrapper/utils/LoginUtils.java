@@ -66,7 +66,6 @@ public class LoginUtils {
 
     public MultiValueMap<String, Object> getIntrospectParameters(String accessToken) throws IOException
     {
-        //Introspect doesn't work on confidential clients (admin-cli)
         MultiValueMap<String, Object> params = new LinkedMultiValueMap<>();
         params.add("token_type_hint", "requesting_party_token");
         params.add("client_secret", clientConfig.getClientSecret());
