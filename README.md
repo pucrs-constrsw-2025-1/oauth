@@ -1,11 +1,11 @@
 Wrapper de autenticação e autorização com o Keycloak
 
 - [X] Use client roles instead of realm roles
-- [ ] Double-check if roles are correctly configured (Santiago)
-- [ ] Add read and write scopes support and update permissions (Santiago)
-- [ ] Login endpoint (Santiago)
-  - [ ] Ensure that the login endpoint returns 400 on a bad request
-  - [ ] Ensure that the login endpoint returns 401 on an invalid username or password
+- [X] Double-check if roles are correctly configured (Santiago)
+- [X] Add read and write scopes support and update permissions (Santiago)
+- [X] Login endpoint (Santiago)
+  - [X] Ensure that the login endpoint returns 400 on a bad request
+  - [X] Ensure that the login endpoint returns 401 on an invalid username or password
 - [X] Create user endpoint (Lucas)
   - [X] Return the user id using the LOCATION header from the create user keycloak endpoint
   - [X] Ensure that the response body has the correct format
