@@ -115,16 +115,20 @@ public class UsersController
     public ResponseEntity<?> getUser(
             @PathVariable("id") String id,
             @Schema(hidden = true) @RequestHeader(value = "Authorization", required = false) String accessToken
-    ) {
-        if (id == null || id.trim().isEmpty()) {
+    )
+    {
+        if (id == null || id.trim().isEmpty())
+        {
             return ResponseEntity.badRequest().body("User ID is required");
         }
 
-        if (accessToken == null || accessToken.trim().isEmpty()) {
+        if (accessToken == null || accessToken.trim().isEmpty())
+        {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Access token is missing");
         }
 
-        try (Keycloak keycloakClient = keycloakAdminClient.fromAdminAccessToken(accessToken)) {
+        try (Keycloak keycloakClient = keycloakAdminClient.fromAdminAccessToken(accessToken))
+        {
             UserRepresentation user = keycloakClient.realm(realmName).users().get(id).toRepresentation();
 
             return ResponseEntity.ok(Map.of(
@@ -135,16 +139,20 @@ public class UsersController
                     "enabled", user.isEnabled()
             ));
         }
-        catch (NotAuthorizedException e) {
+        catch (NotAuthorizedException e)
+        {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid access token");
         }
-        catch (ForbiddenException e) {
+        catch (ForbiddenException e)
+        {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Access token lacks required admin scopes");
         }
-        catch (NotFoundException e) {
+        catch (NotFoundException e)
+        {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User not found");
         }
-        catch (Exception e) {
+        catch (Exception e)
+        {
             return ResponseEntity.internalServerError().body("An unexpected error occurred: " + e.getMessage());
         }
     }
@@ -196,45 +204,56 @@ public class UsersController
      * @return
      */
     @PutMapping("/{id}")
-    public ResponseEntity<?> updateUser(
+    public ResponseEntity<?> updateUser
+    (
             @Schema(hidden = true) @RequestHeader(value = "Authorization", required = false) String accessToken,
             @PathVariable("id") String id,
             @RequestBody UpdateUserRequest updateUserRequest
-    ) {
-        if (id == null || id.trim().isEmpty()) {
+    )
+    {
+        if (id == null || id.trim().isEmpty())
+        {
             return ResponseEntity.badRequest().body("User ID is required");
         }
 
         if (updateUserRequest == null ||
-                updateUserRequest.firstName() == null ||
-                updateUserRequest.lastName() == null ||
-                updateUserRequest.email() == null) {
+            updateUserRequest.firstName() == null ||
+            updateUserRequest.lastName() == null ||
+            updateUserRequest.email() == null)
+        {
             return ResponseEntity.badRequest().body("Invalid request body: missing required fields");
         }
 
-        if (accessToken == null || accessToken.trim().isEmpty()) {
+        if (accessToken == null || accessToken.trim().isEmpty())
+        {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Access token is missing");
         }
 
-        try (Keycloak keycloakClient = keycloakAdminClient.fromAdminAccessToken(accessToken)) {
+        try (Keycloak keycloakClient = keycloakAdminClient.fromAdminAccessToken(accessToken))
+        {
             keycloakClient.realm(realmName).users().get(id).update(updateUserRequest.toKeycloakUserRepresentation());
 
             return ResponseEntity.noContent().build();
         }
-        catch (NotAuthorizedException e) {
+        catch (NotAuthorizedException e)
+        {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid access token");
         }
-        catch (ForbiddenException e) {
+        catch (ForbiddenException e)
+        {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Access token lacks required admin scopes");
         }
-        catch (NotFoundException e) {
+        catch (NotFoundException e)
+        {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User not found");
         }
-        catch (BadRequestException e) {
+        catch (BadRequestException e)
+        {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Invalid request or invalid email");
         }
-        catch (Exception e) {
-            return ResponseEntity.internalServerError().body("An unexpected error occurred: " + e.getMessage());
+        catch (Exception e)
+        {
+            return ResponseEntity.internalServerError().body("An unexpected error occurred: %s".formatted(e.getMessage()));
         }
     }
 
@@ -260,10 +279,10 @@ public class UsersController
     @DeleteMapping("/{id}")
     public ResponseEntity<?> deleteUser(@PathVariable String id, @Schema(hidden = true) @RequestHeader(value = "Authorization", required = false) String accessToken)
     {
-        try (Keycloak keycloakClient = keycloakAdminClient.fromAdminAccessToken(accessToken)) {
+        try (Keycloak keycloakClient = keycloakAdminClient.fromAdminAccessToken(accessToken))
+        {
             UserResource userResource = keycloakClient.realm(realmName).users().get(id);
             UserRepresentation user = userResource.toRepresentation();
-
 
             user.setEnabled(false);
             userResource.update(user);
