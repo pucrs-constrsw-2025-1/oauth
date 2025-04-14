@@ -339,7 +339,7 @@ public class UsersController
         {
             @ApiResponse
             (
-                responseCode = "200",
+                responseCode = "204",
                 description = "User updated"
             ),
             @ApiResponse
@@ -435,7 +435,7 @@ public class UsersController
         {
             @ApiResponse
             (
-                responseCode = "200",
+                responseCode = "204",
                 description = "User password updated"
             ),
             @ApiResponse
@@ -681,7 +681,7 @@ public class UsersController
         {
             @ApiResponse
             (
-                responseCode = "200",
+                responseCode = "204",
                 description = "Role mappings deleted"
             ),
             @ApiResponse
