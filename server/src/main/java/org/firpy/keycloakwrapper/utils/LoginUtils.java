@@ -3,7 +3,7 @@ package org.firpy.keycloakwrapper.utils;
 import com.nimbusds.jwt.SignedJWT;
 import org.firpy.keycloakwrapper.adapters.login.LoginRequest;
 import org.firpy.keycloakwrapper.adapters.login.RefreshTokenRequest;
-import org.firpy.keycloakwrapper.setup.ClientConfig;
+import org.firpy.keycloakwrapper.seeds.RealmSeed;
 import org.springframework.stereotype.Component;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
@@ -14,19 +14,19 @@ import java.text.ParseException;
 @Component
 public class LoginUtils {
 
-	public LoginUtils(ClientConfig clientConfig)
+	public LoginUtils(RealmSeed realmSeed)
 	{
-		this.clientConfig = clientConfig;
+		this.realmSeed = realmSeed;
 	}
 
 	public MultiValueMap<String, ?> getLoginParameters(LoginRequest request) throws IOException
 	{
         MultiValueMap<String, Object> params = new LinkedMultiValueMap<>();
 
-        params.add("client_id", request.username().equals(clientConfig.getAdminUsername()) ? clientConfig.getAdminClientId() : clientConfig.getClientId());
-        if (!request.username().equals(clientConfig.getAdminUsername()))
+        params.add("client_id", request.username().equals(realmSeed.getAdminUsername()) ? realmSeed.getAdminClientId() : realmSeed.getClientId());
+        if (!request.username().equals(realmSeed.getAdminUsername()))
         {
-            params.add("client_secret", clientConfig.getClientSecret());
+            params.add("client_secret", realmSeed.getClientSecret());
         }
 
         params.add("username", request.username());
@@ -43,10 +43,10 @@ public class LoginUtils {
         String token = request.refreshToken();
         boolean isAdmin = isAdmin(token);
 
-        params.add("client_id", isAdmin ? clientConfig.getAdminClientId() : clientConfig.getClientId());
+        params.add("client_id", isAdmin ? realmSeed.getAdminClientId() : realmSeed.getClientId());
         if (!isAdmin)
         {
-            params.add("client_secret", clientConfig.getClientSecret());
+            params.add("client_secret", realmSeed.getClientSecret());
         }
 
         params.add("grant_type", "refresh_token");
@@ -61,18 +61,18 @@ public class LoginUtils {
         SignedJWT jwt = SignedJWT.parse(token);
 
         String authorizedParty = jwt.getJWTClaimsSet().getStringClaim("azp");
-	    return authorizedParty.equals(clientConfig.getAdminClientId());
+	    return authorizedParty.equals(realmSeed.getAdminClientId());
     }
 
     public MultiValueMap<String, Object> getIntrospectParameters(String accessToken) throws IOException
     {
         MultiValueMap<String, Object> params = new LinkedMultiValueMap<>();
         params.add("token_type_hint", "requesting_party_token");
-        params.add("client_secret", clientConfig.getClientSecret());
-        params.add("client_id", clientConfig.getClientId());
+        params.add("client_secret", realmSeed.getClientSecret());
+        params.add("client_id", realmSeed.getClientId());
         params.add("token", accessToken);
         return params;
     }
 
-    private final ClientConfig clientConfig;
+    private final RealmSeed realmSeed;
 }

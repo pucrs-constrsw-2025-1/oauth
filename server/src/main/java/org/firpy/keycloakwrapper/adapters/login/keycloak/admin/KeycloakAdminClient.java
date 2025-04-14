@@ -1,6 +1,6 @@
 package org.firpy.keycloakwrapper.adapters.login.keycloak.admin;
 
-import org.firpy.keycloakwrapper.setup.ClientConfig;
+import org.firpy.keycloakwrapper.seeds.RealmSeed;
 import org.jboss.resteasy.client.jaxrs.internal.ResteasyClientBuilderImpl;
 import org.keycloak.admin.client.Keycloak;
 import org.keycloak.admin.client.KeycloakBuilder;
@@ -12,9 +12,9 @@ import java.io.IOException;
 @Component
 public class KeycloakAdminClient
 {
-	public KeycloakAdminClient(ClientConfig clientConfig)
+	public KeycloakAdminClient(RealmSeed realmSeed)
 	{
-		this.clientConfig = clientConfig;
+		this.realmSeed = realmSeed;
 	}
 
 	public Keycloak fromAdminAccessToken(String accessToken)
@@ -35,7 +35,7 @@ public class KeycloakAdminClient
 	{
 		return KeycloakBuilder.builder()
 							  .clientId(clientId)
-						      .clientSecret(clientConfig.getClientSecret())
+						      .clientSecret(realmSeed.getClientSecret())
 							  .serverUrl(keycloakUrl)
 							  .realm(realmName)
 							  .resteasyClient(
@@ -44,7 +44,7 @@ public class KeycloakAdminClient
 										  .build()).build();
 	}
 
-	private final ClientConfig clientConfig;
+	private final RealmSeed realmSeed;
 
 	@Value("${keycloak.realm}")
 	private String realmName;

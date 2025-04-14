@@ -8,7 +8,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import org.firpy.keycloakwrapper.adapters.login.keycloak.auth.IntrospectionResponse;
 import org.firpy.keycloakwrapper.adapters.login.keycloak.auth.KeycloakAuthClient;
-import org.firpy.keycloakwrapper.setup.ClientConfig;
+import org.firpy.keycloakwrapper.seeds.RealmSeed;
 import org.firpy.keycloakwrapper.utils.LoginUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
@@ -22,11 +22,11 @@ import java.util.Base64;
 @RequestMapping("login")
 public class AuthenticationController
 {
-	public AuthenticationController(KeycloakAuthClient keycloakClient, LoginUtils loginUtils, ClientConfig clientConfig)
+	public AuthenticationController(KeycloakAuthClient keycloakClient, LoginUtils loginUtils, RealmSeed realmSeed)
 	{
 		this.keycloakAuthClient = keycloakClient;
 		this.loginUtils = loginUtils;
-		this.clientConfig = clientConfig;
+		this.realmSeed = realmSeed;
 	}
 
 	/**
@@ -91,7 +91,7 @@ public class AuthenticationController
 	})
 	public ResponseEntity<?> introspectToken(@JsonProperty(required = true) String accessTokenToInspect) throws IOException
 	{
-		byte[] basicAuthBytes = ("%s:%s".formatted(clientConfig.getClientId(), clientConfig.getClientSecret())).getBytes();
+		byte[] basicAuthBytes = ("%s:%s".formatted(realmSeed.getClientId(), realmSeed.getClientSecret())).getBytes();
 		try
 		{
 			return ResponseEntity.ok(keycloakAuthClient.introspectToken("Basic %s".formatted(Base64.getEncoder().encodeToString(basicAuthBytes)), loginUtils.getIntrospectParameters(accessTokenToInspect)));
@@ -159,7 +159,7 @@ public class AuthenticationController
 
     private final KeycloakAuthClient keycloakAuthClient;
 	private final LoginUtils loginUtils;
-	private final ClientConfig clientConfig;
+	private final RealmSeed realmSeed;
 
 	@Value("${keycloak.realm}")
 	private String realmName;

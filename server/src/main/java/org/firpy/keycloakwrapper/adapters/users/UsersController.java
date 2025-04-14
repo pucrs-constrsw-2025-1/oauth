@@ -14,7 +14,7 @@ import jakarta.ws.rs.core.Response;
 import org.firpy.keycloakwrapper.adapters.login.keycloak.admin.KeycloakAdminClient;
 import org.firpy.keycloakwrapper.adapters.login.keycloak.auth.KeycloakAuthClient;
 import org.firpy.keycloakwrapper.adapters.login.keycloak.auth.KeycloakUserInfo;
-import org.firpy.keycloakwrapper.setup.ClientConfig;
+import org.firpy.keycloakwrapper.seeds.RealmSeed;
 import org.keycloak.admin.client.Keycloak;
 import org.keycloak.admin.client.resource.UserResource;
 import org.keycloak.admin.client.resource.UsersResource;
@@ -35,12 +35,12 @@ public class UsersController
 {
 	public UsersController
     (
-        ClientConfig clientConfig,
+        RealmSeed realmSeed,
         KeycloakAdminClient keycloakAdminClient,
         KeycloakAuthClient keycloakAuthClient
     )
 	{
-		this.clientConfig = clientConfig;
+		this.realmSeed = realmSeed;
 		this.keycloakAdminClient = keycloakAdminClient;
 		this.keycloakAuthClient = keycloakAuthClient;
 	}
@@ -649,7 +649,7 @@ public class UsersController
     {
         try (Keycloak keycloakClient = keycloakAdminClient.fromAdminAccessToken(accessToken))
         {
-            String clientUUID = clientConfig.getClientUUID(keycloakClient);
+            String clientUUID = realmSeed.getClientUUID(keycloakClient);
             List<RoleRepresentation> availableRoles = keycloakClient.realm(realmName).users().get(id).roles().clientLevel(clientUUID).listAvailable();
             List<RoleRepresentation> availableRolesToAdd = availableRoles.stream().filter(role -> Arrays.stream(roleNamesToAdd).toList().contains(role.getName())).toList();
             keycloakClient.realm(realmName).users().get(id).roles().clientLevel(clientUUID).add(availableRolesToAdd);
@@ -716,7 +716,7 @@ public class UsersController
     {
         try (Keycloak keycloakClient = keycloakAdminClient.fromAdminAccessToken(accessToken))
         {
-            String clientUUID = clientConfig.getClientUUID(keycloakClient);
+            String clientUUID = realmSeed.getClientUUID(keycloakClient);
             List<RoleRepresentation> roleMappings = keycloakClient.realm(realmName).users().get(id).roles().clientLevel(clientUUID).listAll();
             List<RoleRepresentation> roleMappingsToRemove = roleMappings.stream().filter(role -> Arrays.stream(roleNamesToRemove).toList().contains(role.getName())).toList();
             keycloakClient.realm(realmName).users().get(id).roles().clientLevel(clientUUID).remove(roleMappingsToRemove);
@@ -744,7 +744,7 @@ public class UsersController
     @Value("${keycloak.realm}")
     private String realmName;
 
-    private final ClientConfig clientConfig;
+    private final RealmSeed realmSeed;
 
     private final KeycloakAdminClient keycloakAdminClient;
     private final KeycloakAuthClient keycloakAuthClient;

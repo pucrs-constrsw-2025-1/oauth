@@ -1,4 +1,4 @@
-package org.firpy.keycloakwrapper.setup;
+package org.firpy.keycloakwrapper.seeds;
 
 import jakarta.ws.rs.NotFoundException;
 import jakarta.ws.rs.core.Response;
@@ -31,9 +31,9 @@ import java.util.List;
 @Configuration
 @Slf4j
 @EnableScheduling
-public class ClientConfig
+public class RealmSeed
 {
-    public ClientConfig(KeycloakRealmAdminClient keycloakRealmAdminClient, ResourceLoader resourceLoader)
+    public RealmSeed(KeycloakRealmAdminClient keycloakRealmAdminClient, ResourceLoader resourceLoader)
     {
 	    this.keycloakRealmAdminClient = keycloakRealmAdminClient;
 	    this.resourceLoader = resourceLoader;
