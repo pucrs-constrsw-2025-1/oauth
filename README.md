@@ -59,8 +59,8 @@ Wrapper de autenticação e autorização com o Keycloak
         - errorStack: pilha de todos os erros até o erro final 
 - [X] Autocreate realm if not present
 - [X] Token introspection for admin accounts
-- [ ] Endpoint authorization through Keycloak's OAuth2 endpoint (given a token and a resource, check if the user is authorized to access it) (Santiago)
+- [X] Endpoint authorization through Keycloak's OAuth2 endpoint (given a token and a resource, check if the user is authorized to access it) (Santiago)
     - We can probably use the token introspection endpoint to get all authorized resources for a user
-    - [ ] Return 200 if the user is authorized to access the resource
-    - [ ] Return 403 if the user is not authorized to access the resource
+    - [X] Return 200 if the user is authorized to access the resource
+    - [X] Return 403 if the user is not authorized to access the resource
 - [X] Recreate and store our client's secret (client is already created in the realm, we just need to autocreate the secret now)
