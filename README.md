@@ -1,5 +1,11 @@
 Wrapper de autenticação e autorização com o Keycloak
 
+URL para o Swagger: http://localhost:8081/swagger-ui/index.html
+URL para o keycloak admin console: http://localhost:8080/admin/master/console
+
+Usuário root: admin
+Senha root: admin
+
 - [X] Use client roles instead of realm roles
 - [X] Double-check if roles are correctly configured (Santiago)
 - [X] Add read and write scopes support and update permissions (Santiago)
