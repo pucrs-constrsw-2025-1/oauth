@@ -28,14 +28,14 @@ public class WebApplicationResponseUtils
 
 	public static ResponseEntity<Object> toSpringResponseEntity(Response jaxRsResponse)
 	{
-		if (jaxRsResponse == null) {
+		if (jaxRsResponse == null)
+		{
 			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
 					       .body("JAX-RS exception with no response");
 		}
 
 		int status = jaxRsResponse.getStatus();
 
-		// Convert headers
 		MultivaluedMap<String, Object> jaxRsHeaders = jaxRsResponse.getHeaders();
 		HttpHeaders springHeaders = new HttpHeaders();
 		for (Map.Entry<String, List<Object>> entry : jaxRsHeaders.entrySet())
@@ -48,14 +48,12 @@ public class WebApplicationResponseUtils
 
 		Object entity = jaxRsResponse.getEntity();
 
-		// Handle InputStream safely by buffering
 		if (entity instanceof InputStream inputStream)
 		{
 			byte[] data = readAllBytes(inputStream);
 			return new ResponseEntity<>(new ByteArrayResource(data), springHeaders, HttpStatus.valueOf(status));
 		}
 
-		// Handle RESTEasy BuiltResponse-like wrapping (optional)
 		try
 		{
 			Class<?> builtResponseClass = Class.forName("org.jboss.resteasy.specimpl.BuiltResponse");
@@ -82,7 +80,8 @@ public class WebApplicationResponseUtils
 		return new ResponseEntity<>(entity, springHeaders, HttpStatus.valueOf(status));
 	}
 
-	private static byte[] readAllBytes(InputStream inputStream) {
+	private static byte[] readAllBytes(InputStream inputStream)
+	{
 		try (ByteArrayOutputStream buffer = new ByteArrayOutputStream())
 		{
 			inputStream.transferTo(buffer);
