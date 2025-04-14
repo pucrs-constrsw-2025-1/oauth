@@ -6,6 +6,8 @@ URL para o keycloak admin console: http://localhost:8080/admin/master/console
 Usuário root: admin
 Senha root: admin
 
+O realm, client, client secret, roles e permissões são criados automaticamente no seed RealmSeed.
+
 - [X] Use client roles instead of realm roles
 - [X] Double-check if roles are correctly configured (Santiago)
 - [X] Add read and write scopes support and update permissions (Santiago)
