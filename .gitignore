@@ -1,0 +1,23 @@
+# Node
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# TypeScript
+dist/
+build/
+*.tsbuildinfo
+
+# Environment
+.env
+
+# Editor configs
+.vscode/
+.idea/
+
+# Mac OS
+.DS_Store
+
+# Docker
+docker-compose.override.yml
