@@ -1,10 +1,12 @@
 package com.constrsw.oauth.service;
 
+import com.constrsw.oauth.dto.UserRequest;
+import com.constrsw.oauth.dto.UserResponse;
 import com.constrsw.oauth.exception.CustomExceptionHandler;
-import lombok.RequiredArgsConstructor;
-import main.java.com.constrsw.oauth.dto.UserRequest;
-import main.java.com.constrsw.oauth.dto.UserResponse;
 
+import jakarta.ws.rs.NotFoundException;
+import jakarta.ws.rs.core.Response;
+import lombok.RequiredArgsConstructor;
 import org.keycloak.admin.client.Keycloak;
 import org.keycloak.admin.client.resource.RealmResource;
 import org.keycloak.admin.client.resource.UserResource;
@@ -12,12 +14,8 @@ import org.keycloak.admin.client.resource.UsersResource;
 import org.keycloak.representations.idm.CredentialRepresentation;
 import org.keycloak.representations.idm.UserRepresentation;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
-import javax.ws.rs.NotFoundException;
-import javax.ws.rs.core.Response;
-import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -50,7 +48,7 @@ public class UserService {
         // Create user
         Response response = usersResource.create(user);
         if (response.getStatus() != 201) {
-            throw new CustomExceptionHandler("Failed to create user", HttpStatus.valueOf(response.getStatus()));
+            throw new CustomExceptionHandler();
         }
 
         // Get user ID from location header
@@ -71,7 +69,7 @@ public class UserService {
     public List<UserResponse> getAllUsers(Boolean enabled) {
         UsersResource usersResource = getUsersResource();
         List<UserRepresentation> users = enabled != null ? 
-            usersResource.search(null, null, null, null, enabled, null, null) : 
+            usersResource.search(null, null, null, null, enabled, null, null, enabled, enabled) : 
             usersResource.list();
 
         return users.stream()
@@ -84,7 +82,7 @@ public class UserService {
             UserResource userResource = getUsersResource().get(id);
             return mapToUserResponse(userResource.toRepresentation());
         } catch (NotFoundException e) {
-            throw new CustomExceptionHandler("User not found", HttpStatus.NOT_FOUND);
+            throw new CustomExceptionHandler();
         }
     }
 
@@ -96,7 +94,7 @@ public class UserService {
             user.setLastName(userRequest.getLastName());
             userResource.update(user);
         } catch (NotFoundException e) {
-            throw new CustomExceptionHandler("User not found", HttpStatus.NOT_FOUND);
+            throw new CustomExceptionHandler();
         }
     }
 
@@ -109,7 +107,7 @@ public class UserService {
             credential.setTemporary(false);
             userResource.resetPassword(credential);
         } catch (NotFoundException e) {
-            throw new CustomExceptionHandler("User not found", HttpStatus.NOT_FOUND);
+            throw new CustomExceptionHandler();
         }
     }
 
@@ -120,7 +118,7 @@ public class UserService {
             user.setEnabled(false);
             userResource.update(user);
         } catch (NotFoundException e) {
-            throw new CustomExceptionHandler("User not found", HttpStatus.NOT_FOUND);
+            throw new CustomExceptionHandler();
         }
     }
 

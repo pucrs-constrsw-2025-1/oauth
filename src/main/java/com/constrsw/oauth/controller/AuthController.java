@@ -7,15 +7,15 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
-import main.java.com.constrsw.oauth.dto.AuthRequest;
-import main.java.com.constrsw.oauth.dto.AuthResponse;
-import main.java.com.constrsw.oauth.service.AuthService;
-
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+
+import com.constrsw.oauth.dto.AuthRequest;
+import com.constrsw.oauth.dto.AuthResponse;
+import com.constrsw.oauth.service.AuthService;
 
 @RestController
 @RequestMapping("/api/auth")

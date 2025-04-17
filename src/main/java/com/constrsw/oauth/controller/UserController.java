@@ -1,7 +1,6 @@
 package com.constrsw.oauth.controller;
 
 
-import io.swagger.v3.oas.annotations.Hidden;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -10,12 +9,12 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
-import main.java.com.constrsw.oauth.dto.UserRequest;
-import main.java.com.constrsw.oauth.dto.UserResponse;
-import main.java.com.constrsw.oauth.service.UserService;
-
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import com.constrsw.oauth.dto.UserRequest;
+import com.constrsw.oauth.dto.UserResponse;
+import com.constrsw.oauth.service.UserService;
 
 import java.util.List;
 

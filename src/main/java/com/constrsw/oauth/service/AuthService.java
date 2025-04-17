@@ -1,14 +1,14 @@
 package com.constrsw.oauth.service;
 
 import lombok.RequiredArgsConstructor;
-import main.java.com.constrsw.oauth.dto.AuthRequest;
-import main.java.com.constrsw.oauth.dto.AuthResponse;
-
 import org.keycloak.OAuth2Constants;
 import org.keycloak.admin.client.Keycloak;
 import org.keycloak.admin.client.KeycloakBuilder;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+
+import com.constrsw.oauth.dto.AuthRequest;
+import com.constrsw.oauth.dto.AuthResponse;
 
 @Service
 @RequiredArgsConstructor
@@ -42,9 +42,9 @@ public class AuthService {
         return AuthResponse.builder()
                 .tokenType("Bearer")
                 .accessToken(accessToken.getToken())
-                .expiresIn(accessToken.getExpiresIn())
+                .expiresIn((int) accessToken.getExpiresIn())
                 .refreshToken(accessToken.getRefreshToken())
-                .refreshExpiresIn(accessToken.getRefreshExpiresIn())
+                .refreshExpiresIn((int) accessToken.getRefreshExpiresIn())
                 .build();
     }
 }

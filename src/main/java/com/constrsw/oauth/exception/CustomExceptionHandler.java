@@ -1,17 +1,17 @@
 package com.constrsw.oauth.exception;
 
+import java.time.LocalDateTime;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.context.request.WebRequest;
-import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
+import jakarta.validation.ConstraintViolationException;
 
-import javax.validation.ConstraintViolationException;
-import java.time.LocalDateTime;
 
 @ControllerAdvice
-public class CustomExceptionHandler extends ResponseEntityExceptionHandler {
+public class CustomExceptionHandler extends RuntimeException {
 
     @ExceptionHandler(ConstraintViolationException.class)
     public final ResponseEntity<ErrorResponse> handleConstraintViolationException(
