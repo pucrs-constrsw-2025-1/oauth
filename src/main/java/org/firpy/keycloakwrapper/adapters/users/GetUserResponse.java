@@ -1,10 +1,9 @@
 package org.firpy.keycloakwrapper.adapters.users;
 
 public record GetUserResponse(
-        String username,
+        String email,
         String firstName,
         String lastName,
-        String email,
         Boolean enabled,
         String id
 ){}

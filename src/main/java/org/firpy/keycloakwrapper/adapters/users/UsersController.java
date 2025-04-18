@@ -14,7 +14,6 @@ import jakarta.ws.rs.core.Response;
 import org.firpy.keycloakwrapper.adapters.login.keycloak.admin.KeycloakAdminClient;
 import org.firpy.keycloakwrapper.adapters.login.keycloak.auth.KeycloakAuthClient;
 import org.firpy.keycloakwrapper.adapters.login.keycloak.auth.KeycloakUserInfo;
-import org.firpy.keycloakwrapper.seeds.RealmSeed;
 import org.keycloak.admin.client.Keycloak;
 import org.keycloak.admin.client.resource.UserResource;
 import org.keycloak.admin.client.resource.UsersResource;
@@ -35,20 +34,16 @@ public class UsersController
 {
 	public UsersController
     (
-        RealmSeed realmSeed,
         KeycloakAdminClient keycloakAdminClient,
         KeycloakAuthClient keycloakAuthClient
     )
 	{
-		this.realmSeed = realmSeed;
 		this.keycloakAdminClient = keycloakAdminClient;
 		this.keycloakAuthClient = keycloakAuthClient;
 	}
 
 	/**
      * Consumir a rota do Keycloak que recupera todos os usuários
-     * @param accessToken
-     * @return
      */
     @GetMapping()
     @ApiResponses
@@ -104,10 +99,9 @@ public class UsersController
                     enabled,
                     null
             ).stream().map( x -> new GetUserResponse(
-                    x.getUsername(),
+                    x.getEmail(),
                     x.getFirstName(),
                     x.getLastName(),
-                    x.getEmail(),
                     x.isEnabled(),
                     x.getId()
                     )
@@ -131,9 +125,6 @@ public class UsersController
 
     /**
      * Consumir a rota do Keycloak que recupera um usuário a partir do seu id
-     * @param id
-     * @param accessToken
-     * @return
      */
     @GetMapping("/{id}")
     @ApiResponses
@@ -193,10 +184,9 @@ public class UsersController
             UserRepresentation user = keycloakClient.realm(realmName).users().get(id).toRepresentation();
 
             return ResponseEntity.ok(new GetUserResponse(
-                user.getUsername(),
+                user.getEmail(),
                 user.getFirstName(),
                 user.getLastName(),
-                user.getEmail(),
                 user.isEnabled(),
                 user.getId()
             ));
@@ -252,8 +242,6 @@ public class UsersController
 
     /**
      * Consumir a rota do Keycloak que cria um novo usuário
-     * @param accessToken
-     * @return
      */
     @PostMapping()
     @ApiResponses
@@ -329,8 +317,6 @@ public class UsersController
 
     /**
      * Consumir a rota do Keycloak que atualiza um usuário (método PUT)
-     * @param accessToken
-     * @return
      */
     @PutMapping("/{id}")
     @ApiResponses
@@ -384,8 +370,7 @@ public class UsersController
 
         if (updateUserRequest == null ||
             updateUserRequest.firstName() == null ||
-            updateUserRequest.lastName() == null ||
-            updateUserRequest.email() == null)
+            updateUserRequest.lastName() == null)
         {
             return ResponseEntity.badRequest().body("Invalid request body: missing required fields");
         }
@@ -425,8 +410,6 @@ public class UsersController
 
     /**
      * Consumir a rota do Keycloak que atualiza um usuário (método PATCH)
-     * @param accessToken
-     * @return
      */
     @PatchMapping("/{id}")
     @ApiResponses
@@ -649,7 +632,7 @@ public class UsersController
     {
         try (Keycloak keycloakClient = keycloakAdminClient.fromAdminAccessToken(accessToken))
         {
-            String clientUUID = realmSeed.getClientUUID(keycloakClient);
+            String clientUUID = keycloakClient.realm(realmName).clients().findByClientId(clientId).getFirst().getId();
             List<RoleRepresentation> availableRoles = keycloakClient.realm(realmName).users().get(id).roles().clientLevel(clientUUID).listAvailable();
             List<RoleRepresentation> availableRolesToAdd = availableRoles.stream().filter(role -> Arrays.stream(roleNamesToAdd).toList().contains(role.getName())).toList();
             keycloakClient.realm(realmName).users().get(id).roles().clientLevel(clientUUID).add(availableRolesToAdd);
@@ -716,7 +699,7 @@ public class UsersController
     {
         try (Keycloak keycloakClient = keycloakAdminClient.fromAdminAccessToken(accessToken))
         {
-            String clientUUID = realmSeed.getClientUUID(keycloakClient);
+            String clientUUID = keycloakClient.realm(realmName).clients().findByClientId(clientId).getFirst().getId();
             List<RoleRepresentation> roleMappings = keycloakClient.realm(realmName).users().get(id).roles().clientLevel(clientUUID).listAll();
             List<RoleRepresentation> roleMappingsToRemove = roleMappings.stream().filter(role -> Arrays.stream(roleNamesToRemove).toList().contains(role.getName())).toList();
             keycloakClient.realm(realmName).users().get(id).roles().clientLevel(clientUUID).remove(roleMappingsToRemove);
@@ -744,7 +727,8 @@ public class UsersController
     @Value("${keycloak.realm}")
     private String realmName;
 
-    private final RealmSeed realmSeed;
+    @Value("${keycloak.client-id}")
+    private String clientId;
 
     private final KeycloakAdminClient keycloakAdminClient;
     private final KeycloakAuthClient keycloakAuthClient;

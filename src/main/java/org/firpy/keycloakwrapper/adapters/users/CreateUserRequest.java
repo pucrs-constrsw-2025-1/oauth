@@ -7,17 +7,15 @@ import java.util.List;
 
 public record CreateUserRequest
 (
-	String username,
+	String email,
 	String firstName,
 	String lastName,
-	String email,
 	String password
 )
 {
 	UserRepresentation toKeycloakUserRepresentation()
 	{
 		UserRepresentation newUser = new UserRepresentation();
-		newUser.setUsername(username);
 		newUser.setFirstName(firstName);
 		newUser.setLastName(lastName);
 		newUser.setEmail(email);
@@ -33,10 +31,9 @@ public record CreateUserRequest
 
 	CreateUserResponse toResponse(String id) {
         return new CreateUserResponse(
-                username,
+				email,
                 firstName,
                 lastName,
-                email,
                 password,
                 id
         );

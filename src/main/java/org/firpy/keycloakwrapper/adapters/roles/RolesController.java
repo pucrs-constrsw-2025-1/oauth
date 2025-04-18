@@ -10,7 +10,6 @@ import jakarta.ws.rs.NotAuthorizedException;
 import jakarta.ws.rs.NotFoundException;
 import org.firpy.keycloakwrapper.adapters.login.keycloak.admin.CreateRoleRequest;
 import org.firpy.keycloakwrapper.adapters.login.keycloak.admin.KeycloakAdminClient;
-import org.firpy.keycloakwrapper.seeds.RealmSeed;
 import org.keycloak.admin.client.Keycloak;
 import org.keycloak.admin.client.resource.RolesResource;
 import org.keycloak.representations.idm.RoleRepresentation;
@@ -23,10 +22,9 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("roles")
 public class RolesController
 {
-	public RolesController(KeycloakAdminClient keycloakAdminClient, RealmSeed realmSeed)
+	public RolesController(KeycloakAdminClient keycloakAdminClient)
 	{
 		this.keycloakAdminClient = keycloakAdminClient;
-		this.realmSeed = realmSeed;
 	}
 
 	@GetMapping
@@ -68,7 +66,8 @@ public class RolesController
 		}
 		try (Keycloak keycloak = keycloakAdminClient.fromAdminAccessToken(accessToken))
 		{
-			RoleRepresentation[] roles = keycloak.realm(realmName).clients().get(realmSeed.getClientUUID(keycloak)).roles().list().toArray(RoleRepresentation[]::new);
+			String clientUUID = keycloak.realm(realmName).clients().findByClientId(clientId).getFirst().getId();
+			RoleRepresentation[] roles = keycloak.realm(realmName).clients().get(clientUUID).roles().list().toArray(RoleRepresentation[]::new);
 			return ResponseEntity.ok(roles);
 		}
 		catch (NotAuthorizedException e)
@@ -135,7 +134,8 @@ public class RolesController
 
 		try (Keycloak keycloak = keycloakAdminClient.fromAdminAccessToken(accessToken))
 		{
-			RoleRepresentation role = keycloak.realm(realmName).clients().get(realmSeed.getClientUUID(keycloak)).roles().get(roleName).toRepresentation();
+			String clientUUID = keycloak.realm(realmName).clients().findByClientId(clientId).getFirst().getId();
+			RoleRepresentation role = keycloak.realm(realmName).clients().get(clientUUID).roles().get(roleName).toRepresentation();
 
 			return ResponseEntity.ok(role);
 		}
@@ -206,7 +206,8 @@ public class RolesController
 		}
 		try (Keycloak keycloakClient = keycloakAdminClient.fromAdminAccessToken(accessToken))
 		{
-			RolesResource roles = keycloakClient.realm(realmName).clients().get(realmSeed.getClientUUID(keycloakClient)).roles();
+			String clientUUID = keycloakClient.realm(realmName).clients().findByClientId(clientId).getFirst().getId();
+			RolesResource roles = keycloakClient.realm(realmName).clients().get(clientUUID).roles();
 			roles.create(role.toRoleRepresentation());
 
 			return ResponseEntity.ok(roles.get(role.name()).toRepresentation());
@@ -269,7 +270,8 @@ public class RolesController
 		}
 		try (Keycloak keycloakClient = keycloakAdminClient.fromAdminAccessToken(accessToken))
 		{
-			RolesResource roles = keycloakClient.realm(realmName).clients().get(realmSeed.getClientUUID(keycloakClient)).roles();
+			String clientUUID = keycloakClient.realm(realmName).clients().findByClientId(clientId).getFirst().getId();
+			RolesResource roles = keycloakClient.realm(realmName).clients().get(clientUUID).roles();
 			roles.deleteRole(roleName);
 
 			return ResponseEntity.noContent().build();
@@ -345,7 +347,8 @@ public class RolesController
 
 		try (Keycloak keycloak = keycloakAdminClient.fromAdminAccessToken(accessToken))
 		{
-			RolesResource roles = keycloak.realm(realmName).clients().get(realmSeed.getClientUUID(keycloak)).roles();
+			String clientUUID = keycloak.realm(realmName).clients().findByClientId(clientId).getFirst().getId();
+			RolesResource roles = keycloak.realm(realmName).clients().get(clientUUID).roles();
 			roles.get(roleName).update(role.toRoleRepresentation());
 
 			return ResponseEntity.noContent().build();
@@ -370,8 +373,9 @@ public class RolesController
 
 	private final KeycloakAdminClient keycloakAdminClient;
 
-	private final RealmSeed realmSeed;
-
 	@Value("${keycloak.realm}")
 	private String realmName;
+
+	@Value("${keycloak.client-id}")
+	private String clientId;
 }

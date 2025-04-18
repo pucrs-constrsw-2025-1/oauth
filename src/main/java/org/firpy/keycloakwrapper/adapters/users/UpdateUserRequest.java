@@ -5,8 +5,7 @@ import org.keycloak.representations.idm.UserRepresentation;
 public record UpdateUserRequest
 (
 	String firstName,
-	String lastName,
-	String email
+	String lastName
 )
 {
 	UserRepresentation toKeycloakUserRepresentation()
@@ -14,8 +13,6 @@ public record UpdateUserRequest
 		UserRepresentation newUser = new UserRepresentation();
 		newUser.setFirstName(firstName);
 		newUser.setLastName(lastName);
-		newUser.setEmail(email);
-		newUser.setEnabled(true);
 
 		return newUser;
 	}

@@ -8,7 +8,6 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import org.firpy.keycloakwrapper.adapters.login.keycloak.auth.IntrospectionResponse;
 import org.firpy.keycloakwrapper.adapters.login.keycloak.auth.KeycloakAuthClient;
-import org.firpy.keycloakwrapper.seeds.RealmSeed;
 import org.firpy.keycloakwrapper.utils.LoginUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
@@ -22,11 +21,10 @@ import java.util.Base64;
 @RequestMapping("login")
 public class AuthenticationController
 {
-	public AuthenticationController(KeycloakAuthClient keycloakClient, LoginUtils loginUtils, RealmSeed realmSeed)
+	public AuthenticationController(KeycloakAuthClient keycloakClient, LoginUtils loginUtils)
 	{
 		this.keycloakAuthClient = keycloakClient;
 		this.loginUtils = loginUtils;
-		this.realmSeed = realmSeed;
 	}
 
 	/**
@@ -34,11 +32,9 @@ public class AuthenticationController
      * do Keycloak para autenticação de usuário, gerando o access_token e o refresh_token a partir do
      * client_id,
      * client_secret,
-     * username,
+     * email,
      * newPassword,
      * grant_type: newPassword.
-     * @param request
-     * @return
      */
     @PostMapping()
     @ApiResponses(value = {
@@ -51,8 +47,8 @@ public class AuthenticationController
         @ApiResponse
 		(
             responseCode = "401",
-            description = "Invalid username or password",
-            content = @Content(schema = @Schema(implementation = String.class, defaultValue = "Invalid username or password"))
+            description = "Invalid email or password",
+            content = @Content(schema = @Schema(implementation = String.class, defaultValue = "Invalid email or password"))
 		)
     })
     public ResponseEntity<?> login(@RequestBody LoginRequest request) throws IOException
@@ -64,7 +60,7 @@ public class AuthenticationController
 		}
 		catch (FeignException.Unauthorized unauthorized)
 		{
-			return ResponseEntity.status(401).body("Invalid username or password");
+			return ResponseEntity.status(401).body("Invalid email or password");
 		}
     }
 
@@ -89,9 +85,9 @@ public class AuthenticationController
 			content = @Content(schema = @Schema(implementation = String.class, format = "An unexpected error occurred: {error message}"))
 		)
 	})
-	public ResponseEntity<?> introspectToken(@JsonProperty(required = true) String accessTokenToInspect) throws IOException
-	{
-		byte[] basicAuthBytes = ("%s:%s".formatted(realmSeed.getClientId(), realmSeed.getClientSecret())).getBytes();
+	public ResponseEntity<?> introspectToken(@JsonProperty(required = true) String accessTokenToInspect)
+    {
+		byte[] basicAuthBytes = ("%s:%s".formatted(clientId, clientSecret)).getBytes();
 		try
 		{
 			return ResponseEntity.ok(keycloakAuthClient.introspectToken("Basic %s".formatted(Base64.getEncoder().encodeToString(basicAuthBytes)), loginUtils.getIntrospectParameters(accessTokenToInspect)));
@@ -159,8 +155,13 @@ public class AuthenticationController
 
     private final KeycloakAuthClient keycloakAuthClient;
 	private final LoginUtils loginUtils;
-	private final RealmSeed realmSeed;
 
 	@Value("${keycloak.realm}")
 	private String realmName;
+
+	@Value("${keycloak.client-id}")
+	private String clientId;
+
+	@Value("${keycloak.client-secret}")
+	private String clientSecret;
 }
