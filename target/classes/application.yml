@@ -1,0 +1,36 @@
+server:
+  port: ${OAUTH_INTERNAL_PORT:8080}
+
+keycloak:
+  server:
+    url: http://${KEYCLOAK_INTERNAL_HOST:keycloak}:${KEYCLOAK_INTERNAL_PORT:8080}
+  realm: ${KEYCLOAK_REALM:constrsw}
+  client:
+    id: ${KEYCLOAK_CLIENT_ID:oauth}
+    secret: ${KEYCLOAK_CLIENT_SECRET:wsNXUxaupU9X6jCncsn3rOEy6PDt7oJO}
+
+spring:
+  config.import: optional:configtree:/config/
+  main:
+    allow-bean-definition-overriding: true
+  application:
+    name: oauth-service
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"
+      base-path: /manage
+  endpoint:
+    health:
+      show-details: always
+    metrics:
+      enabled: true
+
+logging:
+  level:
+    org.springframework: INFO
+    com.constrsw: DEBUG
+  file:
+    name: /var/log/oauth/application.log

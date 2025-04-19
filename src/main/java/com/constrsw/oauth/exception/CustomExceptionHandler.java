@@ -1,75 +1,37 @@
 package com.constrsw.oauth.exception;
 
-import java.time.LocalDateTime;
-
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.context.request.WebRequest;
-import jakarta.validation.ConstraintViolationException;
 
+import java.time.Instant;
 
-@ControllerAdvice
-public class CustomExceptionHandler extends RuntimeException {
+@RestControllerAdvice
+public class CustomExceptionHandler {
 
-    @ExceptionHandler(ConstraintViolationException.class)
-    public final ResponseEntity<ErrorResponse> handleConstraintViolationException(
-            ConstraintViolationException ex, WebRequest request) {
-        
-        ErrorResponse error = new ErrorResponse(
-                HttpStatus.BAD_REQUEST.value(),
-                "Validation failed",
-                "OAuthAPI",
-                ex.getMessage(),
-                LocalDateTime.now());
-        
-        return new ResponseEntity<>(error, HttpStatus.BAD_REQUEST);
+    @ExceptionHandler(GlobalException.class)
+    public ResponseEntity<ErrorResponse> handleGlobalException(GlobalException ex, WebRequest request) {
+        ErrorResponse errorResponse = ErrorResponse.builder()
+                .timestamp(Instant.now())
+                .errorCode(ex.getErrorCode())
+                .message(ex.getMessage())
+                .source(ex.getErrorSource())
+                .path(request.getDescription(false).replace("uri=", ""))
+                .build();
+
+        return ResponseEntity.status(ex.getHttpStatus()).body(errorResponse);
     }
 
     @ExceptionHandler(Exception.class)
-    public final ResponseEntity<ErrorResponse> handleAllExceptions(
-            Exception ex, WebRequest request) {
-        
-        ErrorResponse error = new ErrorResponse(
-                HttpStatus.INTERNAL_SERVER_ERROR.value(),
-                "Internal Server Error",
-                "OAuthAPI",
-                ex.getMessage(),
-                LocalDateTime.now());
-        
-        return new ResponseEntity<>(error, HttpStatus.INTERNAL_SERVER_ERROR);
-    }
+    public ResponseEntity<ErrorResponse> handleAllExceptions(Exception ex, WebRequest request) {
+        ErrorResponse errorResponse = ErrorResponse.builder()
+                .timestamp(Instant.now())
+                .errorCode("INTERNAL_ERROR")
+                .message("An unexpected error occurred")
+                .path(request.getDescription(false).replace("uri=", ""))
+                .build();
 
-    @ExceptionHandler(RuntimeException.class)
-    public final ResponseEntity<ErrorResponse> handleRuntimeExceptions(
-            RuntimeException ex, WebRequest request) {
-        
-        HttpStatus status = HttpStatus.INTERNAL_SERVER_ERROR;
-        if (ex instanceof IllegalArgumentException) {
-            status = HttpStatus.BAD_REQUEST;
-        }
-
-        ErrorResponse error = new ErrorResponse(
-                status.value(),
-                status.getReasonPhrase(),
-                "OAuthAPI",
-                ex.getMessage(),
-                LocalDateTime.now());
-        
-        return new ResponseEntity<>(error, status);
+        return ResponseEntity.internalServerError().body(errorResponse);
     }
-    @ExceptionHandler(GlobalException.class)
-    public final ResponseEntity<ErrorResponse> handleGlobalException(
-        GlobalException ex, WebRequest request) {
-    
-    ErrorResponse error = new ErrorResponse(
-            ex.getStatus().value(),
-            ex.getStatus().getReasonPhrase(),
-            ex.getErrorSource(),
-            ex.getMessage(),
-            LocalDateTime.now());
-    
-    return new ResponseEntity<>(error, ex.getStatus());
-}
 }
