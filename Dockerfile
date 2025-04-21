@@ -8,7 +8,9 @@ COPY . .
 
 RUN mvn clean package spring-boot:repackage
 
-FROM amazoncorretto:21-alpine
+FROM registry.access.redhat.com/ubi8
+
+RUN dnf install -y java-21-openjdk-headless && dnf clean all
 
 WORKDIR /app
 
