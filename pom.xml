@@ -9,10 +9,10 @@
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
     <groupId>org.firpy</groupId>
-    <artifactId>keycloak-wrapper</artifactId>
+    <artifactId>oauth</artifactId>
     <version>0.0.1-SNAPSHOT</version>
-    <name>keycloak-wrapper</name>
-    <description>keycloak-wrapper</description>
+    <name>oauth</name>
+    <description>OAuth service that wraps Keycloak</description>
     <url/>
     <licenses>
         <license/>

@@ -14,6 +14,6 @@ RUN dnf install -y java-21-openjdk-headless && dnf clean all
 
 WORKDIR /app
 
-COPY --from=0 /app/target/keycloak-wrapper-0.0.1-SNAPSHOT.jar target/keycloak-wrapper-0.0.1-SNAPSHOT.jar
+COPY --from=0 /app/target/oauth-0.0.1-SNAPSHOT.jar target/oauth-0.0.1-SNAPSHOT.jar
 
-ENTRYPOINT ["java","-jar","target/keycloak-wrapper-0.0.1-SNAPSHOT.jar"]
+ENTRYPOINT ["java","-jar","target/oauth-0.0.1-SNAPSHOT.jar"]
