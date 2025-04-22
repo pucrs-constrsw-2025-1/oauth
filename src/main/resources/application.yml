@@ -34,3 +34,4 @@ logging:
     com.constrsw: DEBUG
   file:
     name: /var/log/oauth/application.log
+      
