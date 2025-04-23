@@ -86,6 +86,12 @@ public class UsersController
         @RequestParam(required = false) Boolean enabled
     )
     {
+
+        if (accessToken == null || accessToken.trim().isEmpty())
+		{
+			return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Access token is missing");
+		}
+
         try (Keycloak keycloakClient = keycloakAdminClient.fromAdminAccessToken(accessToken))
         {
             UsersResource usersResource = keycloakClient.realm(realmName).users();
@@ -230,6 +236,12 @@ public class UsersController
     )
     public ResponseEntity<?> getCurrentUser(@Schema(hidden = true) @RequestHeader(value = "Authorization", required = false) String accessToken)
     {
+
+        if (accessToken == null || accessToken.trim().isEmpty())
+		{
+			return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Access token is missing");
+		}
+
         try
         {
             return ResponseEntity.ok(keycloakAuthClient.getCurrentUser(accessToken));
@@ -288,6 +300,12 @@ public class UsersController
     )
     public ResponseEntity<?> createUser(@Schema(hidden = true) @RequestHeader(value = "Authorization", required = false) String accessToken, @RequestBody CreateUserRequest createUserRequest)
     {
+
+        if (accessToken == null || accessToken.trim().isEmpty())
+		{
+			return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Access token is missing");
+		}
+
         try (Keycloak keycloakClient = keycloakAdminClient.fromAdminAccessToken(accessToken))
         {
             try (Response response = keycloakClient.realm(realmName).users().create(createUserRequest.toKeycloakUserRepresentation()))
@@ -367,6 +385,11 @@ public class UsersController
         {
             return ResponseEntity.badRequest().body("User ID is required");
         }
+
+        if (accessToken == null || accessToken.trim().isEmpty())
+		{
+			return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Access token is missing");
+		}
 
         if (updateUserRequest == null ||
             updateUserRequest.firstName() == null ||
@@ -451,6 +474,12 @@ public class UsersController
     )
     public ResponseEntity<?> updateUserPassword(@Schema(hidden = true) @RequestHeader(value = "Authorization", required = false) String accessToken, @PathVariable("id") String id, @RequestBody UpdateUserPasswordRequest passwordReset)
     {
+
+        if (accessToken == null || accessToken.trim().isEmpty())
+		{
+			return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Access token is missing");
+		}
+
         try (Keycloak keycloakClient = keycloakAdminClient.fromAdminAccessToken(accessToken))
         {
             CredentialRepresentation credentialRepresentation = new CredentialRepresentation();
@@ -506,6 +535,12 @@ public class UsersController
     )
     public ResponseEntity<?> deleteUser(@PathVariable String id, @Schema(hidden = true) @RequestHeader(value = "Authorization", required = false) String accessToken)
     {
+
+        if (accessToken == null || accessToken.trim().isEmpty())
+		{
+			return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Access token is missing");
+		}
+
         try (Keycloak keycloakClient = keycloakAdminClient.fromAdminAccessToken(accessToken))
         {
             UserResource userResource = keycloakClient.realm(realmName).users().get(id);
@@ -570,6 +605,12 @@ public class UsersController
     )
     public ResponseEntity<?> getUserRoleMappings(@Schema(hidden = true) @RequestHeader(value = "Authorization", required = false) String accessToken, @PathVariable("id") String id)
     {
+
+        if (accessToken == null || accessToken.trim().isEmpty())
+		{
+			return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Access token is missing");
+		}
+
         try (Keycloak keycloakClient = keycloakAdminClient.fromAdminAccessToken(accessToken))
         {
             MappingsRepresentation allRoles = keycloakClient.realm(realmName).users().get(id).roles().getAll();
@@ -630,6 +671,12 @@ public class UsersController
     )
     public ResponseEntity<?> createUserRoleMappings(@Schema(hidden = true) @RequestHeader(value = "Authorization", required = false) String accessToken, @PathVariable("id") String id, @RequestBody String[] roleNamesToAdd)
     {
+
+        if (accessToken == null || accessToken.trim().isEmpty())
+		{
+			return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Access token is missing");
+		}
+
         try (Keycloak keycloakClient = keycloakAdminClient.fromAdminAccessToken(accessToken))
         {
             String clientUUID = keycloakClient.realm(realmName).clients().findByClientId(clientId).getFirst().getId();
@@ -697,6 +744,12 @@ public class UsersController
     )
     public ResponseEntity<?> deleteUserRoleMappings(@Schema(hidden = true) @RequestHeader(value = "Authorization", required = false) String accessToken, @PathVariable("id") String id, @RequestBody String[] roleNamesToRemove)
     {
+
+        if (accessToken == null || accessToken.trim().isEmpty())
+		{
+			return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Access token is missing");
+		}
+
         try (Keycloak keycloakClient = keycloakAdminClient.fromAdminAccessToken(accessToken))
         {
             String clientUUID = keycloakClient.realm(realmName).clients().findByClientId(clientId).getFirst().getId();

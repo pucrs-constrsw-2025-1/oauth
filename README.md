@@ -1,10 +1,10 @@
 Wrapper de autenticação e autorização com o Keycloak
 
-URL para o Swagger: http://localhost:8081/swagger-ui/index.html
-URL para o keycloak admin console: http://localhost:8080/admin/master/console
+URL para o Swagger: http://localhost:8080/swagger-ui/index.html
+URL para o keycloak admin console: http://localhost:8090/admin/master/console
 
-Usuário root: admin
-Senha root: admin
+Usuário root: admin@pucrs.br
+Senha root: a12345678
 
 O realm, client, client secret, roles e permissões são criados automaticamente no seed RealmSeed.
 
@@ -46,9 +46,9 @@ O realm, client, client secret, roles e permissões são criados automaticamente
     - [X] Ensure that it returns 404 if the user doesn't exist
     - [X] Ensure that it updates the user's fields
 - Update user password endpoint (Leonardo)
-    - [ ] Ensure that it receives a JSON object with the newPassword field
-    - [ ] Ensure that it returns 400 on a bad request
-    - [ ] Ensure that it returns 401 if the access token is invalid
+    - [X] Ensure that it receives a JSON object with the newPassword field
+    - [X] Ensure that it returns 400 on a bad request
+    - [] Ensure that it returns 401 if the access token is invalid
     - [ ] Ensure that it returns 403 if the access token doesn't have the necessary scopes (not admin)
     - [ ] Ensure that it returns 404 if the user doesn't exist
     - [ ] Ensure that it updates the user's password
