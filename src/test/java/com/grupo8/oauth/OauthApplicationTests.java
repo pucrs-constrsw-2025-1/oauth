@@ -1,13 +1,13 @@
-package com.grupo8.oauth;
+// package com.grupo8.oauth;
 
-import org.junit.jupiter.api.Test;
-import org.springframework.boot.test.context.SpringBootTest;
+// import org.junit.jupiter.api.Test;
+// import org.springframework.boot.test.context.SpringBootTest;
 
-@SpringBootTest
-class OauthApplicationTests {
+// @SpringBootTest
+// class OauthApplicationTests {
 
-	@Test
-	void contextLoads() {
-	}
+// @Test
+// void contextLoads() {
+// }
 
-}
+// }

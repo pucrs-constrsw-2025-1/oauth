@@ -12,9 +12,14 @@ import org.springframework.web.client.RestTemplate;
 @Service
 public class AuthService {
 
-    // TODO: ADICIONAR VARIAVEL: "KEYCLOAK_TOKEN_URI" no .env
-    @Value("${keycloak.token-uri}")
-    private String keycloakTokenUri;
+    @Value("${KEYCLOAK_INTERNAL_HOST}")
+    private String keycloakHost;
+
+    @Value("${KEYCLOAK_INTERNAL_PORT}")
+    private String keycloakPort;
+
+    @Value("${KEYCLOAK_REALM}")
+    private String keycloakRealm;
 
     @Value("${KEYCLOAK_GRANT_TYPE}")
     private String grantType;
@@ -24,6 +29,12 @@ public class AuthService {
 
     @Value("${KEYCLOAK_CLIENT_SECRET}")
     private String clientSecret;
+
+    public String getTokenUri() {
+        return "http://" + keycloakHost + ":" + keycloakPort +
+                "/realms/" + keycloakRealm +
+                "/protocol/openid-connect/token";
+    }
 
     public LoginResponse login(LoginRequest request) {
         RestTemplate restTemplate = new RestTemplate();
@@ -41,7 +52,7 @@ public class AuthService {
         HttpEntity<MultiValueMap<String, String>> entity = new HttpEntity<>(form, headers);
 
         ResponseEntity<LoginResponse> response = restTemplate.exchange(
-                keycloakTokenUri,
+                getTokenUri(),
                 HttpMethod.POST,
                 entity,
                 LoginResponse.class);
