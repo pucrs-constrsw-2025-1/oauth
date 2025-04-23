@@ -1,34 +1,28 @@
-# oauth
-# OAuth Service with Keycloak Integration
+# OAuth API com Keycloak
 
-This project provides authentication and user management services using Spring Boot and Keycloak.
+![Java](https://img.shields.io/badge/java-%23ED8B00.svg?style=for-the-badge&logo=openjdk&logoColor=white)
+![Spring Boot](https://img.shields.io/badge/Spring_Boot-6DB33F?style=for-the-badge&logo=spring&logoColor=white)
+![Keycloak](https://img.shields.io/badge/Keycloak-5F6BED?style=for-the-badge&logo=Keycloak&logoColor=white)
+![Docker](https://img.shields.io/badge/docker-%230db7ed.svg?style=for-the-badge&logo=docker&logoColor=white)
 
-## Architecture
+API de autenticação OAuth2 utilizando Spring Boot e Keycloak como provedor de identidade, containerizada com Docker.
 
-The project follows a clean architecture approach with the following layers:
-
-- **Presentation Layer**: Controllers that handle HTTP requests and responses
-- **Application Layer**: Services that implement business logic
-- **Infrastructure Layer**: Configuration and integration with external systems (Keycloak, databases)
-
-Key technologies used:
-- Spring Boot 3.1.0
-- Keycloak 21.1.1
-- PostgreSQL 13
-- MongoDB 5.0
-- Docker Compose
-
-## Prerequisites
+## 📋 Pré-requisitos
 
 - Docker 20.10+
-- Docker Compose 1.29+
-- JDK 17+
+- Docker Compose 2.0+
+- Java 21 (para desenvolvimento)
+- Maven (para desenvolvimento)
 
-## Getting Started
+## 🚀 Instalação
 
-1. Clone the repository
-2. Create `.env` file based on `.env.example`
-3. Run the application:
-
+1. Clone o repositório:
 ```bash
-docker-compose up --build
+git clone https://github.com/seu-usuario/constrsw-2025-1.git
+cd constrsw-2025-1
+
+docker volume create constrsw-keycloak-data
+docker volume create constrsw-postgresql-data
+docker volume create constrsw-mongodb-data
+
+docker-compose up -d
