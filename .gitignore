@@ -1,0 +1,61 @@
+# === JAVA ===
+*.class
+*.jar
+*.war
+*.ear
+*.iml
+*.log
+*.hprof
+
+# === BUILD ===
+/target/
+/build/
+/out/
+
+# === MAVEN / GRADLE ===
+.mvn/
+!**/src/main/**/maven-wrapper.jar
+pom.xml.tag
+pom.xml.releaseBackup
+pom.xml.versionsBackup
+pom.xml.next
+release.properties
+dependency-reduced-pom.xml
+buildNumber.properties
+.mvn/timing.properties
+/.gradle
+/build/
+
+# === SPRING SPECIFIC ===
+spring.log
+
+# === IDEs ===
+
+# IntelliJ IDEA
+.idea/
+*.iws
+*.iml
+*.ipr
+out/
+
+# Eclipse
+.project
+.classpath
+.c9/
+.settings/
+.springBeans
+
+# NetBeans
+nbproject/private/
+build/
+nbbuild/
+dist/
+nbdist/
+.nb-gradle/
+
+# VS Code
+.vscode/
+
+# OS-generated files
+.DS_Store
+Thumbs.db
