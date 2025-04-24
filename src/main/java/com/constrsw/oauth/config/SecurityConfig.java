@@ -51,7 +51,6 @@ public class SecurityConfig {
         return jwtConverter;
     }
 
-    // Converter para extrair roles do Keycloak do JWT
     static class KeycloakRoleConverter implements Converter<Jwt, Collection<GrantedAuthority>> {
         @SuppressWarnings("unchecked")
         @Override
