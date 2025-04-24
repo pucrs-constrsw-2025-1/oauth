@@ -2,7 +2,8 @@ package com.constrsw.oauth.controller;
 
 import com.constrsw.oauth.model.UserRequest;
 import com.constrsw.oauth.model.UserResponse;
-import com.constrsw.oauth.service.KeycloakService;
+
+import com.constrsw.oauth.service.KeycloakUserService;
 import org.keycloak.representations.AccessTokenResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -17,10 +18,10 @@ import java.util.Map;
 @RequestMapping("/api")
 public class UserController {
 
-    private final KeycloakService keycloakService;
+    private final KeycloakUserService keycloakService;
 
     @Autowired
-    public UserController(KeycloakService keycloakService) {
+    public UserController(KeycloakUserService keycloakService) {
         this.keycloakService = keycloakService;
     }
 
@@ -30,43 +31,17 @@ public class UserController {
     }
 
     @PostMapping("/users")
-    public ResponseEntity<UserResponse> createUser(@RequestBody UserRequest userRequest) {
+    public ResponseEntity<String> createUser(@RequestBody UserRequest userRequest) {
         System.out.println("chegou aqui " + userRequest);
-        UserResponse createdUser = keycloakService.createUser(userRequest);
+        String createdUser = keycloakService.createUser(userRequest, false);
         return new ResponseEntity<>(createdUser, HttpStatus.CREATED);
     }
 
-    @PostMapping("/auth/login")
-    public ResponseEntity<AccessTokenResponse> login(@RequestBody Map<String, String> credentials) {
-        String username = credentials.get("username");
-        String password = credentials.get("password");
-        AccessTokenResponse token = keycloakService.login(username, password);
-        return ResponseEntity.ok(token);
-    }
+
 
     @DeleteMapping("/users/{userId}")
     public ResponseEntity<Void> deleteUser(@PathVariable String userId) {
         keycloakService.deleteUser(userId);
         return ResponseEntity.noContent().build();
-    }
-
-    @GetMapping("/users")
-    public ResponseEntity<List<UserResponse>> getAllUsers() {
-        List<UserResponse> users = keycloakService.getAllUsers();
-        return ResponseEntity.ok(users);
-    }
-
-    @GetMapping("/users/{userId}")
-    public ResponseEntity<UserResponse> getUserById(@PathVariable String userId) {
-        UserResponse user = keycloakService.getUserById(userId);
-        return ResponseEntity.ok(user);
-    }
-
-    // Rota protegida que requer role ADMINISTRADOR
-    @PreAuthorize("hasRole('ADMINISTRADOR')")
-    @GetMapping("/users/admin/list")
-    public ResponseEntity<List<UserResponse>> getAdminUsersList() {
-        List<UserResponse> users = keycloakService.getAllUsers();
-        return ResponseEntity.ok(users);
     }
 }

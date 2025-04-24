@@ -36,8 +36,6 @@ public class KeycloakUserService {
      */
     public String createUser(UserRequest userRequest, boolean isTemporary) {
         try {
-            UsersResource usersResource = keycloak.realm(realm).users();
-            
             CredentialRepresentation credential = new CredentialRepresentation();
             credential.setType(CredentialRepresentation.PASSWORD);
             credential.setValue(userRequest.getPassword());
@@ -45,21 +43,23 @@ public class KeycloakUserService {
             
             UserRepresentation user = new UserRepresentation();
             user.setUsername(userRequest.getUsername());
-            user.setEmail(userRequest.getEmail());
+            user.setEmail(userRequest.getEmail()); 
             user.setFirstName(userRequest.getFirstName());
             user.setLastName(userRequest.getLastName());
             user.setEnabled(true);
+            user.setEmailVerified(true);            
             user.setCredentials(Collections.singletonList(credential));
+            user.setRealmRoles(userRequest.getRoles());
+    
+            Response response = getUsersResource().create(user);
+            System.out.println("Response: " + response.getStatus());
+            System.out.println("Response: " + response.getLocation());
+            System.out.println("Response: " + response.getStatusInfo());
             
-            Response response = usersResource.create(user);
-            
+
             if (response.getStatus() == 201) {
                 String locationPath = response.getLocation().getPath();
                 String userId = locationPath.substring(locationPath.lastIndexOf('/') + 1);
-                
-                if (userRequest.getRoles() != null && !userRequest.getRoles().isEmpty()) {
-                    assignRolesToUser(userId, userRequest.getRoles());
-                }
                 
                 return userId;
             } else {
@@ -91,4 +91,10 @@ public class KeycloakUserService {
     public void deleteUser(String userId) {
         keycloak.realm(realm).users().get(userId).remove();
     }
+
+    private UsersResource getUsersResource() {
+        RealmResource realmResource = keycloak.realm(realm);
+        return realmResource.users();
+    }
+
 }
