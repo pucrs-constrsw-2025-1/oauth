@@ -1,6 +1,6 @@
 {
 	"info": {
-		"_postman_id": "b67aaa8d-c634-4646-9866-93769b8f68d3",
+		"_postman_id": "35a97055-c6b2-42c3-943c-f0d59993fe3d",
 		"name": "oauth",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
 		"_exporter_id": "36127534"
@@ -12,6 +12,16 @@
 				{
 					"name": "is Authorized To Get",
 					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{bearerToken}}",
+									"type": "string"
+								}
+							]
+						},
 						"method": "GET",
 						"header": [],
 						"url": {
@@ -157,6 +167,16 @@
 				{
 					"name": "is Authorized To Put",
 					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{bearerToken}}",
+									"type": "string"
+								}
+							]
+						},
 						"method": "PUT",
 						"header": [],
 						"url": {
@@ -302,6 +322,16 @@
 				{
 					"name": "is Authorized To Create",
 					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{bearerToken}}",
+									"type": "string"
+								}
+							]
+						},
 						"method": "POST",
 						"header": [],
 						"url": {
@@ -447,6 +477,16 @@
 				{
 					"name": "is Authorized To Delete",
 					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{bearerToken}}",
+									"type": "string"
+								}
+							]
+						},
 						"method": "DELETE",
 						"header": [],
 						"url": {
@@ -592,6 +632,16 @@
 				{
 					"name": "is Authorized To Patch",
 					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{bearerToken}}",
+									"type": "string"
+								}
+							]
+						},
 						"method": "PATCH",
 						"header": [],
 						"url": {
@@ -748,6 +798,16 @@
 								{
 									"name": "get User Role Mappings",
 									"request": {
+										"auth": {
+											"type": "bearer",
+											"bearer": [
+												{
+													"key": "token",
+													"value": "{{bearerToken}}",
+													"type": "string"
+												}
+											]
+										},
 										"method": "GET",
 										"header": [
 											{
@@ -819,7 +879,7 @@
 												}
 											],
 											"cookie": [],
-											"body": "[\n  {\n    \"id\": \"<string>\",\n    \"name\": \"<string>\",\n    \"description\": \"<string>\",\n    \"scopeParamRequired\": \"<boolean>\",\n    \"composite\": \"<boolean>\",\n    \"composites\": {\n      \"realm\": [\n        \"<string>\",\n        \"<string>\"\n      ],\n      \"client\": {\n        \"mollitb78\": [\n          \"<string>\",\n          \"<string>\"\n        ]\n      },\n      \"application\": {\n        \"aliqua_1\": [\n          \"<string>\",\n          \"<string>\"\n        ]\n      }\n    },\n    \"clientRole\": \"<boolean>\",\n    \"containerId\": \"<string>\",\n    \"attributes\": {\n      \"sint6c3\": [\n        \"<string>\",\n        \"<string>\"\n      ]\n    }\n  },\n  {\n    \"id\": \"<string>\",\n    \"name\": \"<string>\",\n    \"description\": \"<string>\",\n    \"scopeParamRequired\": \"<boolean>\",\n    \"composite\": \"<boolean>\",\n    \"composites\": {\n      \"realm\": [\n        \"<string>\",\n        \"<string>\"\n      ],\n      \"client\": {\n        \"velit94b\": [\n          \"<string>\",\n          \"<string>\"\n        ],\n        \"veniam_c\": [\n          \"<string>\",\n          \"<string>\"\n        ]\n      },\n      \"application\": {\n        \"esse_c6d\": [\n          \"<string>\",\n          \"<string>\"\n        ]\n      }\n    },\n    \"clientRole\": \"<boolean>\",\n    \"containerId\": \"<string>\",\n    \"attributes\": {\n      \"officia_c9d\": [\n        \"<string>\",\n        \"<string>\"\n      ],\n      \"Excepteur92\": [\n        \"<string>\",\n        \"<string>\"\n      ]\n    }\n  }\n]"
+											"body": "[\n  {\n    \"id\": \"<string>\",\n    \"name\": \"<string>\",\n    \"description\": \"<string>\",\n    \"scopeParamRequired\": \"<boolean>\",\n    \"composite\": \"<boolean>\",\n    \"composites\": {\n      \"realm\": [\n        \"<string>\",\n        \"<string>\"\n      ],\n      \"client\": {\n        \"deserunt_3\": [\n          \"<string>\",\n          \"<string>\"\n        ],\n        \"consequat__\": [\n          \"<string>\",\n          \"<string>\"\n        ]\n      },\n      \"application\": {\n        \"ex_62\": [\n          \"<string>\",\n          \"<string>\"\n        ]\n      }\n    },\n    \"clientRole\": \"<boolean>\",\n    \"containerId\": \"<string>\",\n    \"attributes\": {\n      \"laborum_49\": [\n        \"<string>\",\n        \"<string>\"\n      ]\n    }\n  },\n  {\n    \"id\": \"<string>\",\n    \"name\": \"<string>\",\n    \"description\": \"<string>\",\n    \"scopeParamRequired\": \"<boolean>\",\n    \"composite\": \"<boolean>\",\n    \"composites\": {\n      \"realm\": [\n        \"<string>\",\n        \"<string>\"\n      ],\n      \"client\": {\n        \"laborumd0\": [\n          \"<string>\",\n          \"<string>\"\n        ]\n      },\n      \"application\": {\n        \"do_ae\": [\n          \"<string>\",\n          \"<string>\"\n        ],\n        \"sint161\": [\n          \"<string>\",\n          \"<string>\"\n        ]\n      }\n    },\n    \"clientRole\": \"<boolean>\",\n    \"containerId\": \"<string>\",\n    \"attributes\": {\n      \"Lorem748\": [\n        \"<string>\",\n        \"<string>\"\n      ]\n    }\n  }\n]"
 										},
 										{
 											"name": "Invalid access token",
@@ -857,7 +917,7 @@
 											},
 											"status": "Unauthorized",
 											"code": 401,
-											"_postman_previewlanguage": "text",
+											"_postman_previewlanguage": "json",
 											"header": [
 												{
 													"key": "Content-Type",
@@ -865,7 +925,7 @@
 												}
 											],
 											"cookie": [],
-											"body": "<object>"
+											"body": "{\n  \"errorDescription\": \"<string>\",\n  \"source\": \"<string>\"\n}"
 										},
 										{
 											"name": "Access token lacks required admin scopes",
@@ -903,7 +963,7 @@
 											},
 											"status": "Forbidden",
 											"code": 403,
-											"_postman_previewlanguage": "text",
+											"_postman_previewlanguage": "json",
 											"header": [
 												{
 													"key": "Content-Type",
@@ -911,7 +971,7 @@
 												}
 											],
 											"cookie": [],
-											"body": "<object>"
+											"body": "{\n  \"errorDescription\": \"<string>\",\n  \"source\": \"<string>\"\n}"
 										},
 										{
 											"name": "User not found",
@@ -949,7 +1009,7 @@
 											},
 											"status": "Not Found",
 											"code": 404,
-											"_postman_previewlanguage": "text",
+											"_postman_previewlanguage": "json",
 											"header": [
 												{
 													"key": "Content-Type",
@@ -957,7 +1017,7 @@
 												}
 											],
 											"cookie": [],
-											"body": "<object>"
+											"body": "{\n  \"errorDescription\": \"<string>\",\n  \"source\": \"<string>\"\n}"
 										},
 										{
 											"name": "An unexpected error occurred",
@@ -995,7 +1055,7 @@
 											},
 											"status": "Internal Server Error",
 											"code": 500,
-											"_postman_previewlanguage": "text",
+											"_postman_previewlanguage": "json",
 											"header": [
 												{
 													"key": "Content-Type",
@@ -1003,13 +1063,23 @@
 												}
 											],
 											"cookie": [],
-											"body": "<An unexpected error occurred: {error message}>"
+											"body": "{\n  \"errorDescription\": \"<string>\",\n  \"source\": \"<string>\"\n}"
 										}
 									]
 								},
 								{
 									"name": "create User Role Mappings",
 									"request": {
+										"auth": {
+											"type": "bearer",
+											"bearer": [
+												{
+													"key": "token",
+													"value": "{{bearerToken}}",
+													"type": "string"
+												}
+											]
+										},
 										"method": "POST",
 										"header": [
 											{
@@ -1095,7 +1165,7 @@
 											},
 											"status": "Created",
 											"code": 201,
-											"_postman_previewlanguage": "text",
+											"_postman_previewlanguage": "json",
 											"header": [
 												{
 													"key": "Content-Type",
@@ -1103,7 +1173,7 @@
 												}
 											],
 											"cookie": [],
-											"body": "<object>"
+											"body": "{\n  \"errorDescription\": \"<string>\",\n  \"source\": \"<string>\"\n}"
 										},
 										{
 											"name": "Invalid request or email",
@@ -1150,7 +1220,7 @@
 											},
 											"status": "Bad Request",
 											"code": 400,
-											"_postman_previewlanguage": "text",
+											"_postman_previewlanguage": "json",
 											"header": [
 												{
 													"key": "Content-Type",
@@ -1158,7 +1228,7 @@
 												}
 											],
 											"cookie": [],
-											"body": "<object>"
+											"body": "{\n  \"errorDescription\": \"<string>\",\n  \"source\": \"<string>\"\n}"
 										},
 										{
 											"name": "Invalid access token",
@@ -1205,7 +1275,7 @@
 											},
 											"status": "Unauthorized",
 											"code": 401,
-											"_postman_previewlanguage": "text",
+											"_postman_previewlanguage": "json",
 											"header": [
 												{
 													"key": "Content-Type",
@@ -1213,7 +1283,7 @@
 												}
 											],
 											"cookie": [],
-											"body": "<object>"
+											"body": "{\n  \"errorDescription\": \"<string>\",\n  \"source\": \"<string>\"\n}"
 										},
 										{
 											"name": "Access token lacks required admin scopes",
@@ -1260,7 +1330,7 @@
 											},
 											"status": "Forbidden",
 											"code": 403,
-											"_postman_previewlanguage": "text",
+											"_postman_previewlanguage": "json",
 											"header": [
 												{
 													"key": "Content-Type",
@@ -1268,7 +1338,7 @@
 												}
 											],
 											"cookie": [],
-											"body": "<object>"
+											"body": "{\n  \"errorDescription\": \"<string>\",\n  \"source\": \"<string>\"\n}"
 										},
 										{
 											"name": "User not found",
@@ -1315,7 +1385,7 @@
 											},
 											"status": "Not Found",
 											"code": 404,
-											"_postman_previewlanguage": "text",
+											"_postman_previewlanguage": "json",
 											"header": [
 												{
 													"key": "Content-Type",
@@ -1323,13 +1393,23 @@
 												}
 											],
 											"cookie": [],
-											"body": "<object>"
+											"body": "{\n  \"errorDescription\": \"<string>\",\n  \"source\": \"<string>\"\n}"
 										}
 									]
 								},
 								{
 									"name": "delete User Role Mappings",
 									"request": {
+										"auth": {
+											"type": "bearer",
+											"bearer": [
+												{
+													"key": "token",
+													"value": "{{bearerToken}}",
+													"type": "string"
+												}
+											]
+										},
 										"method": "DELETE",
 										"header": [
 											{
@@ -1470,7 +1550,7 @@
 											},
 											"status": "Bad Request",
 											"code": 400,
-											"_postman_previewlanguage": "text",
+											"_postman_previewlanguage": "json",
 											"header": [
 												{
 													"key": "Content-Type",
@@ -1478,7 +1558,7 @@
 												}
 											],
 											"cookie": [],
-											"body": "<object>"
+											"body": "{\n  \"errorDescription\": \"<string>\",\n  \"source\": \"<string>\"\n}"
 										},
 										{
 											"name": "Invalid access token",
@@ -1525,7 +1605,7 @@
 											},
 											"status": "Unauthorized",
 											"code": 401,
-											"_postman_previewlanguage": "text",
+											"_postman_previewlanguage": "json",
 											"header": [
 												{
 													"key": "Content-Type",
@@ -1533,7 +1613,7 @@
 												}
 											],
 											"cookie": [],
-											"body": "<object>"
+											"body": "{\n  \"errorDescription\": \"<string>\",\n  \"source\": \"<string>\"\n}"
 										},
 										{
 											"name": "Access token lacks required admin scopes",
@@ -1580,7 +1660,7 @@
 											},
 											"status": "Forbidden",
 											"code": 403,
-											"_postman_previewlanguage": "text",
+											"_postman_previewlanguage": "json",
 											"header": [
 												{
 													"key": "Content-Type",
@@ -1588,7 +1668,7 @@
 												}
 											],
 											"cookie": [],
-											"body": "<object>"
+											"body": "{\n  \"errorDescription\": \"<string>\",\n  \"source\": \"<string>\"\n}"
 										},
 										{
 											"name": "User not found",
@@ -1635,7 +1715,7 @@
 											},
 											"status": "Not Found",
 											"code": 404,
-											"_postman_previewlanguage": "text",
+											"_postman_previewlanguage": "json",
 											"header": [
 												{
 													"key": "Content-Type",
@@ -1643,7 +1723,7 @@
 												}
 											],
 											"cookie": [],
-											"body": "<object>"
+											"body": "{\n  \"errorDescription\": \"<string>\",\n  \"source\": \"<string>\"\n}"
 										},
 										{
 											"name": "An unexpected error occurred",
@@ -1690,7 +1770,7 @@
 											},
 											"status": "Internal Server Error",
 											"code": 500,
-											"_postman_previewlanguage": "text",
+											"_postman_previewlanguage": "json",
 											"header": [
 												{
 													"key": "Content-Type",
@@ -1698,7 +1778,7 @@
 												}
 											],
 											"cookie": [],
-											"body": "<An unexpected error occurred: {error message}>"
+											"body": "{\n  \"errorDescription\": \"<string>\",\n  \"source\": \"<string>\"\n}"
 										}
 									]
 								}
@@ -1707,6 +1787,16 @@
 						{
 							"name": "get User",
 							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{bearerToken}}",
+											"type": "string"
+										}
+									]
+								},
 								"method": "GET",
 								"header": [
 									{
@@ -1813,7 +1903,7 @@
 									},
 									"status": "Bad Request",
 									"code": 400,
-									"_postman_previewlanguage": "text",
+									"_postman_previewlanguage": "json",
 									"header": [
 										{
 											"key": "Content-Type",
@@ -1821,7 +1911,7 @@
 										}
 									],
 									"cookie": [],
-									"body": "Invalid request or user not found"
+									"body": "{\n  \"errorDescription\": \"<string>\",\n  \"source\": \"<string>\"\n}"
 								},
 								{
 									"name": "Invalid access token",
@@ -1858,7 +1948,7 @@
 									},
 									"status": "Unauthorized",
 									"code": 401,
-									"_postman_previewlanguage": "text",
+									"_postman_previewlanguage": "json",
 									"header": [
 										{
 											"key": "Content-Type",
@@ -1866,7 +1956,7 @@
 										}
 									],
 									"cookie": [],
-									"body": "Invalid access token"
+									"body": "{\n  \"errorDescription\": \"<string>\",\n  \"source\": \"<string>\"\n}"
 								},
 								{
 									"name": "Access token lacks required admin scopes",
@@ -1903,7 +1993,7 @@
 									},
 									"status": "Forbidden",
 									"code": 403,
-									"_postman_previewlanguage": "text",
+									"_postman_previewlanguage": "json",
 									"header": [
 										{
 											"key": "Content-Type",
@@ -1911,7 +2001,7 @@
 										}
 									],
 									"cookie": [],
-									"body": "Access token lacks required admin scopes"
+									"body": "{\n  \"errorDescription\": \"<string>\",\n  \"source\": \"<string>\"\n}"
 								},
 								{
 									"name": "User not found",
@@ -1948,7 +2038,7 @@
 									},
 									"status": "Not Found",
 									"code": 404,
-									"_postman_previewlanguage": "text",
+									"_postman_previewlanguage": "json",
 									"header": [
 										{
 											"key": "Content-Type",
@@ -1956,13 +2046,23 @@
 										}
 									],
 									"cookie": [],
-									"body": "User not found"
+									"body": "{\n  \"errorDescription\": \"<string>\",\n  \"source\": \"<string>\"\n}"
 								}
 							]
 						},
 						{
 							"name": "update User",
 							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{bearerToken}}",
+											"type": "string"
+										}
+									]
+								},
 								"method": "PUT",
 								"header": [
 									{
@@ -2011,10 +2111,6 @@
 												"key": "Authorization",
 												"value": "Bearer <token>",
 												"description": "Added as a part of security scheme: bearer"
-											},
-											{
-												"key": "Accept",
-												"value": "*/*"
 											}
 										],
 										"body": {
@@ -2050,11 +2146,11 @@
 									"header": [
 										{
 											"key": "Content-Type",
-											"value": "*/*"
+											"value": "text/plain"
 										}
 									],
 									"cookie": [],
-									"body": "<object>"
+									"body": ""
 								},
 								{
 									"name": "Invalid request",
@@ -2100,7 +2196,7 @@
 									},
 									"status": "Bad Request",
 									"code": 400,
-									"_postman_previewlanguage": "text",
+									"_postman_previewlanguage": "json",
 									"header": [
 										{
 											"key": "Content-Type",
@@ -2108,7 +2204,7 @@
 										}
 									],
 									"cookie": [],
-									"body": "<object>"
+									"body": "{\n  \"errorDescription\": \"<string>\",\n  \"source\": \"<string>\"\n}"
 								},
 								{
 									"name": "Invalid access token",
@@ -2154,7 +2250,7 @@
 									},
 									"status": "Unauthorized",
 									"code": 401,
-									"_postman_previewlanguage": "text",
+									"_postman_previewlanguage": "json",
 									"header": [
 										{
 											"key": "Content-Type",
@@ -2162,7 +2258,7 @@
 										}
 									],
 									"cookie": [],
-									"body": "<object>"
+									"body": "{\n  \"errorDescription\": \"<string>\",\n  \"source\": \"<string>\"\n}"
 								},
 								{
 									"name": "Access token lacks required admin scopes",
@@ -2208,7 +2304,7 @@
 									},
 									"status": "Forbidden",
 									"code": 403,
-									"_postman_previewlanguage": "text",
+									"_postman_previewlanguage": "json",
 									"header": [
 										{
 											"key": "Content-Type",
@@ -2216,7 +2312,7 @@
 										}
 									],
 									"cookie": [],
-									"body": "<object>"
+									"body": "{\n  \"errorDescription\": \"<string>\",\n  \"source\": \"<string>\"\n}"
 								},
 								{
 									"name": "User not found",
@@ -2262,7 +2358,7 @@
 									},
 									"status": "Not Found",
 									"code": 404,
-									"_postman_previewlanguage": "text",
+									"_postman_previewlanguage": "json",
 									"header": [
 										{
 											"key": "Content-Type",
@@ -2270,7 +2366,7 @@
 										}
 									],
 									"cookie": [],
-									"body": "<object>"
+									"body": "{\n  \"errorDescription\": \"<string>\",\n  \"source\": \"<string>\"\n}"
 								},
 								{
 									"name": "An unexpected error occurred",
@@ -2316,7 +2412,7 @@
 									},
 									"status": "Internal Server Error",
 									"code": 500,
-									"_postman_previewlanguage": "text",
+									"_postman_previewlanguage": "json",
 									"header": [
 										{
 											"key": "Content-Type",
@@ -2324,13 +2420,23 @@
 										}
 									],
 									"cookie": [],
-									"body": "<string>"
+									"body": "{\n  \"errorDescription\": \"<string>\",\n  \"source\": \"<string>\"\n}"
 								}
 							]
 						},
 						{
 							"name": "delete User",
 							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{bearerToken}}",
+											"type": "string"
+										}
+									]
+								},
 								"method": "DELETE",
 								"header": [
 									{
@@ -2482,7 +2588,7 @@
 									},
 									"status": "Unauthorized",
 									"code": 401,
-									"_postman_previewlanguage": "text",
+									"_postman_previewlanguage": "json",
 									"header": [
 										{
 											"key": "Content-Type",
@@ -2490,7 +2596,7 @@
 										}
 									],
 									"cookie": [],
-									"body": "Invalid access token"
+									"body": "{\n  \"errorDescription\": \"<string>\",\n  \"source\": \"<string>\"\n}"
 								},
 								{
 									"name": "Access token lacks required admin scopes",
@@ -2527,7 +2633,7 @@
 									},
 									"status": "Forbidden",
 									"code": 403,
-									"_postman_previewlanguage": "text",
+									"_postman_previewlanguage": "json",
 									"header": [
 										{
 											"key": "Content-Type",
@@ -2535,7 +2641,7 @@
 										}
 									],
 									"cookie": [],
-									"body": "Access token lacks required admin scopes"
+									"body": "{\n  \"errorDescription\": \"<string>\",\n  \"source\": \"<string>\"\n}"
 								},
 								{
 									"name": "User not found",
@@ -2572,7 +2678,7 @@
 									},
 									"status": "Not Found",
 									"code": 404,
-									"_postman_previewlanguage": "text",
+									"_postman_previewlanguage": "json",
 									"header": [
 										{
 											"key": "Content-Type",
@@ -2580,7 +2686,7 @@
 										}
 									],
 									"cookie": [],
-									"body": "User not found"
+									"body": "{\n  \"errorDescription\": \"<string>\",\n  \"source\": \"<string>\"\n}"
 								},
 								{
 									"name": "Failed to disable user",
@@ -2617,7 +2723,7 @@
 									},
 									"status": "Internal Server Error",
 									"code": 500,
-									"_postman_previewlanguage": "text",
+									"_postman_previewlanguage": "json",
 									"header": [
 										{
 											"key": "Content-Type",
@@ -2625,13 +2731,23 @@
 										}
 									],
 									"cookie": [],
-									"body": "<Failed to disable user: {error message}>"
+									"body": "{\n  \"errorDescription\": \"<string>\",\n  \"source\": \"<string>\"\n}"
 								}
 							]
 						},
 						{
 							"name": "update User Password",
 							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{bearerToken}}",
+											"type": "string"
+										}
+									]
+								},
 								"method": "PATCH",
 								"header": [
 									{
@@ -2680,10 +2796,6 @@
 												"key": "Authorization",
 												"value": "Bearer <token>",
 												"description": "Added as a part of security scheme: bearer"
-											},
-											{
-												"key": "Accept",
-												"value": "*/*"
 											}
 										],
 										"body": {
@@ -2719,11 +2831,11 @@
 									"header": [
 										{
 											"key": "Content-Type",
-											"value": "*/*"
+											"value": "text/plain"
 										}
 									],
 									"cookie": [],
-									"body": "<object>"
+									"body": ""
 								},
 								{
 									"name": "Invalid request or email",
@@ -2769,7 +2881,7 @@
 									},
 									"status": "Bad Request",
 									"code": 400,
-									"_postman_previewlanguage": "text",
+									"_postman_previewlanguage": "json",
 									"header": [
 										{
 											"key": "Content-Type",
@@ -2777,7 +2889,7 @@
 										}
 									],
 									"cookie": [],
-									"body": "<object>"
+									"body": "{\n  \"errorDescription\": \"<string>\",\n  \"source\": \"<string>\"\n}"
 								},
 								{
 									"name": "Invalid access token",
@@ -2823,7 +2935,7 @@
 									},
 									"status": "Unauthorized",
 									"code": 401,
-									"_postman_previewlanguage": "text",
+									"_postman_previewlanguage": "json",
 									"header": [
 										{
 											"key": "Content-Type",
@@ -2831,7 +2943,7 @@
 										}
 									],
 									"cookie": [],
-									"body": "<object>"
+									"body": "{\n  \"errorDescription\": \"<string>\",\n  \"source\": \"<string>\"\n}"
 								},
 								{
 									"name": "Access token lacks required admin scopes",
@@ -2877,7 +2989,7 @@
 									},
 									"status": "Forbidden",
 									"code": 403,
-									"_postman_previewlanguage": "text",
+									"_postman_previewlanguage": "json",
 									"header": [
 										{
 											"key": "Content-Type",
@@ -2885,7 +2997,7 @@
 										}
 									],
 									"cookie": [],
-									"body": "<object>"
+									"body": "{\n  \"errorDescription\": \"<string>\",\n  \"source\": \"<string>\"\n}"
 								},
 								{
 									"name": "User not found",
@@ -2931,7 +3043,7 @@
 									},
 									"status": "Not Found",
 									"code": 404,
-									"_postman_previewlanguage": "text",
+									"_postman_previewlanguage": "json",
 									"header": [
 										{
 											"key": "Content-Type",
@@ -2939,7 +3051,7 @@
 										}
 									],
 									"cookie": [],
-									"body": "<object>"
+									"body": "{\n  \"errorDescription\": \"<string>\",\n  \"source\": \"<string>\"\n}"
 								},
 								{
 									"name": "An unexpected error occurred",
@@ -2985,7 +3097,7 @@
 									},
 									"status": "Internal Server Error",
 									"code": 500,
-									"_postman_previewlanguage": "text",
+									"_postman_previewlanguage": "json",
 									"header": [
 										{
 											"key": "Content-Type",
@@ -2993,7 +3105,7 @@
 										}
 									],
 									"cookie": [],
-									"body": "<string>"
+									"body": "{\n  \"errorDescription\": \"<string>\",\n  \"source\": \"<string>\"\n}"
 								}
 							]
 						}
@@ -3002,6 +3114,16 @@
 				{
 					"name": "get Users",
 					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{bearerToken}}",
+									"type": "string"
+								}
+							]
+						},
 						"method": "GET",
 						"header": [
 							{
@@ -3150,7 +3272,7 @@
 							},
 							"status": "Unauthorized",
 							"code": 401,
-							"_postman_previewlanguage": "text",
+							"_postman_previewlanguage": "json",
 							"header": [
 								{
 									"key": "Content-Type",
@@ -3158,7 +3280,7 @@
 								}
 							],
 							"cookie": [],
-							"body": "Invalid access token"
+							"body": "{\n  \"errorDescription\": \"<string>\",\n  \"source\": \"<string>\"\n}"
 						},
 						{
 							"name": "Access token lacks required admin scopes",
@@ -3209,7 +3331,7 @@
 							},
 							"status": "Forbidden",
 							"code": 403,
-							"_postman_previewlanguage": "text",
+							"_postman_previewlanguage": "json",
 							"header": [
 								{
 									"key": "Content-Type",
@@ -3217,7 +3339,7 @@
 								}
 							],
 							"cookie": [],
-							"body": "Access token lacks required admin scopes"
+							"body": "{\n  \"errorDescription\": \"<string>\",\n  \"source\": \"<string>\"\n}"
 						},
 						{
 							"name": "An unexpected error occurred",
@@ -3268,7 +3390,7 @@
 							},
 							"status": "Internal Server Error",
 							"code": 500,
-							"_postman_previewlanguage": "text",
+							"_postman_previewlanguage": "json",
 							"header": [
 								{
 									"key": "Content-Type",
@@ -3276,13 +3398,23 @@
 								}
 							],
 							"cookie": [],
-							"body": "<string>"
+							"body": "{\n  \"errorDescription\": \"<string>\",\n  \"source\": \"<string>\"\n}"
 						}
 					]
 				},
 				{
 					"name": "create User",
 					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{bearerToken}}",
+									"type": "string"
+								}
+							]
+						},
 						"method": "POST",
 						"header": [
 							{
@@ -3396,7 +3528,7 @@
 							},
 							"status": "Bad Request",
 							"code": 400,
-							"_postman_previewlanguage": "text",
+							"_postman_previewlanguage": "json",
 							"header": [
 								{
 									"key": "Content-Type",
@@ -3404,7 +3536,7 @@
 								}
 							],
 							"cookie": [],
-							"body": "Invalid request or email"
+							"body": "{\n  \"errorDescription\": \"<string>\",\n  \"source\": \"<string>\"\n}"
 						},
 						{
 							"name": "Invalid access token",
@@ -3442,7 +3574,7 @@
 							},
 							"status": "Unauthorized",
 							"code": 401,
-							"_postman_previewlanguage": "text",
+							"_postman_previewlanguage": "json",
 							"header": [
 								{
 									"key": "Content-Type",
@@ -3450,7 +3582,7 @@
 								}
 							],
 							"cookie": [],
-							"body": "Invalid access token"
+							"body": "{\n  \"errorDescription\": \"<string>\",\n  \"source\": \"<string>\"\n}"
 						},
 						{
 							"name": "Access token lacks required admin scopes",
@@ -3488,7 +3620,7 @@
 							},
 							"status": "Forbidden",
 							"code": 403,
-							"_postman_previewlanguage": "text",
+							"_postman_previewlanguage": "json",
 							"header": [
 								{
 									"key": "Content-Type",
@@ -3496,7 +3628,7 @@
 								}
 							],
 							"cookie": [],
-							"body": "Access token lacks required admin scopes"
+							"body": "{\n  \"errorDescription\": \"<string>\",\n  \"source\": \"<string>\"\n}"
 						},
 						{
 							"name": "User already exists",
@@ -3534,7 +3666,7 @@
 							},
 							"status": "Conflict",
 							"code": 409,
-							"_postman_previewlanguage": "text",
+							"_postman_previewlanguage": "json",
 							"header": [
 								{
 									"key": "Content-Type",
@@ -3542,7 +3674,7 @@
 								}
 							],
 							"cookie": [],
-							"body": "User already exists"
+							"body": "{\n  \"errorDescription\": \"<string>\",\n  \"source\": \"<string>\"\n}"
 						},
 						{
 							"name": "An unexpected error occurred",
@@ -3580,7 +3712,7 @@
 							},
 							"status": "Internal Server Error",
 							"code": 500,
-							"_postman_previewlanguage": "text",
+							"_postman_previewlanguage": "json",
 							"header": [
 								{
 									"key": "Content-Type",
@@ -3588,13 +3720,23 @@
 								}
 							],
 							"cookie": [],
-							"body": "<An unexpected error occurred: {error message}>"
+							"body": "{\n  \"errorDescription\": \"<string>\",\n  \"source\": \"<string>\"\n}"
 						}
 					]
 				},
 				{
 					"name": "get Current User",
 					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{bearerToken}}",
+									"type": "string"
+								}
+							]
+						},
 						"method": "GET",
 						"header": [
 							{
@@ -3680,7 +3822,7 @@
 							},
 							"status": "Unauthorized",
 							"code": 401,
-							"_postman_previewlanguage": "text",
+							"_postman_previewlanguage": "json",
 							"header": [
 								{
 									"key": "Content-Type",
@@ -3688,7 +3830,7 @@
 								}
 							],
 							"cookie": [],
-							"body": "Invalid access token"
+							"body": "{\n  \"errorDescription\": \"<string>\",\n  \"source\": \"<string>\"\n}"
 						}
 					]
 				}
@@ -3703,6 +3845,16 @@
 						{
 							"name": "get Role",
 							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{bearerToken}}",
+											"type": "string"
+										}
+									]
+								},
 								"method": "GET",
 								"header": [
 									{
@@ -3772,7 +3924,7 @@
 										}
 									],
 									"cookie": [],
-									"body": "{\n  \"id\": \"<string>\",\n  \"name\": \"<string>\",\n  \"description\": \"<string>\",\n  \"scopeParamRequired\": \"<boolean>\",\n  \"composite\": \"<boolean>\",\n  \"composites\": {\n    \"realm\": [\n      \"<string>\",\n      \"<string>\"\n    ],\n    \"client\": {\n      \"anim5c\": [\n        \"<string>\",\n        \"<string>\"\n      ],\n      \"fugiata\": [\n        \"<string>\",\n        \"<string>\"\n      ],\n      \"doloree\": [\n        \"<string>\",\n        \"<string>\"\n      ]\n    },\n    \"application\": {\n      \"irurea\": [\n        \"<string>\",\n        \"<string>\"\n      ],\n      \"consectetur9f9\": [\n        \"<string>\",\n        \"<string>\"\n      ],\n      \"et50b\": [\n        \"<string>\",\n        \"<string>\"\n      ],\n      \"deserunt_8\": [\n        \"<string>\",\n        \"<string>\"\n      ]\n    }\n  },\n  \"clientRole\": \"<boolean>\",\n  \"containerId\": \"<string>\",\n  \"attributes\": {\n    \"enim_8d1\": [\n      \"<string>\",\n      \"<string>\"\n    ],\n    \"laborum887\": [\n      \"<string>\",\n      \"<string>\"\n    ]\n  }\n}"
+									"body": "{\n  \"id\": \"<string>\",\n  \"name\": \"<string>\",\n  \"description\": \"<string>\",\n  \"scopeParamRequired\": \"<boolean>\",\n  \"composite\": \"<boolean>\",\n  \"composites\": {\n    \"realm\": [\n      \"<string>\",\n      \"<string>\"\n    ],\n    \"client\": {\n      \"ipsumf\": [\n        \"<string>\",\n        \"<string>\"\n      ]\n    },\n    \"application\": {\n      \"anim6\": [\n        \"<string>\",\n        \"<string>\"\n      ]\n    }\n  },\n  \"clientRole\": \"<boolean>\",\n  \"containerId\": \"<string>\",\n  \"attributes\": {\n    \"consectetur13b\": [\n      \"<string>\",\n      \"<string>\"\n    ],\n    \"veniam__4c\": [\n      \"<string>\",\n      \"<string>\"\n    ],\n    \"ex_b_4\": [\n      \"<string>\",\n      \"<string>\"\n    ]\n  }\n}"
 								},
 								{
 									"name": "Invalid access token",
@@ -3809,7 +3961,7 @@
 									},
 									"status": "Unauthorized",
 									"code": 401,
-									"_postman_previewlanguage": "text",
+									"_postman_previewlanguage": "json",
 									"header": [
 										{
 											"key": "Content-Type",
@@ -3817,7 +3969,7 @@
 										}
 									],
 									"cookie": [],
-									"body": "<string>"
+									"body": "{\n  \"errorDescription\": \"<string>\",\n  \"source\": \"<string>\"\n}"
 								},
 								{
 									"name": "Access token lacks required admin scopes",
@@ -3854,7 +4006,7 @@
 									},
 									"status": "Forbidden",
 									"code": 403,
-									"_postman_previewlanguage": "text",
+									"_postman_previewlanguage": "json",
 									"header": [
 										{
 											"key": "Content-Type",
@@ -3862,7 +4014,7 @@
 										}
 									],
 									"cookie": [],
-									"body": "Access token lacks required admin scopes"
+									"body": "{\n  \"errorDescription\": \"<string>\",\n  \"source\": \"<string>\"\n}"
 								},
 								{
 									"name": "Role not found",
@@ -3899,7 +4051,7 @@
 									},
 									"status": "Not Found",
 									"code": 404,
-									"_postman_previewlanguage": "text",
+									"_postman_previewlanguage": "json",
 									"header": [
 										{
 											"key": "Content-Type",
@@ -3907,7 +4059,7 @@
 										}
 									],
 									"cookie": [],
-									"body": "Role not found"
+									"body": "{\n  \"errorDescription\": \"<string>\",\n  \"source\": \"<string>\"\n}"
 								},
 								{
 									"name": "An unexpected error occurred",
@@ -3944,7 +4096,7 @@
 									},
 									"status": "Internal Server Error",
 									"code": 500,
-									"_postman_previewlanguage": "text",
+									"_postman_previewlanguage": "json",
 									"header": [
 										{
 											"key": "Content-Type",
@@ -3952,13 +4104,23 @@
 										}
 									],
 									"cookie": [],
-									"body": "<An unexpected error occurred: {error message}>"
+									"body": "{\n  \"errorDescription\": \"<string>\",\n  \"source\": \"<string>\"\n}"
 								}
 							]
 						},
 						{
 							"name": "update Role",
 							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{bearerToken}}",
+											"type": "string"
+										}
+									]
+								},
 								"method": "PUT",
 								"header": [
 									{
@@ -3972,7 +4134,7 @@
 								],
 								"body": {
 									"mode": "raw",
-									"raw": "{\n  \"name\": \"<string>\",\n  \"description\": \"<string>\"\n}",
+									"raw": "{\n  \"description\": \"<string>\",\n  \"name\": \"<string>\"\n}",
 									"options": {
 										"raw": {
 											"language": "json"
@@ -4015,7 +4177,7 @@
 										],
 										"body": {
 											"mode": "raw",
-											"raw": "{\n  \"name\": \"<string>\",\n  \"description\": \"<string>\"\n}",
+											"raw": "{\n  \"description\": \"<string>\",\n  \"name\": \"<string>\"\n}",
 											"options": {
 												"raw": {
 													"language": "json"
@@ -4069,7 +4231,7 @@
 										],
 										"body": {
 											"mode": "raw",
-											"raw": "{\n  \"name\": \"<string>\",\n  \"description\": \"<string>\"\n}",
+											"raw": "{\n  \"description\": \"<string>\",\n  \"name\": \"<string>\"\n}",
 											"options": {
 												"raw": {
 													"language": "json"
@@ -4123,7 +4285,7 @@
 										],
 										"body": {
 											"mode": "raw",
-											"raw": "{\n  \"name\": \"<string>\",\n  \"description\": \"<string>\"\n}",
+											"raw": "{\n  \"description\": \"<string>\",\n  \"name\": \"<string>\"\n}",
 											"options": {
 												"raw": {
 													"language": "json"
@@ -4150,7 +4312,7 @@
 									},
 									"status": "Unauthorized",
 									"code": 401,
-									"_postman_previewlanguage": "text",
+									"_postman_previewlanguage": "json",
 									"header": [
 										{
 											"key": "Content-Type",
@@ -4158,7 +4320,7 @@
 										}
 									],
 									"cookie": [],
-									"body": "<string>"
+									"body": "{\n  \"errorDescription\": \"<string>\",\n  \"source\": \"<string>\"\n}"
 								},
 								{
 									"name": "Access token lacks required admin scopes",
@@ -4177,7 +4339,7 @@
 										],
 										"body": {
 											"mode": "raw",
-											"raw": "{\n  \"name\": \"<string>\",\n  \"description\": \"<string>\"\n}",
+											"raw": "{\n  \"description\": \"<string>\",\n  \"name\": \"<string>\"\n}",
 											"options": {
 												"raw": {
 													"language": "json"
@@ -4204,7 +4366,7 @@
 									},
 									"status": "Forbidden",
 									"code": 403,
-									"_postman_previewlanguage": "text",
+									"_postman_previewlanguage": "json",
 									"header": [
 										{
 											"key": "Content-Type",
@@ -4212,7 +4374,7 @@
 										}
 									],
 									"cookie": [],
-									"body": "Access token lacks required admin scopes"
+									"body": "{\n  \"errorDescription\": \"<string>\",\n  \"source\": \"<string>\"\n}"
 								},
 								{
 									"name": "Role not found",
@@ -4231,7 +4393,7 @@
 										],
 										"body": {
 											"mode": "raw",
-											"raw": "{\n  \"name\": \"<string>\",\n  \"description\": \"<string>\"\n}",
+											"raw": "{\n  \"description\": \"<string>\",\n  \"name\": \"<string>\"\n}",
 											"options": {
 												"raw": {
 													"language": "json"
@@ -4258,7 +4420,7 @@
 									},
 									"status": "Not Found",
 									"code": 404,
-									"_postman_previewlanguage": "text",
+									"_postman_previewlanguage": "json",
 									"header": [
 										{
 											"key": "Content-Type",
@@ -4266,7 +4428,7 @@
 										}
 									],
 									"cookie": [],
-									"body": "<object>"
+									"body": "{\n  \"errorDescription\": \"<string>\",\n  \"source\": \"<string>\"\n}"
 								},
 								{
 									"name": "An unexpected error occurred",
@@ -4285,7 +4447,7 @@
 										],
 										"body": {
 											"mode": "raw",
-											"raw": "{\n  \"name\": \"<string>\",\n  \"description\": \"<string>\"\n}",
+											"raw": "{\n  \"description\": \"<string>\",\n  \"name\": \"<string>\"\n}",
 											"options": {
 												"raw": {
 													"language": "json"
@@ -4312,7 +4474,7 @@
 									},
 									"status": "Internal Server Error",
 									"code": 500,
-									"_postman_previewlanguage": "text",
+									"_postman_previewlanguage": "json",
 									"header": [
 										{
 											"key": "Content-Type",
@@ -4320,13 +4482,23 @@
 										}
 									],
 									"cookie": [],
-									"body": "<An unexpected error occurred: {error message}>"
+									"body": "{\n  \"errorDescription\": \"<string>\",\n  \"source\": \"<string>\"\n}"
 								}
 							]
 						},
 						{
 							"name": "delete Role",
 							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{bearerToken}}",
+											"type": "string"
+										}
+									]
+								},
 								"method": "DELETE",
 								"header": [
 									{
@@ -4433,7 +4605,7 @@
 									},
 									"status": "Unauthorized",
 									"code": 401,
-									"_postman_previewlanguage": "text",
+									"_postman_previewlanguage": "json",
 									"header": [
 										{
 											"key": "Content-Type",
@@ -4441,7 +4613,7 @@
 										}
 									],
 									"cookie": [],
-									"body": "<string>"
+									"body": "{\n  \"errorDescription\": \"<string>\",\n  \"source\": \"<string>\"\n}"
 								},
 								{
 									"name": "Access token lacks required admin scopes",
@@ -4478,7 +4650,7 @@
 									},
 									"status": "Forbidden",
 									"code": 403,
-									"_postman_previewlanguage": "text",
+									"_postman_previewlanguage": "json",
 									"header": [
 										{
 											"key": "Content-Type",
@@ -4486,7 +4658,7 @@
 										}
 									],
 									"cookie": [],
-									"body": "Access token lacks required admin scopes"
+									"body": "{\n  \"errorDescription\": \"<string>\",\n  \"source\": \"<string>\"\n}"
 								},
 								{
 									"name": "Role not found",
@@ -4523,7 +4695,7 @@
 									},
 									"status": "Not Found",
 									"code": 404,
-									"_postman_previewlanguage": "text",
+									"_postman_previewlanguage": "json",
 									"header": [
 										{
 											"key": "Content-Type",
@@ -4531,7 +4703,7 @@
 										}
 									],
 									"cookie": [],
-									"body": "Role not found"
+									"body": "{\n  \"errorDescription\": \"<string>\",\n  \"source\": \"<string>\"\n}"
 								},
 								{
 									"name": "An unexpected error occurred",
@@ -4568,6 +4740,114 @@
 									},
 									"status": "Internal Server Error",
 									"code": 500,
+									"_postman_previewlanguage": "json",
+									"header": [
+										{
+											"key": "Content-Type",
+											"value": "*/*"
+										}
+									],
+									"cookie": [],
+									"body": "{\n  \"errorDescription\": \"<string>\",\n  \"source\": \"<string>\"\n}"
+								}
+							]
+						},
+						{
+							"name": "patch Role",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{bearerToken}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "PATCH",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									},
+									{
+										"key": "Accept",
+										"value": "*/*"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"name\": \"<string>\",\n  \"description\": \"<string>\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{baseUrl}}/roles/:role-name",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"roles",
+										":role-name"
+									],
+									"variable": [
+										{
+											"key": "role-name",
+											"value": "<string>",
+											"description": "(Required) "
+										}
+									]
+								}
+							},
+							"response": [
+								{
+									"name": "Role updated",
+									"originalRequest": {
+										"method": "PATCH",
+										"header": [
+											{
+												"key": "Authorization",
+												"value": "Bearer <token>",
+												"description": "Added as a part of security scheme: bearer"
+											},
+											{
+												"key": "Accept",
+												"value": "*/*"
+											}
+										],
+										"body": {
+											"mode": "raw",
+											"raw": "{\n  \"name\": \"<string>\",\n  \"description\": \"<string>\"\n}",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "{{baseUrl}}/roles/:role-name",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"roles",
+												":role-name"
+											],
+											"variable": [
+												{
+													"key": "role-name",
+													"value": "<string>",
+													"description": "(Required) "
+												}
+											]
+										}
+									},
+									"status": "No Content",
+									"code": 204,
 									"_postman_previewlanguage": "text",
 									"header": [
 										{
@@ -4576,7 +4856,277 @@
 										}
 									],
 									"cookie": [],
-									"body": "<An unexpected error occurred: {error message}>"
+									"body": "<object>"
+								},
+								{
+									"name": "Invalid request or email",
+									"originalRequest": {
+										"method": "PATCH",
+										"header": [
+											{
+												"key": "Authorization",
+												"value": "Bearer <token>",
+												"description": "Added as a part of security scheme: bearer"
+											},
+											{
+												"key": "Accept",
+												"value": "*/*"
+											}
+										],
+										"body": {
+											"mode": "raw",
+											"raw": "{\n  \"name\": \"<string>\",\n  \"description\": \"<string>\"\n}",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "{{baseUrl}}/roles/:role-name",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"roles",
+												":role-name"
+											],
+											"variable": [
+												{
+													"key": "role-name",
+													"value": "<string>",
+													"description": "(Required) "
+												}
+											]
+										}
+									},
+									"status": "Bad Request",
+									"code": 400,
+									"_postman_previewlanguage": "json",
+									"header": [
+										{
+											"key": "Content-Type",
+											"value": "*/*"
+										}
+									],
+									"cookie": [],
+									"body": "{\n  \"errorDescription\": \"<string>\",\n  \"source\": \"<string>\"\n}"
+								},
+								{
+									"name": "Invalid access token",
+									"originalRequest": {
+										"method": "PATCH",
+										"header": [
+											{
+												"key": "Authorization",
+												"value": "Bearer <token>",
+												"description": "Added as a part of security scheme: bearer"
+											},
+											{
+												"key": "Accept",
+												"value": "*/*"
+											}
+										],
+										"body": {
+											"mode": "raw",
+											"raw": "{\n  \"name\": \"<string>\",\n  \"description\": \"<string>\"\n}",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "{{baseUrl}}/roles/:role-name",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"roles",
+												":role-name"
+											],
+											"variable": [
+												{
+													"key": "role-name",
+													"value": "<string>",
+													"description": "(Required) "
+												}
+											]
+										}
+									},
+									"status": "Unauthorized",
+									"code": 401,
+									"_postman_previewlanguage": "json",
+									"header": [
+										{
+											"key": "Content-Type",
+											"value": "*/*"
+										}
+									],
+									"cookie": [],
+									"body": "{\n  \"errorDescription\": \"<string>\",\n  \"source\": \"<string>\"\n}"
+								},
+								{
+									"name": "Access token lacks required admin scopes",
+									"originalRequest": {
+										"method": "PATCH",
+										"header": [
+											{
+												"key": "Authorization",
+												"value": "Bearer <token>",
+												"description": "Added as a part of security scheme: bearer"
+											},
+											{
+												"key": "Accept",
+												"value": "*/*"
+											}
+										],
+										"body": {
+											"mode": "raw",
+											"raw": "{\n  \"name\": \"<string>\",\n  \"description\": \"<string>\"\n}",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "{{baseUrl}}/roles/:role-name",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"roles",
+												":role-name"
+											],
+											"variable": [
+												{
+													"key": "role-name",
+													"value": "<string>",
+													"description": "(Required) "
+												}
+											]
+										}
+									},
+									"status": "Forbidden",
+									"code": 403,
+									"_postman_previewlanguage": "json",
+									"header": [
+										{
+											"key": "Content-Type",
+											"value": "*/*"
+										}
+									],
+									"cookie": [],
+									"body": "{\n  \"errorDescription\": \"<string>\",\n  \"source\": \"<string>\"\n}"
+								},
+								{
+									"name": "Role not found",
+									"originalRequest": {
+										"method": "PATCH",
+										"header": [
+											{
+												"key": "Authorization",
+												"value": "Bearer <token>",
+												"description": "Added as a part of security scheme: bearer"
+											},
+											{
+												"key": "Accept",
+												"value": "*/*"
+											}
+										],
+										"body": {
+											"mode": "raw",
+											"raw": "{\n  \"name\": \"<string>\",\n  \"description\": \"<string>\"\n}",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "{{baseUrl}}/roles/:role-name",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"roles",
+												":role-name"
+											],
+											"variable": [
+												{
+													"key": "role-name",
+													"value": "<string>",
+													"description": "(Required) "
+												}
+											]
+										}
+									},
+									"status": "Not Found",
+									"code": 404,
+									"_postman_previewlanguage": "json",
+									"header": [
+										{
+											"key": "Content-Type",
+											"value": "*/*"
+										}
+									],
+									"cookie": [],
+									"body": "{\n  \"errorDescription\": \"<string>\",\n  \"source\": \"<string>\"\n}"
+								},
+								{
+									"name": "An unexpected error occurred",
+									"originalRequest": {
+										"method": "PATCH",
+										"header": [
+											{
+												"key": "Authorization",
+												"value": "Bearer <token>",
+												"description": "Added as a part of security scheme: bearer"
+											},
+											{
+												"key": "Accept",
+												"value": "*/*"
+											}
+										],
+										"body": {
+											"mode": "raw",
+											"raw": "{\n  \"name\": \"<string>\",\n  \"description\": \"<string>\"\n}",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "{{baseUrl}}/roles/:role-name",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"roles",
+												":role-name"
+											],
+											"variable": [
+												{
+													"key": "role-name",
+													"value": "<string>",
+													"description": "(Required) "
+												}
+											]
+										}
+									},
+									"status": "Internal Server Error",
+									"code": 500,
+									"_postman_previewlanguage": "json",
+									"header": [
+										{
+											"key": "Content-Type",
+											"value": "*/*"
+										}
+									],
+									"cookie": [],
+									"body": "{\n  \"errorDescription\": \"<string>\",\n  \"source\": \"<string>\"\n}"
 								}
 							]
 						}
@@ -4585,6 +5135,16 @@
 				{
 					"name": "get Roles",
 					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{bearerToken}}",
+									"type": "string"
+								}
+							]
+						},
 						"method": "GET",
 						"header": [
 							{
@@ -4638,7 +5198,7 @@
 								}
 							],
 							"cookie": [],
-							"body": "[\n  {\n    \"id\": \"<string>\",\n    \"name\": \"<string>\",\n    \"description\": \"<string>\",\n    \"scopeParamRequired\": \"<boolean>\",\n    \"composite\": \"<boolean>\",\n    \"composites\": {\n      \"realm\": [\n        \"<string>\",\n        \"<string>\"\n      ],\n      \"client\": {\n        \"mollitb78\": [\n          \"<string>\",\n          \"<string>\"\n        ]\n      },\n      \"application\": {\n        \"aliqua_1\": [\n          \"<string>\",\n          \"<string>\"\n        ]\n      }\n    },\n    \"clientRole\": \"<boolean>\",\n    \"containerId\": \"<string>\",\n    \"attributes\": {\n      \"sint6c3\": [\n        \"<string>\",\n        \"<string>\"\n      ]\n    }\n  },\n  {\n    \"id\": \"<string>\",\n    \"name\": \"<string>\",\n    \"description\": \"<string>\",\n    \"scopeParamRequired\": \"<boolean>\",\n    \"composite\": \"<boolean>\",\n    \"composites\": {\n      \"realm\": [\n        \"<string>\",\n        \"<string>\"\n      ],\n      \"client\": {\n        \"velit94b\": [\n          \"<string>\",\n          \"<string>\"\n        ],\n        \"veniam_c\": [\n          \"<string>\",\n          \"<string>\"\n        ]\n      },\n      \"application\": {\n        \"esse_c6d\": [\n          \"<string>\",\n          \"<string>\"\n        ]\n      }\n    },\n    \"clientRole\": \"<boolean>\",\n    \"containerId\": \"<string>\",\n    \"attributes\": {\n      \"officia_c9d\": [\n        \"<string>\",\n        \"<string>\"\n      ],\n      \"Excepteur92\": [\n        \"<string>\",\n        \"<string>\"\n      ]\n    }\n  }\n]"
+							"body": "[\n  {\n    \"id\": \"<string>\",\n    \"name\": \"<string>\",\n    \"description\": \"<string>\",\n    \"scopeParamRequired\": \"<boolean>\",\n    \"composite\": \"<boolean>\",\n    \"composites\": {\n      \"realm\": [\n        \"<string>\",\n        \"<string>\"\n      ],\n      \"client\": {\n        \"deserunt_3\": [\n          \"<string>\",\n          \"<string>\"\n        ],\n        \"consequat__\": [\n          \"<string>\",\n          \"<string>\"\n        ]\n      },\n      \"application\": {\n        \"ex_62\": [\n          \"<string>\",\n          \"<string>\"\n        ]\n      }\n    },\n    \"clientRole\": \"<boolean>\",\n    \"containerId\": \"<string>\",\n    \"attributes\": {\n      \"laborum_49\": [\n        \"<string>\",\n        \"<string>\"\n      ]\n    }\n  },\n  {\n    \"id\": \"<string>\",\n    \"name\": \"<string>\",\n    \"description\": \"<string>\",\n    \"scopeParamRequired\": \"<boolean>\",\n    \"composite\": \"<boolean>\",\n    \"composites\": {\n      \"realm\": [\n        \"<string>\",\n        \"<string>\"\n      ],\n      \"client\": {\n        \"laborumd0\": [\n          \"<string>\",\n          \"<string>\"\n        ]\n      },\n      \"application\": {\n        \"do_ae\": [\n          \"<string>\",\n          \"<string>\"\n        ],\n        \"sint161\": [\n          \"<string>\",\n          \"<string>\"\n        ]\n      }\n    },\n    \"clientRole\": \"<boolean>\",\n    \"containerId\": \"<string>\",\n    \"attributes\": {\n      \"Lorem748\": [\n        \"<string>\",\n        \"<string>\"\n      ]\n    }\n  }\n]"
 						},
 						{
 							"name": "Invalid access token",
@@ -4667,7 +5227,7 @@
 							},
 							"status": "Unauthorized",
 							"code": 401,
-							"_postman_previewlanguage": "text",
+							"_postman_previewlanguage": "json",
 							"header": [
 								{
 									"key": "Content-Type",
@@ -4675,7 +5235,7 @@
 								}
 							],
 							"cookie": [],
-							"body": "<string>"
+							"body": "{\n  \"errorDescription\": \"<string>\",\n  \"source\": \"<string>\"\n}"
 						},
 						{
 							"name": "Access token lacks required admin scopes",
@@ -4704,7 +5264,7 @@
 							},
 							"status": "Forbidden",
 							"code": 403,
-							"_postman_previewlanguage": "text",
+							"_postman_previewlanguage": "json",
 							"header": [
 								{
 									"key": "Content-Type",
@@ -4712,7 +5272,7 @@
 								}
 							],
 							"cookie": [],
-							"body": "Access token lacks required admin scopes"
+							"body": "{\n  \"errorDescription\": \"<string>\",\n  \"source\": \"<string>\"\n}"
 						},
 						{
 							"name": "An unexpected error occurred",
@@ -4741,7 +5301,7 @@
 							},
 							"status": "Internal Server Error",
 							"code": 500,
-							"_postman_previewlanguage": "text",
+							"_postman_previewlanguage": "json",
 							"header": [
 								{
 									"key": "Content-Type",
@@ -4749,13 +5309,23 @@
 								}
 							],
 							"cookie": [],
-							"body": "<An unexpected error occurred: {error message}>"
+							"body": "{\n  \"errorDescription\": \"<string>\",\n  \"source\": \"<string>\"\n}"
 						}
 					]
 				},
 				{
 					"name": "create Role",
 					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{bearerToken}}",
+									"type": "string"
+								}
+							]
+						},
 						"method": "POST",
 						"header": [
 							{
@@ -4769,7 +5339,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n  \"name\": \"<string>\",\n  \"description\": \"<string>\"\n}",
+							"raw": "{\n  \"description\": \"<string>\",\n  \"name\": \"<string>\"\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -4804,7 +5374,7 @@
 								],
 								"body": {
 									"mode": "raw",
-									"raw": "{\n  \"name\": \"<string>\",\n  \"description\": \"<string>\"\n}",
+									"raw": "{\n  \"description\": \"<string>\",\n  \"name\": \"<string>\"\n}",
 									"options": {
 										"raw": {
 											"language": "json"
@@ -4831,7 +5401,7 @@
 								}
 							],
 							"cookie": [],
-							"body": "{\n  \"id\": \"<string>\",\n  \"name\": \"<string>\",\n  \"description\": \"<string>\",\n  \"scopeParamRequired\": \"<boolean>\",\n  \"composite\": \"<boolean>\",\n  \"composites\": {\n    \"realm\": [\n      \"<string>\",\n      \"<string>\"\n    ],\n    \"client\": {\n      \"anim5c\": [\n        \"<string>\",\n        \"<string>\"\n      ],\n      \"fugiata\": [\n        \"<string>\",\n        \"<string>\"\n      ],\n      \"doloree\": [\n        \"<string>\",\n        \"<string>\"\n      ]\n    },\n    \"application\": {\n      \"irurea\": [\n        \"<string>\",\n        \"<string>\"\n      ],\n      \"consectetur9f9\": [\n        \"<string>\",\n        \"<string>\"\n      ],\n      \"et50b\": [\n        \"<string>\",\n        \"<string>\"\n      ],\n      \"deserunt_8\": [\n        \"<string>\",\n        \"<string>\"\n      ]\n    }\n  },\n  \"clientRole\": \"<boolean>\",\n  \"containerId\": \"<string>\",\n  \"attributes\": {\n    \"enim_8d1\": [\n      \"<string>\",\n      \"<string>\"\n    ],\n    \"laborum887\": [\n      \"<string>\",\n      \"<string>\"\n    ]\n  }\n}"
+							"body": "{\n  \"id\": \"<string>\",\n  \"name\": \"<string>\",\n  \"description\": \"<string>\",\n  \"scopeParamRequired\": \"<boolean>\",\n  \"composite\": \"<boolean>\",\n  \"composites\": {\n    \"realm\": [\n      \"<string>\",\n      \"<string>\"\n    ],\n    \"client\": {\n      \"ipsumf\": [\n        \"<string>\",\n        \"<string>\"\n      ]\n    },\n    \"application\": {\n      \"anim6\": [\n        \"<string>\",\n        \"<string>\"\n      ]\n    }\n  },\n  \"clientRole\": \"<boolean>\",\n  \"containerId\": \"<string>\",\n  \"attributes\": {\n    \"consectetur13b\": [\n      \"<string>\",\n      \"<string>\"\n    ],\n    \"veniam__4c\": [\n      \"<string>\",\n      \"<string>\"\n    ],\n    \"ex_b_4\": [\n      \"<string>\",\n      \"<string>\"\n    ]\n  }\n}"
 						},
 						{
 							"name": "Invalid request or email",
@@ -4850,7 +5420,7 @@
 								],
 								"body": {
 									"mode": "raw",
-									"raw": "{\n  \"name\": \"<string>\",\n  \"description\": \"<string>\"\n}",
+									"raw": "{\n  \"description\": \"<string>\",\n  \"name\": \"<string>\"\n}",
 									"options": {
 										"raw": {
 											"language": "json"
@@ -4869,7 +5439,7 @@
 							},
 							"status": "Bad Request",
 							"code": 400,
-							"_postman_previewlanguage": "text",
+							"_postman_previewlanguage": "json",
 							"header": [
 								{
 									"key": "Content-Type",
@@ -4877,7 +5447,7 @@
 								}
 							],
 							"cookie": [],
-							"body": "<object>"
+							"body": "{\n  \"errorDescription\": \"<string>\",\n  \"source\": \"<string>\"\n}"
 						},
 						{
 							"name": "Invalid access token",
@@ -4896,7 +5466,7 @@
 								],
 								"body": {
 									"mode": "raw",
-									"raw": "{\n  \"name\": \"<string>\",\n  \"description\": \"<string>\"\n}",
+									"raw": "{\n  \"description\": \"<string>\",\n  \"name\": \"<string>\"\n}",
 									"options": {
 										"raw": {
 											"language": "json"
@@ -4915,7 +5485,7 @@
 							},
 							"status": "Unauthorized",
 							"code": 401,
-							"_postman_previewlanguage": "text",
+							"_postman_previewlanguage": "json",
 							"header": [
 								{
 									"key": "Content-Type",
@@ -4923,7 +5493,7 @@
 								}
 							],
 							"cookie": [],
-							"body": "Invalid access token"
+							"body": "{\n  \"errorDescription\": \"<string>\",\n  \"source\": \"<string>\"\n}"
 						},
 						{
 							"name": "Access token lacks required admin scopes",
@@ -4942,7 +5512,7 @@
 								],
 								"body": {
 									"mode": "raw",
-									"raw": "{\n  \"name\": \"<string>\",\n  \"description\": \"<string>\"\n}",
+									"raw": "{\n  \"description\": \"<string>\",\n  \"name\": \"<string>\"\n}",
 									"options": {
 										"raw": {
 											"language": "json"
@@ -4961,7 +5531,7 @@
 							},
 							"status": "Forbidden",
 							"code": 403,
-							"_postman_previewlanguage": "text",
+							"_postman_previewlanguage": "json",
 							"header": [
 								{
 									"key": "Content-Type",
@@ -4969,7 +5539,7 @@
 								}
 							],
 							"cookie": [],
-							"body": "Access token lacks required admin scopes"
+							"body": "{\n  \"errorDescription\": \"<string>\",\n  \"source\": \"<string>\"\n}"
 						},
 						{
 							"name": "Role already exists",
@@ -4988,7 +5558,7 @@
 								],
 								"body": {
 									"mode": "raw",
-									"raw": "{\n  \"name\": \"<string>\",\n  \"description\": \"<string>\"\n}",
+									"raw": "{\n  \"description\": \"<string>\",\n  \"name\": \"<string>\"\n}",
 									"options": {
 										"raw": {
 											"language": "json"
@@ -5007,7 +5577,7 @@
 							},
 							"status": "Conflict",
 							"code": 409,
-							"_postman_previewlanguage": "text",
+							"_postman_previewlanguage": "json",
 							"header": [
 								{
 									"key": "Content-Type",
@@ -5015,7 +5585,7 @@
 								}
 							],
 							"cookie": [],
-							"body": "<object>"
+							"body": "{\n  \"errorDescription\": \"<string>\",\n  \"source\": \"<string>\"\n}"
 						},
 						{
 							"name": "An unexpected error occurred",
@@ -5034,7 +5604,7 @@
 								],
 								"body": {
 									"mode": "raw",
-									"raw": "{\n  \"name\": \"<string>\",\n  \"description\": \"<string>\"\n}",
+									"raw": "{\n  \"description\": \"<string>\",\n  \"name\": \"<string>\"\n}",
 									"options": {
 										"raw": {
 											"language": "json"
@@ -5053,7 +5623,7 @@
 							},
 							"status": "Internal Server Error",
 							"code": 500,
-							"_postman_previewlanguage": "text",
+							"_postman_previewlanguage": "json",
 							"header": [
 								{
 									"key": "Content-Type",
@@ -5061,7 +5631,7 @@
 								}
 							],
 							"cookie": [],
-							"body": "<An unexpected error occurred: {error message}>"
+							"body": "{\n  \"errorDescription\": \"<string>\",\n  \"source\": \"<string>\"\n}"
 						}
 					]
 				}
@@ -5186,7 +5756,7 @@
 							},
 							"status": "Unauthorized",
 							"code": 401,
-							"_postman_previewlanguage": "text",
+							"_postman_previewlanguage": "json",
 							"header": [
 								{
 									"key": "Content-Type",
@@ -5194,7 +5764,7 @@
 								}
 							],
 							"cookie": [],
-							"body": "Invalid email or password"
+							"body": "{\n  \"errorDescription\": \"<string>\",\n  \"source\": \"<string>\"\n}"
 						}
 					]
 				},
@@ -5305,7 +5875,7 @@
 							},
 							"status": "Bad Request",
 							"code": 400,
-							"_postman_previewlanguage": "text",
+							"_postman_previewlanguage": "json",
 							"header": [
 								{
 									"key": "Content-Type",
@@ -5313,7 +5883,7 @@
 								}
 							],
 							"cookie": [],
-							"body": "<string>"
+							"body": "{\n  \"errorDescription\": \"<string>\",\n  \"source\": \"<string>\"\n}"
 						},
 						{
 							"name": "Invalid refresh token",
@@ -5349,7 +5919,7 @@
 							},
 							"status": "Unauthorized",
 							"code": 401,
-							"_postman_previewlanguage": "text",
+							"_postman_previewlanguage": "json",
 							"header": [
 								{
 									"key": "Content-Type",
@@ -5357,7 +5927,7 @@
 								}
 							],
 							"cookie": [],
-							"body": "Invalid refresh token"
+							"body": "{\n  \"errorDescription\": \"<string>\",\n  \"source\": \"<string>\"\n}"
 						},
 						{
 							"name": "An unexpected error occurred",
@@ -5393,7 +5963,7 @@
 							},
 							"status": "Internal Server Error",
 							"code": 500,
-							"_postman_previewlanguage": "text",
+							"_postman_previewlanguage": "json",
 							"header": [
 								{
 									"key": "Content-Type",
@@ -5401,7 +5971,7 @@
 								}
 							],
 							"cookie": [],
-							"body": "<An unexpected error occurred: {error message}>"
+							"body": "{\n  \"errorDescription\": \"<string>\",\n  \"source\": \"<string>\"\n}"
 						}
 					]
 				},
@@ -5512,7 +6082,7 @@
 							},
 							"status": "Unauthorized",
 							"code": 401,
-							"_postman_previewlanguage": "text",
+							"_postman_previewlanguage": "json",
 							"header": [
 								{
 									"key": "Content-Type",
@@ -5520,7 +6090,7 @@
 								}
 							],
 							"cookie": [],
-							"body": "Invalid access token"
+							"body": "{\n  \"errorDescription\": \"<string>\",\n  \"source\": \"<string>\"\n}"
 						},
 						{
 							"name": "An unexpected error occurred",
@@ -5556,7 +6126,7 @@
 							},
 							"status": "Internal Server Error",
 							"code": 500,
-							"_postman_previewlanguage": "text",
+							"_postman_previewlanguage": "json",
 							"header": [
 								{
 									"key": "Content-Type",
@@ -5564,7 +6134,7 @@
 								}
 							],
 							"cookie": [],
-							"body": "<An unexpected error occurred: {error message}>"
+							"body": "{\n  \"errorDescription\": \"<string>\",\n  \"source\": \"<string>\"\n}"
 						}
 					]
 				}
