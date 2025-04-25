@@ -26,60 +26,60 @@ public class UserController {
     }
 
     @Operation(
-            summary = "Autenticação de usuário no Keycloak",
-            description = "Recebe username e password e retorna um access_token se as credenciais forem válidas."
+            summary = "User authentication in Keycloak",
+            description = "Receives username and password and returns an access_token if the credentials are valid."
     )
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "201", description = "Token gerado com sucesso",
+            @ApiResponse(responseCode = "201", description = "Token generated successfully",
                     content = @Content(schema = @Schema(implementation = TokenResponse.class))),
-            @ApiResponse(responseCode = "400", description = "Requisição malformada",
+            @ApiResponse(responseCode = "400", description = "Malformed request",
                     content = @Content(schema = @Schema(implementation = ErrorResponse.class),
                             examples = @ExampleObject(value = """
             {
               "error_code": "400",
-              "error_description": "Requisição inválida.",
+              "error_description": "Invalid request.",
               "error_source": standardSource,
               "error_stack": [
                 {
                   "exception": "org.springframework.web.reactive.function.client.WebClientResponseException$BadRequest",
                   "message": "400 Bad Request",
-                  "cause": "Campo obrigatório não preenchido"
+                  "cause": "Required field not filled"
                 }
               ]
             }
             """))),
-            @ApiResponse(responseCode = "401", description = "Credenciais inválidas",
+            @ApiResponse(responseCode = "401", description = "Invalid credentials",
                     content = @Content(schema = @Schema(implementation = ErrorResponse.class),
                             examples = @ExampleObject(value = """
             {
               "error_code": "401",
-              "error_description": "Credenciais inválidas.",
+              "error_description": "Invalid credentials.",
               "error_source": standardSource,
               "error_stack": []
             }
             """))),
-            @ApiResponse(responseCode = "403", description = "Token sem permissão",
+            @ApiResponse(responseCode = "403", description = "Unauthorized token",
                     content = @Content(schema = @Schema(implementation = ErrorResponse.class),
                             examples = @ExampleObject(value = """
             {
               "error_code": "403",
-              "error_description": "Token sem permissão.",
+              "error_description": "Token does not have permission.",
               "error_source": standardSource,
               "error_stack": []
             }
             """))),
-            @ApiResponse(responseCode = "500", description = "Erro inesperado",
+            @ApiResponse(responseCode = "500", description = "Unexpected error",
                     content = @Content(schema = @Schema(implementation = ErrorResponse.class),
                             examples = @ExampleObject(value = """
             {
               "error_code": "500",
-              "error_description": "Erro inesperado.",
+              "error_description": "Unexpected error.",
               "error_source": standardSource,
               "error_stack": [
                 {
                   "exception": "java.lang.NullPointerException",
-                  "message": "Não foi possível acessar o objeto",
-                  "cause": "Objeto nulo na autenticação"
+                  "message": "Could not access object",
+                  "cause": "Null object in authentication"
                 }
               ]
             }
@@ -92,65 +92,60 @@ public class UserController {
     }
 
     @Operation(
-            summary = "Criação de usuário no Keycloak",
-            description = "Cria um novo usuário no Keycloak com os dados fornecidos, desde que o token de autorização seja válido."
+            summary = "List Keycloak users",
+            description = "Returns a list of users registered in Keycloak. It is possible to filter users by `enabled` status (active/inactive)."
     )
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "201", description = "Usuário criado com sucesso",
-                    content = @Content(mediaType = "application/json", examples = @ExampleObject(value = "{\"message\": \"Usuário criado com sucesso\"}"))),
-            @ApiResponse(responseCode = "400", description = "Estrutura inválida ou e-mail inválido",
-                    content = @Content(schema = @Schema(implementation = ErrorResponse.class), examples = @ExampleObject(value = """
+            @ApiResponse(responseCode = "201", description = "Token generated successfully",
+                    content = @Content(schema = @Schema(implementation = TokenResponse.class))),
+            @ApiResponse(responseCode = "400", description = "Malformed request",
+                    content = @Content(schema = @Schema(implementation = ErrorResponse.class),
+                            examples = @ExampleObject(value = """
         {
           "error_code": "400",
-          "error_description": "Estrutura inválida ou e-mail inválido.",
+          "error_description": "Invalid request.",
           "error_source": standardSource,
           "error_stack": [
             {
               "exception": "org.springframework.web.reactive.function.client.WebClientResponseException$BadRequest",
               "message": "400 Bad Request",
-              "cause": "E-mail em formato inválido"
+              "cause": "Required field not filled"
             }
           ]
         }
         """))),
-            @ApiResponse(responseCode = "401", description = "Token inválido",
-                    content = @Content(schema = @Schema(implementation = ErrorResponse.class), examples = @ExampleObject(value = """
+                    @ApiResponse(responseCode = "401", description = "Invalid credentials",
+                            content = @Content(schema = @Schema(implementation = ErrorResponse.class),
+                                    examples = @ExampleObject(value = """
         {
           "error_code": "401",
-          "error_description": "Token inválido.",
+          "error_description": "Invalid credentials.",
           "error_source": standardSource,
           "error_stack": []
         }
         """))),
-            @ApiResponse(responseCode = "403", description = "Sem permissão para criar usuário",
-                    content = @Content(schema = @Schema(implementation = ErrorResponse.class), examples = @ExampleObject(value = """
+                    @ApiResponse(responseCode = "403", description = "Unauthorized token",
+                            content = @Content(schema = @Schema(implementation = ErrorResponse.class),
+                                    examples = @ExampleObject(value = """
         {
           "error_code": "403",
-          "error_description": "Sem permissão para criar usuário.",
+          "error_description": "Token does not have permission.",
           "error_source": standardSource,
           "error_stack": []
         }
         """))),
-            @ApiResponse(responseCode = "409", description = "Usuário já existe",
-                    content = @Content(schema = @Schema(implementation = ErrorResponse.class), examples = @ExampleObject(value = """
-        {
-          "error_code": "409",
-          "error_description": "Usuário já existe.",
-          "error_source": standardSource,
-          "error_stack": []
-        }
-        """))),
-            @ApiResponse(responseCode = "500", description = "Erro inesperado no servidor",
-                    content = @Content(schema = @Schema(implementation = ErrorResponse.class), examples = @ExampleObject(value = """
+                    @ApiResponse(responseCode = "500", description = "Unexpected error",
+                            content = @Content(schema = @Schema(implementation = ErrorResponse.class),
+                                    examples = @ExampleObject(value = """
         {
           "error_code": "500",
-          "error_description": "Erro na criação do usuário.",
+          "error_description": "Unexpected error.",
           "error_source": standardSource,
           "error_stack": [
             {
               "exception": "java.lang.NullPointerException",
-              "message": "Erro inesperado",
-              "cause": "Objeto nulo ao processar usuário"
+              "message": "Could not access object",
+              "cause": "Null object in authentication"
             }
           ]
         }
@@ -160,45 +155,48 @@ public class UserController {
     public ResponseEntity<?> createUser( @RequestBody @Valid UserRequest user, @RequestHeader("Authorization") String token) {
         keycloakService.createUser(user, token);
         return ResponseEntity.status(HttpStatus.CREATED)
-                .body(Map.of("message", "Usuário criado com sucesso"));
+                .body(Map.of("message", "User created successfully"));
     }
 
     @Operation(
-            summary = "Listagem de usuários do Keycloak",
-            description = "Retorna a lista de usuários cadastrados no Keycloak. É possível filtrar usuários pelo status `enabled` (ativos/inativos)."
+            summary = "List Keycloak users",
+            description = "Returns a list of users registered in Keycloak. It is possible to filter users by `enabled` status (active/inactive)."
     )
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Usuários retornados com sucesso",
+            @ApiResponse(responseCode = "200", description = "Users retrieved successfully",
                     content = @Content(mediaType = "application/json", schema = @Schema(implementation = UserResponse.class))),
-            @ApiResponse(responseCode = "401", description = "Token inválido",
+
+            @ApiResponse(responseCode = "401", description = "Invalid token",
                     content = @Content(schema = @Schema(implementation = ErrorResponse.class), examples = @ExampleObject(value = """
         {
           "error_code": "401",
-          "error_description": "Token inválido.",
-          "error_source": standardSource,
+          "error_description": "Invalid token.",
+          "error_source": "OAuthAPI",
           "error_stack": []
         }
         """))),
-            @ApiResponse(responseCode = "403", description = "Sem permissão para listar usuários",
+
+            @ApiResponse(responseCode = "403", description = "No permission to list users",
                     content = @Content(schema = @Schema(implementation = ErrorResponse.class), examples = @ExampleObject(value = """
         {
           "error_code": "403",
-          "error_description": "Sem permissão para listar usuários.",
-          "error_source": standardSource,
+          "error_description": "No permission to list users.",
+          "error_source": "OAuthAPI",
           "error_stack": []
         }
         """))),
-            @ApiResponse(responseCode = "500", description = "Erro inesperado ao listar usuários",
+
+            @ApiResponse(responseCode = "500", description = "Unexpected error while listing users",
                     content = @Content(schema = @Schema(implementation = ErrorResponse.class), examples = @ExampleObject(value = """
         {
           "error_code": "500",
-          "error_description": "Erro na listagem de usuários.",
-          "error_source": standardSource,
+          "error_description": "Error while listing users.",
+          "error_source": "OAuthAPI",
           "error_stack": [
             {
               "exception": "java.lang.RuntimeException",
-              "message": "Erro de conexão",
-              "cause": "Timeout na chamada HTTP"
+              "message": "Connection error",
+              "cause": "Timeout in HTTP request"
             }
           ]
         }
@@ -206,55 +204,59 @@ public class UserController {
     })
     @GetMapping("/users")
     public ResponseEntity<?> getUsers(@RequestHeader("Authorization") String token, @RequestParam Optional<Boolean> enabled) {
-        List<UserResponse> users = keycloakService.getUsers(token);
+        List<UserResponse> users = keycloakService.getUsers(token, enabled);
         return ResponseEntity.ok(users);
     }
 
     @Operation(
-            summary = "Buscar usuário por ID",
-            description = "Retorna os dados de um usuário específico cadastrado no Keycloak, desde que o token de autenticação seja válido."
+            summary = "Get user by ID",
+            description = "Returns the data of a specific user registered in Keycloak, given a valid authentication token."
     )
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Usuário retornado com sucesso",
+            @ApiResponse(responseCode = "200", description = "User retrieved successfully",
                     content = @Content(mediaType = "application/json", schema = @Schema(implementation = UserResponse.class))),
-            @ApiResponse(responseCode = "401", description = "Token inválido",
+
+            @ApiResponse(responseCode = "401", description = "Invalid token",
                     content = @Content(schema = @Schema(implementation = ErrorResponse.class), examples = @ExampleObject(value = """
         {
           "error_code": "401",
-          "error_description": "Token inválido.",
-          "error_source": standardSource,
+          "error_description": "Invalid token.",
+          "error_source": "OAuthAPI",
           "error_stack": []
         }
         """))),
-            @ApiResponse(responseCode = "403", description = "Sem permissão para visualizar usuário",
+
+            @ApiResponse(responseCode = "403", description = "No permission to view user",
                     content = @Content(schema = @Schema(implementation = ErrorResponse.class), examples = @ExampleObject(value = """
         {
           "error_code": "403",
-          "error_description": "Sem permissão para visualizar usuário.",
-          "error_source": standardSource,
+          "error_description": "No permission to view user.",
+          "error_source": "OAuthAPI",
           "error_stack": []
         }
         """))),
-            @ApiResponse(responseCode = "404", description = "Usuário não encontrado",
+
+            @ApiResponse(responseCode = "404", description = "User not found",
                     content = @Content(schema = @Schema(implementation = ErrorResponse.class), examples = @ExampleObject(value = """
         {
           "error_code": "404",
-          "error_description": "Usuário não encontrado.",
-          "error_source": standardSource,
+          "error_description": "User not found.",
+          "error_source": "OAuthAPI",
           "error_stack": []
         }
         """))),
-            @ApiResponse(responseCode = "500", description = "Erro inesperado ao buscar usuário",
+
+            @ApiResponse(responseCode = "500", description = "Unexpected error while fetching user",
                     content = @Content(schema = @Schema(implementation = ErrorResponse.class), examples = @ExampleObject(value = """
         {
           "error_code": "500",
-          "error_description": "Erro ao buscar usuário.",
-          "error_source": standardSource,
+          "error_description": "Error while fetching user.",
+          "error_source": "OAuthAPI",
           "error_stack": [
             {
               "exception": "java.lang.RuntimeException",
-              "message": "Erro interno",
-              "cause": "Falha na comunicação com Keycloak"
+              "message": "Internal error",
+              "cause": "Failed to communicate with Keycloak"
             }
           ]
         }
@@ -267,50 +269,58 @@ public class UserController {
     }
 
     @Operation(
-            summary = "Atualização de usuário no Keycloak",
-            description = "Atualiza os dados de um usuário existente no Keycloak. É necessário fornecer um token válido e o ID do usuário."
+            summary = "Update user in Keycloak",
+            description = "Updates data of an existing Keycloak user. Requires a valid token and the user ID."
     )
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Usuário atualizado com sucesso",
-                    content = @Content(mediaType = "application/json", examples = @ExampleObject(value = "{\"message\": \"Usuário atualizado com sucesso\"}"))),
-            @ApiResponse(responseCode = "401", description = "Token inválido",
+            @ApiResponse(responseCode = "200", description = "User updated successfully",
+                    content = @Content(mediaType = "application/json", examples = @ExampleObject(value = """
+        {
+          "message": "User updated successfully"
+        }
+        """))),
+
+            @ApiResponse(responseCode = "401", description = "Invalid token",
                     content = @Content(schema = @Schema(implementation = ErrorResponse.class), examples = @ExampleObject(value = """
         {
           "error_code": "401",
-          "error_description": "Token inválido.",
-          "error_source": standardSource,
+          "error_description": "Invalid token.",
+          "error_source": "OAuthAPI",
           "error_stack": []
         }
         """))),
-            @ApiResponse(responseCode = "403", description = "Sem permissão para atualizar usuário",
+
+            @ApiResponse(responseCode = "403", description = "No permission to update user",
                     content = @Content(schema = @Schema(implementation = ErrorResponse.class), examples = @ExampleObject(value = """
         {
           "error_code": "403",
-          "error_description": "Sem permissão para atualizar usuário.",
-          "error_source": standardSource,
+          "error_description": "No permission to update user.",
+          "error_source": "OAuthAPI",
           "error_stack": []
         }
         """))),
-            @ApiResponse(responseCode = "404", description = "Usuário não encontrado",
+
+            @ApiResponse(responseCode = "404", description = "User not found for update",
                     content = @Content(schema = @Schema(implementation = ErrorResponse.class), examples = @ExampleObject(value = """
         {
           "error_code": "404",
-          "error_description": "Usuário não encontrado para atualização.",
-          "error_source": standardSource,
+          "error_description": "User not found for update.",
+          "error_source": "OAuthAPI",
           "error_stack": []
         }
         """))),
-            @ApiResponse(responseCode = "500", description = "Erro inesperado ao atualizar usuário",
+
+            @ApiResponse(responseCode = "500", description = "Unexpected error while updating user",
                     content = @Content(schema = @Schema(implementation = ErrorResponse.class), examples = @ExampleObject(value = """
         {
           "error_code": "500",
-          "error_description": "Erro ao atualizar usuário.",
-          "error_source": standardSource,
+          "error_description": "Error while updating user.",
+          "error_source": "OAuthAPI",
           "error_stack": [
             {
               "exception": "java.lang.RuntimeException",
-              "message": "Erro interno",
-              "cause": "Falha ao acessar Keycloak"
+              "message": "Internal error",
+              "cause": "Failed to access Keycloak"
             }
           ]
         }
@@ -319,63 +329,72 @@ public class UserController {
     @PutMapping("/users/{id}")
     public ResponseEntity<?> updateUser(@RequestHeader("Authorization") String token, @PathVariable String id, @RequestBody @Valid UserRequest user) {
         keycloakService.updateUser(token, id, user);
-        return ResponseEntity.ok(Map.of("message", "Usuário atualizado com sucesso"));
+        return ResponseEntity.ok(Map.of("message", "User updated successfully"));
     }
 
     @Operation(
-            summary = "Alteração de senha de usuário",
-            description = "Altera a senha de um usuário existente no Keycloak. É necessário fornecer o token de autenticação e o novo valor da senha no corpo da requisição."
+            summary = "Change user password",
+            description = "Changes the password of an existing user in Keycloak. Requires authentication token and the new password in the request body."
     )
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Senha atualizada com sucesso",
-                    content = @Content(mediaType = "application/json", examples = @ExampleObject(value = "{\"message\": \"Senha atualizada com sucesso\"}"))),
-            @ApiResponse(responseCode = "400", description = "Campo 'password' ausente ou inválido",
+            @ApiResponse(responseCode = "200", description = "Password updated successfully",
+                    content = @Content(mediaType = "application/json", examples = @ExampleObject(value = """
+        {
+          "message": "Password updated successfully"
+        }
+        """))),
+
+            @ApiResponse(responseCode = "400", description = "Missing or invalid 'password' field",
                     content = @Content(schema = @Schema(implementation = ErrorResponse.class), examples = @ExampleObject(value = """
         {
           "error_code": "400",
-          "error_description": "Campo 'password' é obrigatório.",
-          "error_source": standardSource,
+          "error_description": "Field 'password' is required.",
+          "error_source": "OAuthAPI",
           "error_stack": []
         }
         """))),
-            @ApiResponse(responseCode = "401", description = "Token inválido",
+
+            @ApiResponse(responseCode = "401", description = "Invalid token",
                     content = @Content(schema = @Schema(implementation = ErrorResponse.class), examples = @ExampleObject(value = """
         {
           "error_code": "401",
-          "error_description": "Token inválido.",
-          "error_source": standardSource,
+          "error_description": "Invalid token.",
+          "error_source": "OAuthAPI",
           "error_stack": []
         }
         """))),
-            @ApiResponse(responseCode = "403", description = "Sem permissão para alterar senha",
+
+            @ApiResponse(responseCode = "403", description = "No permission to change password",
                     content = @Content(schema = @Schema(implementation = ErrorResponse.class), examples = @ExampleObject(value = """
         {
           "error_code": "403",
-          "error_description": "Sem permissão para alterar senha.",
-          "error_source": standardSource,
+          "error_description": "No permission to change password.",
+          "error_source": "OAuthAPI",
           "error_stack": []
         }
         """))),
-            @ApiResponse(responseCode = "404", description = "Usuário não encontrado",
+
+            @ApiResponse(responseCode = "404", description = "User not found for password change",
                     content = @Content(schema = @Schema(implementation = ErrorResponse.class), examples = @ExampleObject(value = """
         {
           "error_code": "404",
-          "error_description": "Usuário não encontrado para alterar senha.",
-          "error_source": standardSource,
+          "error_description": "User not found for password change.",
+          "error_source": "OAuthAPI",
           "error_stack": []
         }
         """))),
-            @ApiResponse(responseCode = "500", description = "Erro inesperado ao alterar senha",
+
+            @ApiResponse(responseCode = "500", description = "Unexpected error while changing password",
                     content = @Content(schema = @Schema(implementation = ErrorResponse.class), examples = @ExampleObject(value = """
         {
           "error_code": "500",
-          "error_description": "Erro ao alterar senha.",
-          "error_source": standardSource,
+          "error_description": "Error while changing password.",
+          "error_source": "OAuthAPI",
           "error_stack": [
             {
               "exception": "java.lang.RuntimeException",
-              "message": "Erro interno",
-              "cause": "Falha ao acessar Keycloak"
+              "message": "Internal error",
+              "cause": "Failed to access Keycloak"
             }
           ]
         }
@@ -385,57 +404,65 @@ public class UserController {
     public ResponseEntity<?> updatePassword(@RequestHeader("Authorization") String token, @PathVariable String id, @RequestBody Map<String, String> body) {
         String password = body.get("password");
         if (password == null || password.isBlank()) {
-            return ResponseEntity.badRequest().body("Campo 'password' é obrigatório.");
+            return ResponseEntity.badRequest().body("Field 'password' is required.");
         }
         keycloakService.updatePassword(token, id, password);
-        return ResponseEntity.ok(Map.of("message", "Senha atualizada com sucesso"));
+        return ResponseEntity.ok(Map.of("message", "Password updated successfully"));
     }
 
     @Operation(
-            summary = "Remoção de usuário",
-            description = "Remove ou desativa um usuário do Keycloak. É necessário fornecer um token de autenticação e o ID do usuário a ser removido."
+            summary = "Delete user",
+            description = "Removes or deactivates a user in Keycloak. Requires authentication token and the user ID."
     )
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Usuário removido com sucesso",
-                    content = @Content(mediaType = "application/json", examples = @ExampleObject(value = "{\"message\": \"Usuário removido com sucesso\"}"))),
-            @ApiResponse(responseCode = "401", description = "Token inválido",
+            @ApiResponse(responseCode = "200", description = "User deleted successfully",
+                    content = @Content(mediaType = "application/json", examples = @ExampleObject(value = """
+        {
+          "message": "User deleted successfully"
+        }
+        """))),
+
+            @ApiResponse(responseCode = "401", description = "Invalid token",
                     content = @Content(schema = @Schema(implementation = ErrorResponse.class), examples = @ExampleObject(value = """
         {
           "error_code": "401",
-          "error_description": "Token inválido.",
-          "error_source": standardSource,
+          "error_description": "Invalid token.",
+          "error_source": "OAuthAPI",
           "error_stack": []
         }
         """))),
-            @ApiResponse(responseCode = "403", description = "Sem permissão para deletar usuário",
+
+            @ApiResponse(responseCode = "403", description = "No permission to delete user",
                     content = @Content(schema = @Schema(implementation = ErrorResponse.class), examples = @ExampleObject(value = """
         {
           "error_code": "403",
-          "error_description": "Sem permissão para deletar usuário.",
-          "error_source": standardSource,
+          "error_description": "No permission to delete user.",
+          "error_source": "OAuthAPI",
           "error_stack": []
         }
         """))),
-            @ApiResponse(responseCode = "404", description = "Usuário não encontrado",
+
+            @ApiResponse(responseCode = "404", description = "User not found for deletion",
                     content = @Content(schema = @Schema(implementation = ErrorResponse.class), examples = @ExampleObject(value = """
         {
           "error_code": "404",
-          "error_description": "Usuário não encontrado para remoção.",
-          "error_source": standardSource,
+          "error_description": "User not found for deletion.",
+          "error_source": "OAuthAPI",
           "error_stack": []
         }
         """))),
-            @ApiResponse(responseCode = "500", description = "Erro inesperado ao deletar usuário",
+
+            @ApiResponse(responseCode = "500", description = "Unexpected error while deleting user",
                     content = @Content(schema = @Schema(implementation = ErrorResponse.class), examples = @ExampleObject(value = """
         {
           "error_code": "500",
-          "error_description": "Erro ao deletar usuário.",
-          "error_source": standardSource,
+          "error_description": "Error while deleting user.",
+          "error_source": "OAuthAPI",
           "error_stack": [
             {
               "exception": "java.lang.RuntimeException",
-              "message": "Erro interno",
-              "cause": "Falha na comunicação com Keycloak"
+              "message": "Internal error",
+              "cause": "Failed to communicate with Keycloak"
             }
           ]
         }
@@ -444,6 +471,6 @@ public class UserController {
     @DeleteMapping("/users/{id}")
     public ResponseEntity<?> deleteUser(@RequestHeader("Authorization") String token, @PathVariable String id) {
         keycloakService.disableUser(token, id);
-        return ResponseEntity.ok(Map.of("message", "Usuário removido com sucesso"));
+        return ResponseEntity.ok(Map.of("message", "User deleted successfully"));
     }
 }

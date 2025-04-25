@@ -11,15 +11,15 @@ import lombok.Setter;
 @Setter
 public class UserRequest {
 
-    @Schema(example = "usuario@email.com")
-    @NotBlank(message = "Username (e-mail) é obrigatório")
+    @Schema(example = "user@email.com")
+    @NotBlank(message = "Username (e-mail) is required")
     @Pattern(
             regexp = "^(?=.{1,64}@)[A-Za-z0-9_-]+(\\.[A-Za-z0-9_-]+)*@[^-][A-Za-z0-9-]+(\\.[A-Za-z0-9-]+)*(\\.[A-Za-z]{2,})$",
-            message = "E-mail inválido conforme RFC"
+            message = "Invalid e-mail format according to RFC"
     )
     private String username;
 
-    @NotBlank(message = "Senha é obrigatória")
+    @NotBlank(message = "Password is required")
     private String password;
 
     @JsonProperty("first-name")

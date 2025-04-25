@@ -18,6 +18,7 @@ import org.springframework.web.reactive.function.client.WebClient;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -79,7 +80,7 @@ public class KeycloakService {
             .map(response -> response.getHeaders().getLocation());
     }
 
-    public List<UserResponse> getUsers(String token) {
+    public List<UserResponse> getUsers(String token, Optional<Boolean> enabled) {
 
         List<Map<String, Object>> response = webClient.get()
                 .uri(keycloakUrl + "/admin/realms/" + realm + "/users")
@@ -101,6 +102,7 @@ public class KeycloakService {
                     u.setEnabled((Boolean) map.getOrDefault("enabled", true));
                     return u;
                 })
+                .filter(user -> enabled.map(e -> user.isEnabled() == e).orElse(true))
                 .toList();
     }
 

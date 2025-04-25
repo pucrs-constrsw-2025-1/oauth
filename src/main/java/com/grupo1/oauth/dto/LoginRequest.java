@@ -4,7 +4,7 @@ import lombok.Data;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotBlank;
 
-@Schema(description = "Dados para autenticação no Keycloak")
+@Schema(description = "Data for authentication in Keycloak")
 @Data
 public class LoginRequest {
 
@@ -12,7 +12,7 @@ public class LoginRequest {
     @NotBlank
     private String username;
 
-    @Schema(description = "Senha do usuário", example = "a12345678", requiredMode = Schema.RequiredMode.REQUIRED)
+    @Schema(description = "User password", example = "a12345678", requiredMode = Schema.RequiredMode.REQUIRED)
     @NotBlank
     private String password;
 }

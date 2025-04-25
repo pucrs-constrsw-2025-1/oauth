@@ -11,17 +11,18 @@ import java.util.Map;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-@Schema(description = "Resposta de erro estruturada")
+@Schema(description = "Structured error response")
 public class ErrorResponse {
-    @Schema(example = "400", description = "Código de erro retornado pela API")
+
+    @Schema(example = "400", description = "Error code returned by the API")
     public String error_code;
 
-    @Schema(example = "Requisição inválida.", description = "Descrição do erro")
+    @Schema(example = "Invalid request.", description = "Description of the error")
     public String error_description;
 
-    @Schema(example = "OAuthAPI", description = "Fonte/origem do erro")
+    @Schema(example = "OAuthAPI", description = "Source/origin of the error")
     public String error_source;
 
-    @Schema(description = "Lista de detalhes da pilha de erro")
+    @Schema(description = "List of error stack details")
     public List<Map<String, Object>> error_stack;
 }

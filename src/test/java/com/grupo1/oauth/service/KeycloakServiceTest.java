@@ -50,13 +50,13 @@ class KeycloakServiceTest {
         keycloakService = new KeycloakService(mockWebClient);
 
         ReflectionTestUtils.setField(keycloakService, "keycloakUrl", "http://localhost:8080");
-        ReflectionTestUtils.setField(keycloakService, "realm", "myrealm");
+        ReflectionTestUtils.setField(keycloakService, "realm", "my-realm");
         ReflectionTestUtils.setField(keycloakService, "clientId", "client-id");
         ReflectionTestUtils.setField(keycloakService, "clientSecret", "client-secret");
     }
 
     @Test
-    @DisplayName("Deve criar usuário com sucesso quando location estiver presente")
+    @DisplayName("Should create user successfully when location header is present")
     void createUser_shouldSendCorrectPayloadAndSucceed_whenLocationIsReturned() {
         // Arrange
         UserRequest user = new UserRequest();
@@ -82,7 +82,7 @@ class KeycloakServiceTest {
     }
 
     @Test
-    @DisplayName("Deve lançar exceção quando header location não estiver presente")
+    @DisplayName("Should throw exception when location header is missing")
     void createUser_shouldThrowException_whenLocationHeaderIsMissing() {
         // Arrange
         UserRequest user = new UserRequest();
@@ -103,11 +103,11 @@ class KeycloakServiceTest {
         RuntimeException exception = assertThrows(RuntimeException.class, () ->
                 keycloakService.createUser(user, "Bearer token")
         );
-        assertEquals("Usuário criado, mas não foi possível recuperar o ID.", exception.getMessage());
+        assertEquals("User created, but could not retrieve ID.", exception.getMessage());
     }
 
     @Test
-    @DisplayName("Deve retornar token ao realizar login com sucesso")
+    @DisplayName("Should return token when login is successful")
     void login_shouldReturnTokenResponse_whenCredentialsAreValid() {
         // Arrange
         LoginRequest loginRequest = new LoginRequest();
@@ -133,7 +133,7 @@ class KeycloakServiceTest {
     }
 
     @Test
-    @DisplayName("Deve retornar null se token não for retornado pelo WebClient")
+    @DisplayName("Should return null if token is not returned by WebClient")
     void login_shouldReturnNull_whenWebClientReturnsEmpty() {
         // Arrange
         LoginRequest loginRequest = new LoginRequest();
@@ -155,7 +155,7 @@ class KeycloakServiceTest {
     }
 
     @Test
-    @DisplayName("Deve atualizar dados do usuário corretamente")
+    @DisplayName("Should update user data correctly")
     void updateUser_shouldSucceed_whenWebClientReturns2xx() {
         // Arrange
         UserRequest request = new UserRequest();
@@ -176,7 +176,7 @@ class KeycloakServiceTest {
     }
 
     @Test
-    @DisplayName("Deve atualizar senha do usuário corretamente")
+    @DisplayName("Should update user password correctly")
     void updatePassword_shouldSucceed_whenWebClientReturns2xx() {
         // Arrange
         when(mockWebClient.put()).thenReturn(mockRequestBodyUriSpec);
@@ -188,11 +188,11 @@ class KeycloakServiceTest {
         when(mockResponseSpec.toBodilessEntity()).thenReturn(Mono.just(ResponseEntity.ok().build()));
 
         // Act + Assert
-        assertDoesNotThrow(() -> keycloakService.updatePassword("Bearer token", "123", "newpass"));
+        assertDoesNotThrow(() -> keycloakService.updatePassword("Bearer token", "123", "new_pass"));
     }
 
     @Test
-    @DisplayName("Deve desabilitar usuário corretamente")
+    @DisplayName("Should disable user correctly")
     void disableUser_shouldSucceed_whenWebClientReturns2xx() {
         // Arrange
         when(mockWebClient.put()).thenReturn(mockRequestBodyUriSpec);
@@ -206,4 +206,4 @@ class KeycloakServiceTest {
         // Act + Assert
         assertDoesNotThrow(() -> keycloakService.disableUser("Bearer token", "123"));
     }
-} 
+}
