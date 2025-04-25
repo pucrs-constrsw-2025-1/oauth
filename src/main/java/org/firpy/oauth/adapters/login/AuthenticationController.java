@@ -1,6 +1,7 @@
 package org.firpy.oauth.adapters.login;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import errors.OAuthError;
 import feign.FeignException;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -48,7 +49,7 @@ public class AuthenticationController
 		(
             responseCode = "401",
             description = "Invalid email or password",
-            content = @Content(schema = @Schema(implementation = String.class, defaultValue = "Invalid email or password"))
+			content = @Content(schema = @Schema(implementation = OAuthError.class))
 		)
     })
     public ResponseEntity<?> login(@RequestBody LoginRequest request) throws IOException
@@ -60,7 +61,7 @@ public class AuthenticationController
 		}
 		catch (FeignException.Unauthorized unauthorized)
 		{
-			return ResponseEntity.status(401).body("Invalid email or password");
+			return ResponseEntity.status(401).body(OAuthError.keycloakError("Invalid email or password"));
 		}
     }
 
@@ -76,13 +77,13 @@ public class AuthenticationController
 		(
 			responseCode = "401",
 			description = "Invalid access token",
-			content = @Content(schema = @Schema(implementation = String.class, defaultValue = "Invalid access token"))
+			content = @Content(schema = @Schema(implementation = OAuthError.class))
 		),
 		@ApiResponse
 		(
 			responseCode = "500",
 			description = "An unexpected error occurred",
-			content = @Content(schema = @Schema(implementation = String.class, format = "An unexpected error occurred: {error message}"))
+			content = @Content(schema = @Schema(implementation = OAuthError.class))
 		)
 	})
 	public ResponseEntity<?> introspectToken(@JsonProperty(required = true) String accessTokenToInspect)
@@ -94,11 +95,11 @@ public class AuthenticationController
 		}
 		catch (FeignException.Unauthorized unauthorized)
 		{
-			return ResponseEntity.status(401).body("Invalid access token");
+			return ResponseEntity.status(401).body(OAuthError.keycloakError("Invalid access token"));
 		}
 		catch (Exception exception)
 		{
-			return ResponseEntity.internalServerError().body("An unexpected error occurred: %s".formatted(exception.getMessage()));
+			return ResponseEntity.internalServerError().body(OAuthError.keycloakError("An unexpected error occurred: %s".formatted(exception.getMessage())));
 		}
 	}
 
@@ -114,26 +115,26 @@ public class AuthenticationController
 		(
 			responseCode = "400",
 			description = "Could not parse refresh token",
-			content = @Content(schema = @Schema(implementation = String.class, allowableValues = {"Could not parse refresh token", "Refresh token is required"}))
+			content = @Content(schema = @Schema(implementation = OAuthError.class))
 		),
 		@ApiResponse
 		(
 			responseCode = "401",
 			description = "Invalid refresh token",
-			content = @Content(schema = @Schema(implementation = String.class, defaultValue = "Invalid refresh token"))
+			content = @Content(schema = @Schema(implementation = OAuthError.class))
 		),
 		@ApiResponse
 		(
 			responseCode = "500",
 			description = "An unexpected error occurred",
-			content = @Content(schema = @Schema(implementation = String.class, format = "An unexpected error occurred: {error message}"))
+			content = @Content(schema = @Schema(implementation = OAuthError.class))
 		)
 	})
 	public ResponseEntity<?> loginWithRefreshToken(RefreshTokenRequest request)
 	{
 		if (request.refreshToken() == null)
 		{
-			return ResponseEntity.badRequest().body("Refresh token is required");
+			return ResponseEntity.badRequest().body(OAuthError.internalError("Refresh token is required"));
 		}
 		try
 		{
@@ -141,15 +142,15 @@ public class AuthenticationController
 		}
 		catch (ParseException parseException)
 		{
-			return ResponseEntity.badRequest().body("Could not parse refresh token");
+			return ResponseEntity.badRequest().body(OAuthError.keycloakError("Could not parse refresh token"));
 		}
 		catch (FeignException.Unauthorized unauthorized)
 		{
-			return ResponseEntity.status(401).body("Invalid refresh token");
+			return ResponseEntity.status(401).body(OAuthError.keycloakError("Invalid refresh token"));
 		}
 		catch (Exception exception)
 		{
-			return ResponseEntity.internalServerError().body("An unexpected error occurred: %s".formatted(exception.getMessage()));
+			return ResponseEntity.internalServerError().body(OAuthError.keycloakError("An unexpected error occurred: %s".formatted(exception.getMessage())));
 		}
 	}
 

@@ -3,12 +3,14 @@ package org.firpy.oauth.adapters.login;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import org.firpy.oauth.services.AuthorizationService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/")
+@SecurityRequirement(name = "bearerAuth")
 public class AuthorizationController
 {
 	public AuthorizationController(AuthorizationService authorizationService)

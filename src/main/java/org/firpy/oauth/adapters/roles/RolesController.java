@@ -1,10 +1,12 @@
 package org.firpy.oauth.adapters.roles;
 
+import errors.OAuthError;
 import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.ws.rs.ForbiddenException;
 import jakarta.ws.rs.NotAuthorizedException;
 import jakarta.ws.rs.NotFoundException;
@@ -17,8 +19,11 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.net.URI;
+
 @RestController
 @RequestMapping("roles")
+@SecurityRequirement(name = "bearerAuth")
 public class RolesController
 {
 	public RolesController(KeycloakAdminClient keycloakAdminClient)
@@ -41,19 +46,19 @@ public class RolesController
 			(
 				responseCode = "401",
 				description = "Invalid access token",
-				content = @Content(schema = @Schema(implementation = String.class, allowableValues = {"Access token is missing", "Invalid access token"}))
+				content = @Content(schema = @Schema(implementation = OAuthError.class))
 			),
 			@ApiResponse
 			(
 				responseCode = "403",
 				description = "Access token lacks required admin scopes",
-				content = @Content(schema = @Schema(implementation = String.class, defaultValue = "Access token lacks required admin scopes"))
+				content = @Content(schema = @Schema(implementation = OAuthError.class))
 			),
 			@ApiResponse
 			(
 				responseCode = "500",
 				description = "An unexpected error occurred",
-				content = @Content(schema = @Schema(implementation = String.class, format = "An unexpected error occurred: {error message}"))
+				content = @Content(schema = @Schema(implementation = OAuthError.class))
 			)
 		}
 	)
@@ -61,7 +66,7 @@ public class RolesController
 	{
 		if (accessToken == null || accessToken.trim().isEmpty())
 		{
-			return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Access token is missing");
+			return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(OAuthError.internalError("Access token is missing"));
 		}
 		try (Keycloak keycloak = keycloakAdminClient.fromAdminAccessToken(accessToken))
 		{
@@ -71,15 +76,15 @@ public class RolesController
 		}
 		catch (NotAuthorizedException e)
 		{
-			return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid access token");
+			return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(OAuthError.keycloakError("Invalid access token"));
 		}
 		catch (ForbiddenException e)
 		{
-			return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Access token lacks required admin scopes");
+			return ResponseEntity.status(HttpStatus.FORBIDDEN).body(OAuthError.keycloakError("Access token lacks required admin scopes"));
 		}
 		catch (Exception e)
 		{
-			return ResponseEntity.internalServerError().body("An unexpected error occurred: %s".formatted(e.getMessage()));
+			return ResponseEntity.internalServerError().body(OAuthError.keycloakError("An unexpected error occurred: %s".formatted(e.getMessage())));
 		}
 	}
 
@@ -98,25 +103,25 @@ public class RolesController
 			(
 				responseCode = "401",
 				description = "Invalid access token",
-				content = @Content(schema = @Schema(implementation = String.class, allowableValues = {"Access token is missing", "Invalid access token"}))
+				content = @Content(schema = @Schema(implementation = OAuthError.class))
 			),
 			@ApiResponse
 			(
 				responseCode = "403",
 				description = "Access token lacks required admin scopes",
-				content = @Content(schema = @Schema(implementation = String.class, defaultValue = "Access token lacks required admin scopes"))
+				content = @Content(schema = @Schema(implementation = OAuthError.class))
 			),
 			@ApiResponse
 			(
 				responseCode = "404",
 				description = "Role not found",
-				content = @Content(schema = @Schema(implementation = String.class, defaultValue = "Role not found"))
+				content = @Content(schema = @Schema(implementation = OAuthError.class))
 			),
 			@ApiResponse
 			(
 				responseCode = "500",
 				description = "An unexpected error occurred",
-				content = @Content(schema = @Schema(implementation = String.class, format = "An unexpected error occurred: {error message}"))
+				content = @Content(schema = @Schema(implementation = OAuthError.class))
 			)
 		}
 	)
@@ -124,11 +129,11 @@ public class RolesController
 	{
 		if (roleName == null || roleName.trim().isEmpty())
 		{
-			return ResponseEntity.badRequest().body("Role name is required");
+			return ResponseEntity.badRequest().body(OAuthError.internalError("Role name is required"));
 		}
 		if (accessToken == null || accessToken.trim().isEmpty())
 		{
-			return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Access token is missing");
+			return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(OAuthError.keycloakError("Access token is missing"));
 		}
 
 		try (Keycloak keycloak = keycloakAdminClient.fromAdminAccessToken(accessToken))
@@ -140,15 +145,15 @@ public class RolesController
 		}
 		catch (NotAuthorizedException e)
 		{
-			return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid access token");
+			return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(OAuthError.keycloakError("Invalid access token"));
 		}
 		catch (ForbiddenException e)
 		{
-			return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Access token lacks required admin scopes");
+			return ResponseEntity.status(HttpStatus.FORBIDDEN).body(OAuthError.keycloakError("Access token lacks required admin scopes"));
 		}
 		catch (NotFoundException e)
 		{
-			return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Role not found");
+			return ResponseEntity.status(HttpStatus.NOT_FOUND).body(OAuthError.keycloakError("Role not found"));
 		}
 	}
 
@@ -166,30 +171,32 @@ public class RolesController
 			@ApiResponse
 			(
 				responseCode = "400",
-				description = "Invalid request or email"
+				description = "Invalid request or email",
+				content = @Content(schema = @Schema(implementation = OAuthError.class))
 			),
 			@ApiResponse
 			(
 				responseCode = "401",
 				description = "Invalid access token",
-				content = @Content(schema = @Schema(implementation = String.class, defaultValue = "Invalid access token"))
+				content = @Content(schema = @Schema(implementation = OAuthError.class))
 			),
 			@ApiResponse
 			(
 				responseCode = "403",
 				description = "Access token lacks required admin scopes",
-				content = @Content(schema = @Schema(implementation = String.class, defaultValue = "Access token lacks required admin scopes"))
+				content = @Content(schema = @Schema(implementation = OAuthError.class))
 			),
 			@ApiResponse
 			(
 				responseCode = "409",
-				description = "Role already exists"
+				description = "Role already exists",
+				content = @Content(schema = @Schema(implementation = OAuthError.class))
 			),
 			@ApiResponse
 			(
 				responseCode = "500",
 				description = "An unexpected error occurred",
-				content = @Content(schema = @Schema(implementation = String.class, format = "An unexpected error occurred: {error message}"))
+				content = @Content(schema = @Schema(implementation = OAuthError.class))
 			)
 		}
 	)
@@ -197,11 +204,11 @@ public class RolesController
 	{
 		if (role == null || role.name() == null || role.name().trim().isEmpty())
 		{
-			return ResponseEntity.badRequest().body("Role name is required");
+			return ResponseEntity.badRequest().body(OAuthError.internalError("Role name is required"));
 		}
 		if (accessToken == null || accessToken.trim().isEmpty())
 		{
-			return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Access token is missing");
+			return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(OAuthError.internalError("Access token is missing"));
 		}
 		try (Keycloak keycloakClient = keycloakAdminClient.fromAdminAccessToken(accessToken))
 		{
@@ -209,15 +216,16 @@ public class RolesController
 			RolesResource roles = keycloakClient.realm(realmName).clients().get(clientUUID).roles();
 			roles.create(role.toRoleRepresentation());
 
-			return ResponseEntity.ok(roles.get(role.name()).toRepresentation());
+			RoleRepresentation createdRole = roles.get(role.name()).toRepresentation();
+			return ResponseEntity.created(URI.create("/roles/%s".formatted(createdRole.getId()))).body(createdRole);
 		}
 		catch (NotAuthorizedException e)
 		{
-			return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid access token");
+			return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(OAuthError.keycloakError("Invalid access token"));
 		}
 		catch (ForbiddenException e)
 		{
-			return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Access token lacks required admin scopes");
+			return ResponseEntity.status(HttpStatus.FORBIDDEN).body(OAuthError.keycloakError("Access token lacks required admin scopes"));
 		}
 	}
 
@@ -235,25 +243,25 @@ public class RolesController
 			(
 				responseCode = "401",
 				description = "Invalid access token",
-				content = @Content(schema = @Schema(implementation = String.class, allowableValues = {"Access token is missing", "Invalid access token"}))
+				content = @Content(schema = @Schema(implementation = OAuthError.class))
 			),
 			@ApiResponse
 			(
 				responseCode = "403",
 				description = "Access token lacks required admin scopes",
-				content = @Content(schema = @Schema(implementation = String.class, defaultValue = "Access token lacks required admin scopes"))
+				content = @Content(schema = @Schema(implementation = OAuthError.class))
 			),
 			@ApiResponse
 			(
 				responseCode = "404",
 				description = "Role not found",
-				content = @Content(schema = @Schema(implementation = String.class, defaultValue = "Role not found"))
+				content = @Content(schema = @Schema(implementation = OAuthError.class))
 			),
 			@ApiResponse
 			(
 				responseCode = "500",
 				description = "An unexpected error occurred",
-				content = @Content(schema = @Schema(implementation = String.class, format = "An unexpected error occurred: {error message}"))
+				content = @Content(schema = @Schema(implementation = OAuthError.class))
 			)
 		}
 	)
@@ -261,11 +269,11 @@ public class RolesController
 	{
 		if (roleName == null || roleName.trim().isEmpty())
 		{
-			return ResponseEntity.badRequest().body("Role name is required");
+			return ResponseEntity.badRequest().body(OAuthError.internalError("Role name is required"));
 		}
 		if (accessToken == null || accessToken.trim().isEmpty())
 		{
-			return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Access token is missing");
+			return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(OAuthError.internalError("Access token is missing"));
 		}
 		try (Keycloak keycloakClient = keycloakAdminClient.fromAdminAccessToken(accessToken))
 		{
@@ -277,19 +285,19 @@ public class RolesController
 		}
 		catch (NotAuthorizedException e)
 		{
-			return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid access token");
+			return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(OAuthError.keycloakError("Invalid access token"));
 		}
 		catch (ForbiddenException e)
 		{
-			return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Access token lacks required admin scopes");
+			return ResponseEntity.status(HttpStatus.FORBIDDEN).body(OAuthError.keycloakError("Access token lacks required admin scopes"));
 		}
 		catch (NotFoundException e)
 		{
-			return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Role not found");
+			return ResponseEntity.status(HttpStatus.NOT_FOUND).body(OAuthError.keycloakError("Role not found"));
 		}
 		catch (Exception e)
 		{
-			return ResponseEntity.internalServerError().body("An unexpected error occurred: %s".formatted(e.getMessage()));
+			return ResponseEntity.internalServerError().body(OAuthError.keycloakError("An unexpected error occurred: %s".formatted(e.getMessage())));
 		}
 	}
 
@@ -312,24 +320,25 @@ public class RolesController
 			(
 				responseCode = "401",
 				description = "Invalid access token",
-				content = @Content(schema = @Schema(implementation = String.class, allowableValues = {"Access token is missing", "Invalid access token"}))
+				content = @Content(schema = @Schema(implementation = OAuthError.class))
 			),
 			@ApiResponse
 			(
 				responseCode = "403",
 				description = "Access token lacks required admin scopes",
-				content = @Content(schema = @Schema(implementation = String.class, defaultValue = "Access token lacks required admin scopes"))
+				content = @Content(schema = @Schema(implementation = OAuthError.class))
 			),
 			@ApiResponse
 			(
 				responseCode = "404",
-				description = "Role not found"
+				description = "Role not found",
+				content = @Content(schema = @Schema(implementation = OAuthError.class))
 			),
 			@ApiResponse
 			(
 				responseCode = "500",
 				description = "An unexpected error occurred",
-				content = @Content(schema = @Schema(implementation = String.class, format = "An unexpected error occurred: {error message}"))
+				content = @Content(schema = @Schema(implementation = OAuthError.class))
 			)
 		}
 	)
@@ -337,11 +346,11 @@ public class RolesController
 	{
 		if (accessToken == null || accessToken.trim().isEmpty())
 		{
-			return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Access token is missing");
+			return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(OAuthError.internalError("Access token is missing"));
 		}
 		if (roleName == null || roleName.trim().isEmpty())
 		{
-			return ResponseEntity.badRequest().body("Role name is required");
+			return ResponseEntity.badRequest().body(OAuthError.keycloakError("Role name is required"));
 		}
 
 		try (Keycloak keycloak = keycloakAdminClient.fromAdminAccessToken(accessToken))
@@ -354,20 +363,74 @@ public class RolesController
 		}
 		catch (NotAuthorizedException e)
 		{
-			return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid access token");
+			return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(OAuthError.keycloakError("Invalid access token"));
 		}
 		catch (ForbiddenException e)
 		{
-			return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Access token lacks required admin scopes");
+			return ResponseEntity.status(HttpStatus.FORBIDDEN).body(OAuthError.keycloakError("Access token lacks required admin scopes"));
 		}
 		catch (NotFoundException e)
 		{
-			return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Role not found");
+			return ResponseEntity.status(HttpStatus.NOT_FOUND).body(OAuthError.keycloakError("Role not found"));
 		}
 		catch (Exception e)
 		{
-			return ResponseEntity.internalServerError().body("An unexpected error occurred: %s".formatted(e.getMessage()));
+			return ResponseEntity.internalServerError().body(OAuthError.keycloakError("An unexpected error occurred: %s".formatted(e.getMessage())));
 		}
+	}
+
+	@PatchMapping("/{role-name}")
+	@ApiResponses
+	(
+		value =
+		{
+			@ApiResponse
+			(
+				responseCode = "204",
+				description = "Role updated"
+			),
+			@ApiResponse
+			(
+				responseCode = "400",
+				description = "Invalid request or email",
+				content = @Content(schema = @Schema(implementation = OAuthError.class))
+			),
+			@ApiResponse
+			(
+				responseCode = "401",
+				description = "Invalid access token",
+				content = @Content(schema = @Schema(implementation = OAuthError.class))
+			),
+			@ApiResponse
+			(
+				responseCode = "403",
+				description = "Access token lacks required admin scopes",
+				content = @Content(schema = @Schema(implementation = OAuthError.class))
+			),
+			@ApiResponse
+			(
+				responseCode = "404",
+				description = "Role not found",
+				content = @Content(schema = @Schema(implementation = OAuthError.class))
+			),
+			@ApiResponse
+			(
+				responseCode = "500",
+				description = "An unexpected error occurred",
+				content = @Content(schema = @Schema(implementation = OAuthError.class))
+			)
+		}
+)
+	public ResponseEntity<?> patchRole(@Schema(hidden = true) @RequestHeader(value = "Authorization", required = false) String accessToken, @PathVariable("role-name") String roleName, @RequestBody PatchRoleRequest patch)
+	{
+        ResponseEntity<?> existingRole = getRole(accessToken, roleName);
+		if (existingRole.getBody() instanceof RoleRepresentation role)
+		{
+			patch.applyTo(role);
+			return updateRole(accessToken, roleName, new CreateRoleRequest(role.getName(), role.getDescription()));
+		}
+
+		return existingRole;
 	}
 
 	private final KeycloakAdminClient keycloakAdminClient;

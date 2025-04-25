@@ -1,11 +1,12 @@
 package org.firpy.oauth.adapters.roles;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import org.keycloak.representations.idm.RoleRepresentation;
 
 public record CreateRoleRequest
 (
-	String name,
-	String description
+	@JsonProperty(required = true) String name,
+	@JsonProperty(required = true) String description
 )
 {
 	public RoleRepresentation toRoleRepresentation()
