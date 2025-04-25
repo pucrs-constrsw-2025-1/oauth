@@ -8,7 +8,7 @@ import org.springframework.context.annotation.AnnotationConfigApplicationContext
 
 @SpringBootApplication
 @EnableFeignClients
-public class KeycloakWrapperApplication
+public class OauthApplication
 {
     public static void main(String[] args)
     {
@@ -18,6 +18,6 @@ public class KeycloakWrapperApplication
 
         applicationContext.refresh();
 
-        SpringApplication.run(KeycloakWrapperApplication.class, args);
+        SpringApplication.run(OauthApplication.class, args);
     }
 }
