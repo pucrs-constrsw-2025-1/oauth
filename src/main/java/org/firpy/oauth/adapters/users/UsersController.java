@@ -1,4 +1,4 @@
-package org.firpy.keycloakwrapper.adapters.users;
+package org.firpy.oauth.adapters.users;
 
 import feign.FeignException;
 import io.swagger.v3.oas.annotations.media.ArraySchema;
@@ -11,9 +11,9 @@ import jakarta.ws.rs.ForbiddenException;
 import jakarta.ws.rs.NotAuthorizedException;
 import jakarta.ws.rs.NotFoundException;
 import jakarta.ws.rs.core.Response;
-import org.firpy.keycloakwrapper.adapters.login.keycloak.admin.KeycloakAdminClient;
-import org.firpy.keycloakwrapper.adapters.login.keycloak.auth.KeycloakAuthClient;
-import org.firpy.keycloakwrapper.adapters.login.keycloak.auth.KeycloakUserInfo;
+import org.firpy.oauth.adapters.login.keycloak.admin.KeycloakAdminClient;
+import org.firpy.oauth.adapters.login.keycloak.auth.KeycloakAuthClient;
+import org.firpy.oauth.adapters.login.keycloak.auth.KeycloakUserInfo;
 import org.keycloak.admin.client.Keycloak;
 import org.keycloak.admin.client.resource.UserResource;
 import org.keycloak.admin.client.resource.UsersResource;

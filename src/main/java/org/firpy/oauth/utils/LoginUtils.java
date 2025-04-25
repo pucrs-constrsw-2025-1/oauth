@@ -1,7 +1,7 @@
-package org.firpy.keycloakwrapper.utils;
+package org.firpy.oauth.utils;
 
-import org.firpy.keycloakwrapper.adapters.login.LoginRequest;
-import org.firpy.keycloakwrapper.adapters.login.RefreshTokenRequest;
+import org.firpy.oauth.adapters.login.LoginRequest;
+import org.firpy.oauth.adapters.login.RefreshTokenRequest;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.util.LinkedMultiValueMap;

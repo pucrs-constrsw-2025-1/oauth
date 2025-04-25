@@ -1,4 +1,4 @@
-package org.firpy.keycloakwrapper.adapters.users;
+package org.firpy.oauth.adapters.users;
 
 import org.keycloak.representations.idm.UserRepresentation;
 

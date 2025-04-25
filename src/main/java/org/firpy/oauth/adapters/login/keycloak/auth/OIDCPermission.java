@@ -1,4 +1,4 @@
-package org.firpy.keycloakwrapper.adapters.login.keycloak.auth;
+package org.firpy.oauth.adapters.login.keycloak.auth;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 

@@ -1,4 +1,4 @@
-package org.firpy.oauth.adapters.login.keycloak.admin;
+package org.firpy.oauth.adapters.roles;
 
 import org.keycloak.representations.idm.RoleRepresentation;
 

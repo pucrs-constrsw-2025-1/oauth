@@ -1,6 +1,6 @@
-package org.firpy.keycloakwrapper.adapters.login.keycloak.auth;
+package org.firpy.oauth.adapters.login.keycloak.auth;
 
-import org.firpy.keycloakwrapper.adapters.login.AccessToken;
+import org.firpy.oauth.adapters.login.AccessToken;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.http.MediaType;
 import org.springframework.util.MultiValueMap;
