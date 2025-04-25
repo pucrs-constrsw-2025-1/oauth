@@ -1,9 +1,9 @@
-package org.firpy.keycloakwrapper.adapters.login;
+package org.firpy.oauth.adapters.login;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
-import org.firpy.keycloakwrapper.services.AuthorizationService;
+import org.firpy.oauth.services.AuthorizationService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 

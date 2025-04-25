@@ -1,4 +1,4 @@
-package org.firpy.keycloakwrapper.utils;
+package org.firpy.oauth.utils;
 
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.http.HttpHeaders;

@@ -1,6 +1,6 @@
-package org.firpy.keycloakwrapper.services;
+package org.firpy.oauth.services;
 
-import org.firpy.keycloakwrapper.adapters.login.keycloak.auth.KeycloakAuthClient;
+import org.firpy.oauth.adapters.login.keycloak.auth.KeycloakAuthClient;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.util.LinkedMultiValueMap;

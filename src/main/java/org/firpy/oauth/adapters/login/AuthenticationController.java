@@ -1,4 +1,4 @@
-package org.firpy.keycloakwrapper.adapters.login;
+package org.firpy.oauth.adapters.login;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import feign.FeignException;
@@ -6,9 +6,9 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
-import org.firpy.keycloakwrapper.adapters.login.keycloak.auth.IntrospectionResponse;
-import org.firpy.keycloakwrapper.adapters.login.keycloak.auth.KeycloakAuthClient;
-import org.firpy.keycloakwrapper.utils.LoginUtils;
+import org.firpy.oauth.adapters.login.keycloak.auth.IntrospectionResponse;
+import org.firpy.oauth.adapters.login.keycloak.auth.KeycloakAuthClient;
+import org.firpy.oauth.utils.LoginUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;

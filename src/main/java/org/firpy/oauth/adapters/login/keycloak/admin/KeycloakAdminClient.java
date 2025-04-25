@@ -1,12 +1,10 @@
-package org.firpy.keycloakwrapper.adapters.login.keycloak.admin;
+package org.firpy.oauth.adapters.login.keycloak.admin;
 
 import org.jboss.resteasy.client.jaxrs.internal.ResteasyClientBuilderImpl;
 import org.keycloak.admin.client.Keycloak;
 import org.keycloak.admin.client.KeycloakBuilder;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
-
-import java.io.IOException;
 
 @Component
 public class KeycloakAdminClient

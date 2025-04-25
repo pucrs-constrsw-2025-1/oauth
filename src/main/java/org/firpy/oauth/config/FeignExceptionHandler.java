@@ -1,4 +1,4 @@
-package org.firpy.keycloakwrapper.config;
+package org.firpy.oauth.config;
 
 import feign.FeignException;
 import jakarta.servlet.http.HttpServletResponse;

@@ -1,4 +1,4 @@
-package org.firpy.keycloakwrapper;
+package org.firpy.oauth;
 
 import me.paulschwarz.springdotenv.DotenvPropertySource;
 import org.springframework.boot.SpringApplication;
