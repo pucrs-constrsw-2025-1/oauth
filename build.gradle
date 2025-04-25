@@ -1,0 +1,90 @@
+plugins {
+	id 'java'
+	id 'org.springframework.boot' version '3.4.4'
+	id 'io.spring.dependency-management' version '1.1.7'
+	id 'jacoco'
+	id 'org.sonarqube' version '4.4.1.3373'
+}
+
+group = 'com.grupo1'
+version = '0.0.1-SNAPSHOT'
+
+java {
+	toolchain {
+		languageVersion = JavaLanguageVersion.of(17)
+	}
+}
+
+configurations {
+	compileOnly {
+		extendsFrom annotationProcessor
+	}
+}
+
+repositories {
+	mavenCentral()
+}
+
+dependencies {
+	// Spring Web
+	implementation 'org.springframework.boot:spring-boot-starter-web'
+
+	// WebClient (via WebFlux)
+	implementation 'org.springframework.boot:spring-boot-starter-webflux'
+
+	// Validação de dados
+	implementation 'org.springframework.boot:spring-boot-starter-validation'
+
+	// Jackson para JSON
+	implementation 'com.fasterxml.jackson.core:jackson-databind'
+
+	// Lombok
+	compileOnly 'org.projectlombok:lombok'
+	annotationProcessor 'org.projectlombok:lombok'
+
+	// Swagger
+	implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.2.0'
+
+	// Testes
+	testImplementation 'org.springframework.boot:spring-boot-starter-test'
+
+	// Mockito
+	testImplementation 'org.mockito:mockito-core'
+	testImplementation 'org.mockito:mockito-junit-jupiter'
+	testImplementation 'io.projectreactor:reactor-test'
+
+	// Jackson (caso precise serializar objetos para JSON nos testes)
+	testImplementation 'com.fasterxml.jackson.core:jackson-databind'
+}
+
+tasks.named('test') {
+	useJUnitPlatform()
+}
+
+jacoco {
+	toolVersion = "0.8.10" // ou a versão mais recente
+}
+
+jacocoTestReport {
+	dependsOn test
+	reports {
+		html.required = true
+		xml.required = true
+		csv.required = false
+	}
+}
+
+sonarqube {
+	properties {
+		property "sonar.projectKey", "seu-projeto"
+		property "sonar.projectName", "Seu Projeto"
+		property "sonar.host.url", "http://localhost:9000"
+//		property "sonar.token", "sqa_527520a488f061862bda7b5d60cdee0c803fcd0b"
+		property "sonar.login", "admin"
+		property "sonar.password", "adminadmin"
+		property "sonar.gradle.skipCompile", "true"
+		property "sonar.java.binaries", "build/classes"
+		property "sonar.junit.reportPaths", "build/test-results/test"
+		property "sonar.jacoco.reportPaths", "build/jacoco/test.exec"
+	}
+}
