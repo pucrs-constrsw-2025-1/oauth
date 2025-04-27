@@ -496,6 +496,21 @@ public class UsersController
             keycloakClient.realm(realmName).users().get(id).resetPassword(credentialRepresentation);
 
             return ResponseEntity.noContent().build();
+        } catch (NotAuthorizedException e)
+        {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(OAuthError.keycloakError("Invalid access token"));
+        }
+        catch (ForbiddenException e)
+        {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(OAuthError.keycloakError("Access token lacks required admin scopes"));
+        }
+        catch (NotFoundException e)
+        {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(OAuthError.keycloakError("User not found"));
+        }
+        catch (Exception e)
+        {
+            return ResponseEntity.internalServerError().body(OAuthError.keycloakError("An unexpected error occurred: %s".formatted(e.getMessage())));
         }
     }
 

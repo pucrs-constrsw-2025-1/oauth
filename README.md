@@ -48,16 +48,16 @@ O realm, client, client secret, roles e permissões são criados automaticamente
 - Update user password endpoint (Leonardo)
     - [X] Ensure that it receives a JSON object with the newPassword field
     - [X] Ensure that it returns 400 on a bad request
-    - [] Ensure that it returns 401 if the access token is invalid
-    - [ ] Ensure that it returns 403 if the access token doesn't have the necessary scopes (not admin)
-    - [ ] Ensure that it returns 404 if the user doesn't exist
-    - [ ] Ensure that it updates the user's password
+    - [X] Ensure that it returns 401 if the access token is invalid
+    - [X] Ensure that it returns 403 if the access token doesn't have the necessary scopes (not admin)
+    - [X] Ensure that it returns 404 if the user doesn't exist
+    - [X] Ensure that it updates the user's password
 - Delete user endpoint (Leonardo)
-    - [ ] Ensure that it returns 400 on a bad request
-    - [ ] Ensure that it returns 401 if the access token is invalid
-    - [ ] Ensure that it returns 403 if the access token doesn't have the necessary scopes (not admin)
-    - [ ] Ensure that it returns 404 if the user doesn't exist
-    - [ ] Ensure that it deletes the user
+    - [X] Ensure that it returns 400 on a bad request
+    - [X] Ensure that it returns 401 if the access token is invalid
+    - [X] Ensure that it returns 403 if the access token doesn't have the necessary scopes (not admin)
+    - [X] Ensure that it returns 404 if the user doesn't exist
+    - [X] Ensure that it deletes the user
 - General error handling (Santiago)
     - [ ] Document errors on Swagger UI
     - [ ] Ensure that all endpoints have the following response body on errors:
