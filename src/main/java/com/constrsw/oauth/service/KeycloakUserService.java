@@ -12,6 +12,8 @@ import org.springframework.stereotype.Service;
 
 import java.util.Collections;
 import java.util.List;
+
+import jakarta.ws.rs.NotFoundException;
 import jakarta.ws.rs.core.Response;
 
 @Service
@@ -47,7 +49,7 @@ public class KeycloakUserService {
             user.setFirstName(userRequest.getFirstName());
             user.setLastName(userRequest.getLastName());
             user.setEnabled(true);
-            user.setEmailVerified(true);            
+            user.setEmailVerified(true);
             user.setCredentials(Collections.singletonList(credential));
             user.setRealmRoles(userRequest.getRoles());
     
@@ -95,6 +97,35 @@ public class KeycloakUserService {
     private UsersResource getUsersResource() {
         RealmResource realmResource = keycloak.realm(realm);
         return realmResource.users();
+    }
+
+    /** -----------------------------------------------------------
+     *  Lista usuários do realm.
+     *  @param enabled  null ➜ sem filtro  
+     *                  true ➜ só habilitados  
+     *                  false➜ só desabilitados
+     *  @return lista de UserRepresentation
+     *  ----------------------------------------------------------- */
+    public List<UserRepresentation> listUsers(Boolean enabled) {
+        List<UserRepresentation> users =
+                keycloak.realm(realm).users().list();            // GET /admin/realms/{realm}/users
+
+        if (enabled != null) {
+            users = users.stream().filter(u -> Boolean.valueOf(enabled).equals(u.isEnabled())).toList();
+        }
+        return users;
+    }
+
+    /** -----------------------------------------------------------
+     *  Recupera UM usuário pelo id.
+     *  @throws NotFoundException se não existir
+     *  ----------------------------------------------------------- */
+    public UserRepresentation getUserById(String id) {
+        try {
+            return keycloak.realm(realm).users().get(id).toRepresentation();
+        } catch (jakarta.ws.rs.NotFoundException e) {
+            throw new com.constrsw.oauth.exception.KeycloakIntegrationException("Usuário não encontrado", e);
+        }
     }
 
 }

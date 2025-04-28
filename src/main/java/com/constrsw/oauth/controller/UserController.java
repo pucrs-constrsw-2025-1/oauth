@@ -44,4 +44,43 @@ public class UserController {
         keycloakService.deleteUser(userId);
         return ResponseEntity.noContent().build();
     }
+
+    /** -----------------------------------------------------------
+     *  GET /api/users
+     *  Ex.: /api/users?enabled=true
+     *  ----------------------------------------------------------- */
+    @GetMapping("/users")
+    public ResponseEntity<List<UserResponse>> listUsers(
+            @RequestParam(required = false) Boolean enabled) {
+
+        List<UserResponse> result = keycloakService
+                .listUsers(enabled)              // serviço
+                .stream()
+                .map(this::toResponse)           // converte p/ DTO
+                .toList();
+
+        return ResponseEntity.ok(result);        // 200
+    }
+
+    /** -----------------------------------------------------------
+     *  GET /api/users/{id}
+     *  ----------------------------------------------------------- */
+    @GetMapping("/users/{id}")
+    public ResponseEntity<UserResponse> getUser(@PathVariable String id) {
+
+        UserResponse dto = toResponse(keycloakService.getUserById(id));
+        return ResponseEntity.ok(dto);           // 200
+    }
+
+    /* --------- utilitário de conversão Domain → DTO --------- */
+    private UserResponse toResponse(org.keycloak.representations.idm.UserRepresentation u) {
+        return UserResponse.builder()
+                .id(u.getId())
+                .username(u.getUsername())
+                .email(u.getEmail())
+                .firstName(u.getFirstName())
+                .lastName(u.getLastName())
+                .enabled(u.isEnabled())
+                .build();
+    }
 }
