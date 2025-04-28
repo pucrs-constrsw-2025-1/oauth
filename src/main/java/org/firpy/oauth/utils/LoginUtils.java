@@ -41,17 +41,6 @@ public class LoginUtils
         return params;
     }
 
-    public MultiValueMap<String, Object> getIntrospectParameters(String accessToken)
-    {
-        MultiValueMap<String, Object> params = new LinkedMultiValueMap<>();
-        params.add("token_type_hint", "requesting_party_token");
-        params.add("client_id", clientId);
-        params.add("client_secret", clientSecret);
-        params.add("token", accessToken);
-
-        return params;
-    }
-
     @Value("${keycloak.client-secret}")
     private String clientSecret;
 

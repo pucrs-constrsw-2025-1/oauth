@@ -1,12 +1,10 @@
 package org.firpy.oauth.adapters.login;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
 import feign.FeignException;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
-import org.firpy.oauth.adapters.login.keycloak.auth.IntrospectionResponse;
 import org.firpy.oauth.adapters.login.keycloak.auth.KeycloakAuthClient;
 import org.firpy.oauth.errors.OAuthError;
 import org.firpy.oauth.utils.LoginUtils;
@@ -19,7 +17,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.io.IOException;
 import java.text.ParseException;
-import java.util.Base64;
 
 @RestController()
 @RequestMapping("login")
@@ -65,44 +62,6 @@ public class AuthenticationController
         catch (FeignException.Unauthorized unauthorized)
         {
             return ResponseEntity.status(401).body(OAuthError.keycloakError("Invalid email or password"));
-        }
-    }
-
-    @PostMapping("/introspect")
-    @ApiResponses(value = {
-            @ApiResponse
-                    (
-                            responseCode = "200",
-                            description = "Introspect successful",
-                            content = @Content(schema = @Schema(implementation = IntrospectionResponse.class))
-                    ),
-            @ApiResponse
-                    (
-                            responseCode = "401",
-                            description = "Invalid access token",
-                            content = @Content(schema = @Schema(implementation = OAuthError.class))
-                    ),
-            @ApiResponse
-                    (
-                            responseCode = "500",
-                            description = "An unexpected error occurred",
-                            content = @Content(schema = @Schema(implementation = OAuthError.class))
-                    )
-    })
-    public ResponseEntity<?> introspectToken(@JsonProperty(required = true) String accessTokenToInspect)
-    {
-        byte[] basicAuthBytes = ("%s:%s".formatted(clientId, clientSecret)).getBytes();
-        try
-        {
-            return ResponseEntity.ok(keycloakAuthClient.introspectToken("Basic %s".formatted(Base64.getEncoder().encodeToString(basicAuthBytes)), loginUtils.getIntrospectParameters(accessTokenToInspect)));
-        }
-        catch (FeignException.Unauthorized unauthorized)
-        {
-            return ResponseEntity.status(401).body(OAuthError.keycloakError("Invalid access token"));
-        }
-        catch (Exception exception)
-        {
-            return ResponseEntity.internalServerError().body(OAuthError.keycloakError("An unexpected error occurred: %s".formatted(exception.getMessage())));
         }
     }
 

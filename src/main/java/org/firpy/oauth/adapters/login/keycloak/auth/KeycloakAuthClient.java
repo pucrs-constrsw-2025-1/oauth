@@ -22,9 +22,6 @@ public interface KeycloakAuthClient
     @GetMapping("/realms/${keycloak.realm}/protocol/openid-connect/userinfo")
     KeycloakUserInfo getCurrentUser(@RequestHeader("Authorization") String accessToken);
 
-    @PostMapping(value = "/realms/${keycloak.realm}/protocol/openid-connect/token/introspect", consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE)
-    IntrospectionResponse introspectToken(@RequestHeader("Authorization") String authorization, @RequestBody MultiValueMap<String, ?> request);
-
     @PostMapping(value = "/realms/${keycloak.realm}/protocol/openid-connect/token", consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE)
     Map<String, Object> requestAuthorization(@RequestHeader("Authorization") String basicAuth, @RequestBody MultiValueMap<String, ?> request);
 

@@ -1,6 +1,6 @@
 {
 	"info": {
-		"_postman_id": "35a97055-c6b2-42c3-943c-f0d59993fe3d",
+		"_postman_id": "a2641c4c-bb27-411e-a1a8-8e123139919f",
 		"name": "oauth",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
 		"_exporter_id": "36127534"
@@ -879,7 +879,7 @@
 												}
 											],
 											"cookie": [],
-											"body": "[\n  {\n    \"id\": \"<string>\",\n    \"name\": \"<string>\",\n    \"description\": \"<string>\",\n    \"scopeParamRequired\": \"<boolean>\",\n    \"composite\": \"<boolean>\",\n    \"composites\": {\n      \"realm\": [\n        \"<string>\",\n        \"<string>\"\n      ],\n      \"client\": {\n        \"deserunt_3\": [\n          \"<string>\",\n          \"<string>\"\n        ],\n        \"consequat__\": [\n          \"<string>\",\n          \"<string>\"\n        ]\n      },\n      \"application\": {\n        \"ex_62\": [\n          \"<string>\",\n          \"<string>\"\n        ]\n      }\n    },\n    \"clientRole\": \"<boolean>\",\n    \"containerId\": \"<string>\",\n    \"attributes\": {\n      \"laborum_49\": [\n        \"<string>\",\n        \"<string>\"\n      ]\n    }\n  },\n  {\n    \"id\": \"<string>\",\n    \"name\": \"<string>\",\n    \"description\": \"<string>\",\n    \"scopeParamRequired\": \"<boolean>\",\n    \"composite\": \"<boolean>\",\n    \"composites\": {\n      \"realm\": [\n        \"<string>\",\n        \"<string>\"\n      ],\n      \"client\": {\n        \"laborumd0\": [\n          \"<string>\",\n          \"<string>\"\n        ]\n      },\n      \"application\": {\n        \"do_ae\": [\n          \"<string>\",\n          \"<string>\"\n        ],\n        \"sint161\": [\n          \"<string>\",\n          \"<string>\"\n        ]\n      }\n    },\n    \"clientRole\": \"<boolean>\",\n    \"containerId\": \"<string>\",\n    \"attributes\": {\n      \"Lorem748\": [\n        \"<string>\",\n        \"<string>\"\n      ]\n    }\n  }\n]"
+											"body": "[\n  {\n    \"id\": \"<string>\",\n    \"name\": \"<string>\",\n    \"description\": \"<string>\",\n    \"scopeParamRequired\": \"<boolean>\",\n    \"composite\": \"<boolean>\",\n    \"composites\": {\n      \"realm\": [\n        \"<string>\",\n        \"<string>\"\n      ],\n      \"client\": {\n        \"eab_\": [\n          \"<string>\",\n          \"<string>\"\n        ],\n        \"doloree8b\": [\n          \"<string>\",\n          \"<string>\"\n        ]\n      },\n      \"application\": {\n        \"esse_1\": [\n          \"<string>\",\n          \"<string>\"\n        ],\n        \"officia8\": [\n          \"<string>\",\n          \"<string>\"\n        ],\n        \"aliquip1\": [\n          \"<string>\",\n          \"<string>\"\n        ]\n      }\n    },\n    \"clientRole\": \"<boolean>\",\n    \"containerId\": \"<string>\",\n    \"attributes\": {\n      \"do_5\": [\n        \"<string>\",\n        \"<string>\"\n      ],\n      \"dolor_38\": [\n        \"<string>\",\n        \"<string>\"\n      ]\n    }\n  },\n  {\n    \"id\": \"<string>\",\n    \"name\": \"<string>\",\n    \"description\": \"<string>\",\n    \"scopeParamRequired\": \"<boolean>\",\n    \"composite\": \"<boolean>\",\n    \"composites\": {\n      \"realm\": [\n        \"<string>\",\n        \"<string>\"\n      ],\n      \"client\": {\n        \"dolore_f\": [\n          \"<string>\",\n          \"<string>\"\n        ]\n      },\n      \"application\": {\n        \"labore60\": [\n          \"<string>\",\n          \"<string>\"\n        ],\n        \"nisie5\": [\n          \"<string>\",\n          \"<string>\"\n        ],\n        \"dolorf9_\": [\n          \"<string>\",\n          \"<string>\"\n        ],\n        \"in_59\": [\n          \"<string>\",\n          \"<string>\"\n        ]\n      }\n    },\n    \"clientRole\": \"<boolean>\",\n    \"containerId\": \"<string>\",\n    \"attributes\": {\n      \"incididunt5c0\": [\n        \"<string>\",\n        \"<string>\"\n      ],\n      \"occaecat__\": [\n        \"<string>\",\n        \"<string>\"\n      ]\n    }\n  }\n]"
 										},
 										{
 											"name": "Invalid access token",
@@ -3924,7 +3924,7 @@
 										}
 									],
 									"cookie": [],
-									"body": "{\n  \"id\": \"<string>\",\n  \"name\": \"<string>\",\n  \"description\": \"<string>\",\n  \"scopeParamRequired\": \"<boolean>\",\n  \"composite\": \"<boolean>\",\n  \"composites\": {\n    \"realm\": [\n      \"<string>\",\n      \"<string>\"\n    ],\n    \"client\": {\n      \"ipsumf\": [\n        \"<string>\",\n        \"<string>\"\n      ]\n    },\n    \"application\": {\n      \"anim6\": [\n        \"<string>\",\n        \"<string>\"\n      ]\n    }\n  },\n  \"clientRole\": \"<boolean>\",\n  \"containerId\": \"<string>\",\n  \"attributes\": {\n    \"consectetur13b\": [\n      \"<string>\",\n      \"<string>\"\n    ],\n    \"veniam__4c\": [\n      \"<string>\",\n      \"<string>\"\n    ],\n    \"ex_b_4\": [\n      \"<string>\",\n      \"<string>\"\n    ]\n  }\n}"
+									"body": "{\n  \"id\": \"<string>\",\n  \"name\": \"<string>\",\n  \"description\": \"<string>\",\n  \"scopeParamRequired\": \"<boolean>\",\n  \"composite\": \"<boolean>\",\n  \"composites\": {\n    \"realm\": [\n      \"<string>\",\n      \"<string>\"\n    ],\n    \"client\": {\n      \"magna9c\": [\n        \"<string>\",\n        \"<string>\"\n      ],\n      \"adipisicing33\": [\n        \"<string>\",\n        \"<string>\"\n      ],\n      \"mollit9ef\": [\n        \"<string>\",\n        \"<string>\"\n      ]\n    },\n    \"application\": {\n      \"sitbdd\": [\n        \"<string>\",\n        \"<string>\"\n      ]\n    }\n  },\n  \"clientRole\": \"<boolean>\",\n  \"containerId\": \"<string>\",\n  \"attributes\": {\n    \"dolor151\": [\n      \"<string>\",\n      \"<string>\"\n    ]\n  }\n}"
 								},
 								{
 									"name": "Invalid access token",
@@ -5198,7 +5198,7 @@
 								}
 							],
 							"cookie": [],
-							"body": "[\n  {\n    \"id\": \"<string>\",\n    \"name\": \"<string>\",\n    \"description\": \"<string>\",\n    \"scopeParamRequired\": \"<boolean>\",\n    \"composite\": \"<boolean>\",\n    \"composites\": {\n      \"realm\": [\n        \"<string>\",\n        \"<string>\"\n      ],\n      \"client\": {\n        \"deserunt_3\": [\n          \"<string>\",\n          \"<string>\"\n        ],\n        \"consequat__\": [\n          \"<string>\",\n          \"<string>\"\n        ]\n      },\n      \"application\": {\n        \"ex_62\": [\n          \"<string>\",\n          \"<string>\"\n        ]\n      }\n    },\n    \"clientRole\": \"<boolean>\",\n    \"containerId\": \"<string>\",\n    \"attributes\": {\n      \"laborum_49\": [\n        \"<string>\",\n        \"<string>\"\n      ]\n    }\n  },\n  {\n    \"id\": \"<string>\",\n    \"name\": \"<string>\",\n    \"description\": \"<string>\",\n    \"scopeParamRequired\": \"<boolean>\",\n    \"composite\": \"<boolean>\",\n    \"composites\": {\n      \"realm\": [\n        \"<string>\",\n        \"<string>\"\n      ],\n      \"client\": {\n        \"laborumd0\": [\n          \"<string>\",\n          \"<string>\"\n        ]\n      },\n      \"application\": {\n        \"do_ae\": [\n          \"<string>\",\n          \"<string>\"\n        ],\n        \"sint161\": [\n          \"<string>\",\n          \"<string>\"\n        ]\n      }\n    },\n    \"clientRole\": \"<boolean>\",\n    \"containerId\": \"<string>\",\n    \"attributes\": {\n      \"Lorem748\": [\n        \"<string>\",\n        \"<string>\"\n      ]\n    }\n  }\n]"
+							"body": "[\n  {\n    \"id\": \"<string>\",\n    \"name\": \"<string>\",\n    \"description\": \"<string>\",\n    \"scopeParamRequired\": \"<boolean>\",\n    \"composite\": \"<boolean>\",\n    \"composites\": {\n      \"realm\": [\n        \"<string>\",\n        \"<string>\"\n      ],\n      \"client\": {\n        \"eab_\": [\n          \"<string>\",\n          \"<string>\"\n        ],\n        \"doloree8b\": [\n          \"<string>\",\n          \"<string>\"\n        ]\n      },\n      \"application\": {\n        \"esse_1\": [\n          \"<string>\",\n          \"<string>\"\n        ],\n        \"officia8\": [\n          \"<string>\",\n          \"<string>\"\n        ],\n        \"aliquip1\": [\n          \"<string>\",\n          \"<string>\"\n        ]\n      }\n    },\n    \"clientRole\": \"<boolean>\",\n    \"containerId\": \"<string>\",\n    \"attributes\": {\n      \"do_5\": [\n        \"<string>\",\n        \"<string>\"\n      ],\n      \"dolor_38\": [\n        \"<string>\",\n        \"<string>\"\n      ]\n    }\n  },\n  {\n    \"id\": \"<string>\",\n    \"name\": \"<string>\",\n    \"description\": \"<string>\",\n    \"scopeParamRequired\": \"<boolean>\",\n    \"composite\": \"<boolean>\",\n    \"composites\": {\n      \"realm\": [\n        \"<string>\",\n        \"<string>\"\n      ],\n      \"client\": {\n        \"dolore_f\": [\n          \"<string>\",\n          \"<string>\"\n        ]\n      },\n      \"application\": {\n        \"labore60\": [\n          \"<string>\",\n          \"<string>\"\n        ],\n        \"nisie5\": [\n          \"<string>\",\n          \"<string>\"\n        ],\n        \"dolorf9_\": [\n          \"<string>\",\n          \"<string>\"\n        ],\n        \"in_59\": [\n          \"<string>\",\n          \"<string>\"\n        ]\n      }\n    },\n    \"clientRole\": \"<boolean>\",\n    \"containerId\": \"<string>\",\n    \"attributes\": {\n      \"incididunt5c0\": [\n        \"<string>\",\n        \"<string>\"\n      ],\n      \"occaecat__\": [\n        \"<string>\",\n        \"<string>\"\n      ]\n    }\n  }\n]"
 						},
 						{
 							"name": "Invalid access token",
@@ -5401,7 +5401,7 @@
 								}
 							],
 							"cookie": [],
-							"body": "{\n  \"id\": \"<string>\",\n  \"name\": \"<string>\",\n  \"description\": \"<string>\",\n  \"scopeParamRequired\": \"<boolean>\",\n  \"composite\": \"<boolean>\",\n  \"composites\": {\n    \"realm\": [\n      \"<string>\",\n      \"<string>\"\n    ],\n    \"client\": {\n      \"ipsumf\": [\n        \"<string>\",\n        \"<string>\"\n      ]\n    },\n    \"application\": {\n      \"anim6\": [\n        \"<string>\",\n        \"<string>\"\n      ]\n    }\n  },\n  \"clientRole\": \"<boolean>\",\n  \"containerId\": \"<string>\",\n  \"attributes\": {\n    \"consectetur13b\": [\n      \"<string>\",\n      \"<string>\"\n    ],\n    \"veniam__4c\": [\n      \"<string>\",\n      \"<string>\"\n    ],\n    \"ex_b_4\": [\n      \"<string>\",\n      \"<string>\"\n    ]\n  }\n}"
+							"body": "{\n  \"id\": \"<string>\",\n  \"name\": \"<string>\",\n  \"description\": \"<string>\",\n  \"scopeParamRequired\": \"<boolean>\",\n  \"composite\": \"<boolean>\",\n  \"composites\": {\n    \"realm\": [\n      \"<string>\",\n      \"<string>\"\n    ],\n    \"client\": {\n      \"magna9c\": [\n        \"<string>\",\n        \"<string>\"\n      ],\n      \"adipisicing33\": [\n        \"<string>\",\n        \"<string>\"\n      ],\n      \"mollit9ef\": [\n        \"<string>\",\n        \"<string>\"\n      ]\n    },\n    \"application\": {\n      \"sitbdd\": [\n        \"<string>\",\n        \"<string>\"\n      ]\n    }\n  },\n  \"clientRole\": \"<boolean>\",\n  \"containerId\": \"<string>\",\n  \"attributes\": {\n    \"dolor151\": [\n      \"<string>\",\n      \"<string>\"\n    ]\n  }\n}"
 						},
 						{
 							"name": "Invalid request or email",
@@ -5956,169 +5956,6 @@
 									"query": [
 										{
 											"key": "refreshToken",
-											"value": "<string>"
-										}
-									]
-								}
-							},
-							"status": "Internal Server Error",
-							"code": 500,
-							"_postman_previewlanguage": "json",
-							"header": [
-								{
-									"key": "Content-Type",
-									"value": "*/*"
-								}
-							],
-							"cookie": [],
-							"body": "{\n  \"errorDescription\": \"<string>\",\n  \"source\": \"<string>\"\n}"
-						}
-					]
-				},
-				{
-					"name": "introspect Token",
-					"request": {
-						"method": "POST",
-						"header": [
-							{
-								"key": "Accept",
-								"value": "*/*"
-							}
-						],
-						"url": {
-							"raw": "{{baseUrl}}/login/introspect?accessTokenToInspect=<string>",
-							"host": [
-								"{{baseUrl}}"
-							],
-							"path": [
-								"login",
-								"introspect"
-							],
-							"query": [
-								{
-									"key": "accessTokenToInspect",
-									"value": "<string>",
-									"description": "(Required) "
-								}
-							]
-						}
-					},
-					"response": [
-						{
-							"name": "Introspect successful",
-							"originalRequest": {
-								"method": "POST",
-								"header": [
-									{
-										"key": "Authorization",
-										"value": "Bearer <token>",
-										"description": "Added as a part of security scheme: bearer"
-									},
-									{
-										"key": "Accept",
-										"value": "*/*"
-									}
-								],
-								"url": {
-									"raw": "{{baseUrl}}/login/introspect?accessTokenToInspect=<string>",
-									"host": [
-										"{{baseUrl}}"
-									],
-									"path": [
-										"login",
-										"introspect"
-									],
-									"query": [
-										{
-											"key": "accessTokenToInspect",
-											"value": "<string>"
-										}
-									]
-								}
-							},
-							"status": "OK",
-							"code": 200,
-							"_postman_previewlanguage": "json",
-							"header": [
-								{
-									"key": "Content-Type",
-									"value": "*/*"
-								}
-							],
-							"cookie": [],
-							"body": "{\n  \"active\": \"<boolean>\",\n  \"permissions\": [\n    {\n      \"resource_id\": \"<string>\",\n      \"resource_name\": \"<string>\"\n    },\n    {\n      \"resource_id\": \"<string>\",\n      \"resource_name\": \"<string>\"\n    }\n  ],\n  \"exp\": \"<integer>\",\n  \"nbf\": \"<integer>\",\n  \"iat\": \"<integer>\",\n  \"aud\": \"<string>\"\n}"
-						},
-						{
-							"name": "Invalid access token",
-							"originalRequest": {
-								"method": "POST",
-								"header": [
-									{
-										"key": "Authorization",
-										"value": "Bearer <token>",
-										"description": "Added as a part of security scheme: bearer"
-									},
-									{
-										"key": "Accept",
-										"value": "*/*"
-									}
-								],
-								"url": {
-									"raw": "{{baseUrl}}/login/introspect?accessTokenToInspect=<string>",
-									"host": [
-										"{{baseUrl}}"
-									],
-									"path": [
-										"login",
-										"introspect"
-									],
-									"query": [
-										{
-											"key": "accessTokenToInspect",
-											"value": "<string>"
-										}
-									]
-								}
-							},
-							"status": "Unauthorized",
-							"code": 401,
-							"_postman_previewlanguage": "json",
-							"header": [
-								{
-									"key": "Content-Type",
-									"value": "*/*"
-								}
-							],
-							"cookie": [],
-							"body": "{\n  \"errorDescription\": \"<string>\",\n  \"source\": \"<string>\"\n}"
-						},
-						{
-							"name": "An unexpected error occurred",
-							"originalRequest": {
-								"method": "POST",
-								"header": [
-									{
-										"key": "Authorization",
-										"value": "Bearer <token>",
-										"description": "Added as a part of security scheme: bearer"
-									},
-									{
-										"key": "Accept",
-										"value": "*/*"
-									}
-								],
-								"url": {
-									"raw": "{{baseUrl}}/login/introspect?accessTokenToInspect=<string>",
-									"host": [
-										"{{baseUrl}}"
-									],
-									"path": [
-										"login",
-										"introspect"
-									],
-									"query": [
-										{
-											"key": "accessTokenToInspect",
 											"value": "<string>"
 										}
 									]
