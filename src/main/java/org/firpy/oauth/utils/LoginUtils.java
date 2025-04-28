@@ -10,9 +10,10 @@ import org.springframework.util.MultiValueMap;
 import java.text.ParseException;
 
 @Component
-public class LoginUtils {
+public class LoginUtils
+{
 
-	public MultiValueMap<String, ?> getLoginParameters(LoginRequest request)
+    public MultiValueMap<String, ?> getLoginParameters(LoginRequest request)
     {
         MultiValueMap<String, Object> params = new LinkedMultiValueMap<>();
 

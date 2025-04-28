@@ -6,4 +6,6 @@ public record GetUserResponse(
         String lastName,
         Boolean enabled,
         String id
-){}
+)
+{
+}

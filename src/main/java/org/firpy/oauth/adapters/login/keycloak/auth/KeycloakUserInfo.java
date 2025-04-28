@@ -3,15 +3,15 @@ package org.firpy.oauth.adapters.login.keycloak.auth;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 public record KeycloakUserInfo
-(
-	String sub,
-	String name,
-	String scope,
-	@JsonProperty("given_name") String givenName,
-	@JsonProperty("family_name") String familyName,
-	@JsonProperty("preferred_username") String preferredUsername,
-	String email,
-	String picture
-)
+        (
+                String sub,
+                String name,
+                String scope,
+                @JsonProperty("given_name") String givenName,
+                @JsonProperty("family_name") String familyName,
+                @JsonProperty("preferred_username") String preferredUsername,
+                String email,
+                String picture
+        )
 {
 }

@@ -9,26 +9,26 @@ import org.springframework.stereotype.Component;
 @Component
 public class KeycloakAdminClient
 {
-	public Keycloak fromAdminAccessToken(String accessToken)
-	{
-		return KeycloakBuilder.builder()
-						      .authorization(accessToken)
-							  .serverUrl(keycloakUrl)
-							  .realm(realmName)
-							  .clientId(clientId)
-							  .resteasyClient(
-									  new ResteasyClientBuilderImpl()
-										  .connectionPoolSize(10)
-										  .build())
-							  .build();
-	}
+    public Keycloak fromAdminAccessToken(String accessToken)
+    {
+        return KeycloakBuilder.builder()
+                .authorization(accessToken)
+                .serverUrl(keycloakUrl)
+                .realm(realmName)
+                .clientId(clientId)
+                .resteasyClient(
+                        new ResteasyClientBuilderImpl()
+                                .connectionPoolSize(10)
+                                .build())
+                .build();
+    }
 
-	@Value("${keycloak.realm}")
-	private String realmName;
+    @Value("${keycloak.realm}")
+    private String realmName;
 
-	@Value("${keycloak.client-id}")
-	private String clientId;
+    @Value("${keycloak.client-id}")
+    private String clientId;
 
-	@Value("${keycloak.url}")
-	private String keycloakUrl;
+    @Value("${keycloak.url}")
+    private String keycloakUrl;
 }
