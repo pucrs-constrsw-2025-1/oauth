@@ -7,12 +7,19 @@ import jakarta.ws.rs.NotAuthorizedException;
 import jakarta.ws.rs.NotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 
 @ControllerAdvice
 public class GlobalExceptionHandler
 {
+    @ExceptionHandler(HttpMessageNotReadableException.class)
+    public ResponseEntity<OAuthError> handleHttpMessageNotReadableException(HttpMessageNotReadableException ex)
+    {
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                .body(OAuthError.internalError("Invalid request or data"));
+    }
 
     @ExceptionHandler(NotAuthorizedException.class)
     public ResponseEntity<OAuthError> handleNotAuthorized(NotAuthorizedException ex)
@@ -21,8 +28,22 @@ public class GlobalExceptionHandler
                 .body(OAuthError.keycloakError("Invalid access token"));
     }
 
+    @ExceptionHandler(FeignException.Unauthorized.class)
+    public ResponseEntity<OAuthError> handleFeignUnauthorized(FeignException.Unauthorized ex)
+    {
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                .body(OAuthError.keycloakError("Invalid access token"));
+    }
+
     @ExceptionHandler(ForbiddenException.class)
     public ResponseEntity<OAuthError> handleForbidden(ForbiddenException ex)
+    {
+        return ResponseEntity.status(HttpStatus.FORBIDDEN)
+                .body(OAuthError.keycloakError("Access token lacks required admin scopes"));
+    }
+
+    @ExceptionHandler(FeignException.Forbidden.class)
+    public ResponseEntity<OAuthError> handleFeignForbidden(FeignException.Forbidden ex)
     {
         return ResponseEntity.status(HttpStatus.FORBIDDEN)
                 .body(OAuthError.keycloakError("Access token lacks required admin scopes"));
@@ -56,17 +77,10 @@ public class GlobalExceptionHandler
                 .body(OAuthError.keycloakError("Invalid request or data"));
     }
 
-    @ExceptionHandler(FeignException.Unauthorized.class)
-    public ResponseEntity<OAuthError> handleFeignUnauthorized(FeignException.Unauthorized ex)
-    {
-        return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
-                .body(OAuthError.keycloakError("Invalid access token"));
-    }
-
     @ExceptionHandler(Exception.class)
     public ResponseEntity<OAuthError> handleAllUncaught(Exception ex)
     {
         return ResponseEntity.internalServerError()
-                .body(OAuthError.keycloakError("An unexpected error occurred: " + ex.getMessage()));
+                .body(OAuthError.keycloakError("An unexpected error occurred: %s".formatted(ex.getMessage())));
     }
 }
