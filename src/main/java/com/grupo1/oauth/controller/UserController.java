@@ -203,7 +203,7 @@ public class UserController {
         """)))
     })
     @GetMapping("/users")
-    public ResponseEntity<?> getUsers(@RequestHeader("Authorization") String token, @RequestParam Optional<Boolean> enabled) {
+    public ResponseEntity<List<UserResponse>> getUsers(@RequestHeader("Authorization") String token, @RequestParam Optional<Boolean> enabled) {
         List<UserResponse> users = keycloakService.getUsers(token, enabled);
         return ResponseEntity.ok(users);
     }

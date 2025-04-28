@@ -82,31 +82,6 @@ class KeycloakServiceTest {
     }
 
     @Test
-    @DisplayName("Should throw exception when location header is missing")
-    void createUser_shouldThrowException_whenLocationHeaderIsMissing() {
-        // Arrange
-        UserRequest user = new UserRequest();
-        user.setUsername("user@email.com");
-        user.setPassword("password123");
-        user.setFirstName("Jane");
-        user.setLastName("Doe");
-
-        when(mockWebClient.post()).thenReturn(mockRequestBodyUriSpec);
-        when(mockRequestBodyUriSpec.uri(anyString())).thenReturn(mockRequestBodyUriSpec);
-        when(mockRequestBodyUriSpec.header(anyString(), anyString())).thenReturn(mockRequestBodyUriSpec);
-        when(mockRequestBodyUriSpec.contentType(any())).thenReturn(mockRequestBodyUriSpec);
-        when(mockRequestBodyUriSpec.bodyValue(any())).thenReturn(mockRequestHeadersSpec);
-        when(mockRequestHeadersSpec.retrieve()).thenReturn(mockResponseSpec);
-        when(mockResponseSpec.toBodilessEntity()).thenReturn(Mono.empty());
-
-        // Act + Assert
-        RuntimeException exception = assertThrows(RuntimeException.class, () ->
-                keycloakService.createUser(user, "Bearer token")
-        );
-        assertEquals("User created, but could not retrieve ID.", exception.getMessage());
-    }
-
-    @Test
     @DisplayName("Should return token when login is successful")
     void login_shouldReturnTokenResponse_whenCredentialsAreValid() {
         // Arrange

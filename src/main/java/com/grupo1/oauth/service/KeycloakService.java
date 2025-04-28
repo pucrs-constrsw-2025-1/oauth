@@ -74,10 +74,7 @@ public class KeycloakService {
             .header(HttpHeaders.AUTHORIZATION, token)
             .contentType(MediaType.APPLICATION_JSON)
             .bodyValue(payload)
-            .retrieve()
-            .toBodilessEntity()
-            .blockOptional()
-            .map(response -> response.getHeaders().getLocation());
+            .retrieve();
     }
 
     public List<UserResponse> getUsers(String token, Optional<Boolean> enabled) {
