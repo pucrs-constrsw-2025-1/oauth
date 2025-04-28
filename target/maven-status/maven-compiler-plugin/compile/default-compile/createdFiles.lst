@@ -16,3 +16,4 @@ com\constrsw\oauth\config\SwaggerConfig.class
 com\constrsw\oauth\dto\AuthResponse.class
 com\constrsw\oauth\dto\UserResponse$UserResponseBuilder.class
 com\constrsw\oauth\dto\UserRequest.class
+com\constrsw\oauth\config\OpenApiConfig.class

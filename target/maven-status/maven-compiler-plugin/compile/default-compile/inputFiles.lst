@@ -6,6 +6,7 @@ C:\Users\Ochôa\Desktop\constrsw-2025-1\backend\oauth\src\main\java\com\constrsw
 C:\Users\Ochôa\Desktop\constrsw-2025-1\backend\oauth\src\main\java\com\constrsw\oauth\dto\UserResponse.java
 C:\Users\Ochôa\Desktop\constrsw-2025-1\backend\oauth\src\main\java\com\constrsw\oauth\exception\CustomExceptionHandler.java
 C:\Users\Ochôa\Desktop\constrsw-2025-1\backend\oauth\src\main\java\com\constrsw\oauth\exception\ErrorResponse.java
+C:\Users\Ochôa\Desktop\constrsw-2025-1\backend\oauth\src\main\java\com\constrsw\oauth\config\OpenApiConfig.java
 C:\Users\Ochôa\Desktop\constrsw-2025-1\backend\oauth\src\main\java\com\constrsw\oauth\dto\AuthRequest.java
 C:\Users\Ochôa\Desktop\constrsw-2025-1\backend\oauth\src\main\java\com\constrsw\oauth\controller\AuthController.java
 C:\Users\Ochôa\Desktop\constrsw-2025-1\backend\oauth\src\main\java\com\constrsw\oauth\OauthApplication.java

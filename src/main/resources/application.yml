@@ -37,10 +37,23 @@ spring:
     serialization:
       write-dates-as-timestamps: false
     time-zone: America/Sao_Paulo
+springdoc:
+  swagger-ui:
+    path: /swagger-ui.html
+    tags-sorter: alpha
+    operations-sorter: alpha
+  api-docs:
+    path: /v3/api-docs
+  default-consumes-media-type: application/json
+  default-produces-media-type: application/json
   mvc:
     pathmatch:
       matching-strategy: ant_path_matcher
-
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          issuer-uri: http://keycloak:8080/realms/your-realm
 management:
   endpoints:
     web:

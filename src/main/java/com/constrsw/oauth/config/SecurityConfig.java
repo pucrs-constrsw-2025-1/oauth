@@ -16,25 +16,36 @@ public class SecurityConfig {
     @Value("${spring.security.oauth2.resourceserver.jwt.issuer-uri}")
     private String issuerUri;
 
-    @Value("${spring.security.oauth2.resourceserver.jwt.jwk-set-uri}")
-    private String jwkSetUri;
+    private static final String[] SWAGGER_WHITELIST = {
+        "/swagger-ui.html",
+        "/swagger-ui/**",
+        "/v3/api-docs/**",
+        "/swagger-resources/**",
+        "/webjars/**",
+        "/configuration/ui",
+        "/configuration/security"
+    };
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
             .authorizeHttpRequests(auth -> auth
-                .requestMatchers("/manage/health").permitAll()  // Public health endpoint
-                .requestMatchers("/users").hasRole("ADMIN")     // Requires ADMIN role
+                .requestMatchers(SWAGGER_WHITELIST).permitAll()
+                .requestMatchers("/manage/**").permitAll()
+                .requestMatchers("/users").hasRole("ADMIN")
                 .anyRequest().authenticated()
             )
             .oauth2ResourceServer(oauth2 -> oauth2
                 .jwt(jwt -> jwt.decoder(jwtDecoder()))
-            );
+            )
+            .cors(cors -> cors.disable())
+            .csrf(csrf -> csrf.disable());
+        
         return http.build();
     }
 
     @Bean
     public JwtDecoder jwtDecoder() {
-        return NimbusJwtDecoder.withJwkSetUri(jwkSetUri).build();
+        return JwtDecoders.fromIssuerLocation(issuerUri);
     }
 }
