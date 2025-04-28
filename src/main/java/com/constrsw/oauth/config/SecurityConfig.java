@@ -13,9 +13,6 @@ import org.springframework.security.web.SecurityFilterChain;
 @EnableWebSecurity
 public class SecurityConfig {
 
-    @Value("${spring.security.oauth2.resourceserver.jwt.issuer-uri}")
-    private String issuerUri;
-
     private static final String[] SWAGGER_WHITELIST = {
         "/swagger-ui.html",
         "/swagger-ui/**",
@@ -31,21 +28,8 @@ public class SecurityConfig {
         http
             .authorizeHttpRequests(auth -> auth
                 .requestMatchers(SWAGGER_WHITELIST).permitAll()
-                .requestMatchers("/manage/**").permitAll()
-                .requestMatchers("/users").hasRole("ADMIN")
-                .anyRequest().authenticated()
-            )
-            .oauth2ResourceServer(oauth2 -> oauth2
-                .jwt(jwt -> jwt.decoder(jwtDecoder()))
-            )
-            .cors(cors -> cors.disable())
-            .csrf(csrf -> csrf.disable());
-        
+                // resto da configuração...
+            );
         return http.build();
-    }
-
-    @Bean
-    public JwtDecoder jwtDecoder() {
-        return JwtDecoders.fromIssuerLocation(issuerUri);
     }
 }

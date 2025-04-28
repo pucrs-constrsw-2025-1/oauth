@@ -11,6 +11,7 @@ C:\Users\Ochôa\Desktop\constrsw-2025-1\backend\oauth\src\main\java\com\constrsw
 C:\Users\Ochôa\Desktop\constrsw-2025-1\backend\oauth\src\main\java\com\constrsw\oauth\controller\AuthController.java
 C:\Users\Ochôa\Desktop\constrsw-2025-1\backend\oauth\src\main\java\com\constrsw\oauth\OauthApplication.java
 C:\Users\Ochôa\Desktop\constrsw-2025-1\backend\oauth\src\main\java\com\constrsw\oauth\service\AuthService.java
+C:\Users\Ochôa\Desktop\constrsw-2025-1\backend\oauth\src\main\java\com\constrsw\oauth\config\JwtConfig.java
 C:\Users\Ochôa\Desktop\constrsw-2025-1\backend\oauth\src\main\java\com\constrsw\oauth\config\KeycloakConfig.java
 C:\Users\Ochôa\Desktop\constrsw-2025-1\backend\oauth\src\main\java\com\constrsw\oauth\dto\AuthResponse.java
 C:\Users\Ochôa\Desktop\constrsw-2025-1\backend\oauth\src\main\java\com\constrsw\oauth\controller\UserController.java

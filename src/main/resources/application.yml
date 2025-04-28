@@ -53,7 +53,7 @@ springdoc:
     oauth2:
       resourceserver:
         jwt:
-          issuer-uri: http://keycloak:8080/realms/your-realm
+          issuer-uri: ${KEYCLOAK_SERVER_URL:http://keycloak:8080}/realms/${KEYCLOAK_REALM:constrsw}
 management:
   endpoints:
     web:
