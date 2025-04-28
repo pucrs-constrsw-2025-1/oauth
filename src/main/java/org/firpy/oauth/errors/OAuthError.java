@@ -1,10 +1,10 @@
-package errors;
+package org.firpy.oauth.errors;
 
 public record OAuthError
-(
-    String errorDescription,
-    String source
-)
+        (
+                String errorDescription,
+                String source
+        )
 {
     public static OAuthError keycloakError(String errorDescription)
     {

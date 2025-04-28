@@ -1,21 +1,16 @@
 package org.firpy.oauth.adapters.users;
 
-import errors.OAuthError;
-import feign.FeignException;
 import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
-import jakarta.ws.rs.BadRequestException;
-import jakarta.ws.rs.ForbiddenException;
-import jakarta.ws.rs.NotAuthorizedException;
-import jakarta.ws.rs.NotFoundException;
 import jakarta.ws.rs.core.Response;
 import org.firpy.oauth.adapters.login.keycloak.admin.KeycloakAdminClient;
 import org.firpy.oauth.adapters.login.keycloak.auth.KeycloakAuthClient;
 import org.firpy.oauth.adapters.login.keycloak.auth.KeycloakUserInfo;
+import org.firpy.oauth.errors.OAuthError;
 import org.keycloak.admin.client.Keycloak;
 import org.keycloak.admin.client.resource.UserResource;
 import org.keycloak.admin.client.resource.UsersResource;
@@ -35,64 +30,64 @@ import java.util.Map;
 @SecurityRequirement(name = "bearerAuth")
 public class UsersController
 {
-	public UsersController
-    (
-        KeycloakAdminClient keycloakAdminClient,
-        KeycloakAuthClient keycloakAuthClient
-    )
-	{
-		this.keycloakAdminClient = keycloakAdminClient;
-		this.keycloakAuthClient = keycloakAuthClient;
-	}
+    public UsersController
+            (
+                    KeycloakAdminClient keycloakAdminClient,
+                    KeycloakAuthClient keycloakAuthClient
+            )
+    {
+        this.keycloakAdminClient = keycloakAdminClient;
+        this.keycloakAuthClient = keycloakAuthClient;
+    }
 
-	/**
+    /**
      * Consumir a rota do Keycloak que recupera todos os usuários
      */
     @GetMapping()
     @ApiResponses
-    (
-        value =
-        {
-            @ApiResponse
             (
-                responseCode = "200",
-                description = "Users retrieved",
-                content = @Content(array = @ArraySchema(schema = @Schema(implementation = GetUserResponse.class)))
-            ),
-            @ApiResponse
-            (
-                responseCode = "500",
-                description = "An unexpected error occurred",
-                content = @Content(schema = @Schema(implementation = OAuthError.class))
-            ),
-            @ApiResponse
-            (
-                responseCode = "401",
-                description = "Invalid access token",
-                content = @Content(schema = @Schema(implementation = OAuthError.class))
-            ),
-            @ApiResponse
-            (
-                responseCode = "403",
-                description = "Access token lacks required admin scopes",
-                content = @Content(schema = @Schema(implementation = OAuthError.class))
+                    value =
+                            {
+                                    @ApiResponse
+                                            (
+                                                    responseCode = "200",
+                                                    description = "Users retrieved",
+                                                    content = @Content(array = @ArraySchema(schema = @Schema(implementation = GetUserResponse.class)))
+                                            ),
+                                    @ApiResponse
+                                            (
+                                                    responseCode = "500",
+                                                    description = "An unexpected error occurred",
+                                                    content = @Content(schema = @Schema(implementation = OAuthError.class))
+                                            ),
+                                    @ApiResponse
+                                            (
+                                                    responseCode = "401",
+                                                    description = "Invalid access token",
+                                                    content = @Content(schema = @Schema(implementation = OAuthError.class))
+                                            ),
+                                    @ApiResponse
+                                            (
+                                                    responseCode = "403",
+                                                    description = "Access token lacks required admin scopes",
+                                                    content = @Content(schema = @Schema(implementation = OAuthError.class))
+                                            )
+                            }
             )
-        }
-    )
     public ResponseEntity<?> getUsers
     (
-        @Schema(hidden = true) @RequestHeader(value = "Authorization", required = false) String accessToken,
-        @RequestParam(required = false) String username,
-        @RequestParam(required = false) String firstName,
-        @RequestParam(required = false) String lastName,
-        @RequestParam(required = false) String email,
-        @RequestParam(required = false) Boolean enabled
+            @Schema(hidden = true) @RequestHeader(value = "Authorization", required = false) String accessToken,
+            @RequestParam(required = false) String username,
+            @RequestParam(required = false) String firstName,
+            @RequestParam(required = false) String lastName,
+            @RequestParam(required = false) String email,
+            @RequestParam(required = false) Boolean enabled
     )
     {
         if (accessToken == null || accessToken.trim().isEmpty())
-		{
-			return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(OAuthError.internalError("Access token is missing"));
-		}
+        {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(OAuthError.internalError("Access token is missing"));
+        }
 
         try (Keycloak keycloakClient = keycloakAdminClient.fromAdminAccessToken(accessToken))
         {
@@ -106,29 +101,19 @@ public class UsersController
                     0, 10000,
                     enabled,
                     null
-            ).stream().map( x -> new GetUserResponse(
-                    x.getEmail(),
-                    x.getFirstName(),
-                    x.getLastName(),
-                    x.isEnabled(),
-                    x.getId()
+            ).stream().map(x -> new GetUserResponse(
+                            x.getEmail(),
+                            x.getFirstName(),
+                            x.getLastName(),
+                            x.isEnabled(),
+                            x.getId()
                     )
             ).toList();
 
             return ResponseEntity.ok(users);
         }
-        catch (NotAuthorizedException e)
-        {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(OAuthError.keycloakError("Invalid access token"));
-        }
-        catch (ForbiddenException e)
-        {
-            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(OAuthError.keycloakError("Access token lacks required admin scopes"));
-        }
-        catch (Exception e)
-        {
-            return ResponseEntity.internalServerError().body(OAuthError.keycloakError("An unexpected error occurred: %s".formatted(e.getMessage())));
-        }
+
+
     }
 
     /**
@@ -136,45 +121,45 @@ public class UsersController
      */
     @GetMapping("/{id}")
     @ApiResponses
-    (
-        value =
-        {
-            @ApiResponse
             (
-                responseCode = "200",
-                description = "User retrieved",
-                content = @Content(schema = @Schema(implementation = GetUserResponse.class))
-            ),
-            @ApiResponse
-            (
-                responseCode = "400",
-                description = "Invalid request or user not found",
-                content = @Content(schema = @Schema(implementation = OAuthError.class))
-            ),
-            @ApiResponse
-            (
-                responseCode = "401",
-                description = "Invalid access token",
-                content = @Content(schema = @Schema(implementation = OAuthError.class))
-            ),
-            @ApiResponse
-            (
-                responseCode = "403",
-                description = "Access token lacks required admin scopes",
-                content = @Content(schema = @Schema(implementation = OAuthError.class))
-            ),
-            @ApiResponse
-            (
-                responseCode = "404",
-                description = "User not found",
-                content = @Content(schema = @Schema(implementation = OAuthError.class))
+                    value =
+                            {
+                                    @ApiResponse
+                                            (
+                                                    responseCode = "200",
+                                                    description = "User retrieved",
+                                                    content = @Content(schema = @Schema(implementation = GetUserResponse.class))
+                                            ),
+                                    @ApiResponse
+                                            (
+                                                    responseCode = "400",
+                                                    description = "Invalid request or user not found",
+                                                    content = @Content(schema = @Schema(implementation = OAuthError.class))
+                                            ),
+                                    @ApiResponse
+                                            (
+                                                    responseCode = "401",
+                                                    description = "Invalid access token",
+                                                    content = @Content(schema = @Schema(implementation = OAuthError.class))
+                                            ),
+                                    @ApiResponse
+                                            (
+                                                    responseCode = "403",
+                                                    description = "Access token lacks required admin scopes",
+                                                    content = @Content(schema = @Schema(implementation = OAuthError.class))
+                                            ),
+                                    @ApiResponse
+                                            (
+                                                    responseCode = "404",
+                                                    description = "User not found",
+                                                    content = @Content(schema = @Schema(implementation = OAuthError.class))
+                                            )
+                            }
             )
-        }
-    )
     public ResponseEntity<?> getUser
     (
-        @PathVariable("id") String id,
-        @Schema(hidden = true) @RequestHeader(value = "Authorization", required = false) String accessToken
+            @PathVariable("id") String id,
+            @Schema(hidden = true) @RequestHeader(value = "Authorization", required = false) String accessToken
     )
     {
         if (id == null || id.trim().isEmpty())
@@ -192,66 +177,45 @@ public class UsersController
             UserRepresentation user = keycloakClient.realm(realmName).users().get(id).toRepresentation();
 
             return ResponseEntity.ok(new GetUserResponse(
-                user.getEmail(),
-                user.getFirstName(),
-                user.getLastName(),
-                user.isEnabled(),
-                user.getId()
+                    user.getEmail(),
+                    user.getFirstName(),
+                    user.getLastName(),
+                    user.isEnabled(),
+                    user.getId()
             ));
         }
-        catch (NotAuthorizedException e)
-        {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(OAuthError.keycloakError("Invalid access token"));
-        }
-        catch (ForbiddenException e)
-        {
-            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(OAuthError.keycloakError("Access token lacks required admin scopes"));
-        }
-        catch (NotFoundException e)
-        {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(OAuthError.keycloakError("User not found"));
-        }
-        catch (Exception e)
-        {
-            return ResponseEntity.internalServerError().body(OAuthError.keycloakError("An unexpected error occurred: %s".formatted(e.getMessage())));
-        }
+
+
     }
 
     @GetMapping("/current")
     @ApiResponses
-    (
-        value =
-        {
-            @ApiResponse
             (
-                responseCode = "200",
-                description = "User retrieved",
-                content = @Content(schema = @Schema(implementation = KeycloakUserInfo.class))
-            ),
-            @ApiResponse
-            (
-                responseCode = "401",
-                description = "Invalid access token",
-                content = @Content(schema = @Schema(implementation = OAuthError.class))
+                    value =
+                            {
+                                    @ApiResponse
+                                            (
+                                                    responseCode = "200",
+                                                    description = "User retrieved",
+                                                    content = @Content(schema = @Schema(implementation = KeycloakUserInfo.class))
+                                            ),
+                                    @ApiResponse
+                                            (
+                                                    responseCode = "401",
+                                                    description = "Invalid access token",
+                                                    content = @Content(schema = @Schema(implementation = OAuthError.class))
+                                            )
+                            }
             )
-        }
-    )
     public ResponseEntity<?> getCurrentUser(@Schema(hidden = true) @RequestHeader(value = "Authorization", required = false) String accessToken)
     {
 
         if (accessToken == null || accessToken.trim().isEmpty())
-		{
-			return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(OAuthError.internalError("Access token is missing"));
-		}
+        {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(OAuthError.internalError("Access token is missing"));
+        }
 
-        try
-        {
-            return ResponseEntity.ok(keycloakAuthClient.getCurrentUser(accessToken));
-        }
-        catch (FeignException.Unauthorized unauthorized)
-        {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(OAuthError.keycloakError("Invalid access token"));
-        }
+        return ResponseEntity.ok(keycloakAuthClient.getCurrentUser(accessToken));
     }
 
     /**
@@ -259,54 +223,54 @@ public class UsersController
      */
     @PostMapping()
     @ApiResponses
-    (
-        value =
-        {
-            @ApiResponse
             (
-                responseCode = "201",
-                description = "User created",
-                content = @Content(schema = @Schema(implementation = CreateUserResponse.class))
-            ),
-            @ApiResponse
-            (
-                responseCode = "400",
-                description = "Invalid request or email",
-                content = @Content(schema = @Schema(implementation = OAuthError.class))
-            ),
-            @ApiResponse
-            (
-                responseCode = "401",
-                description = "Invalid access token",
-                content = @Content(schema = @Schema(implementation = OAuthError.class))
-            ),
-            @ApiResponse
-            (
-                responseCode = "403",
-                description = "Access token lacks required admin scopes",
-                content = @Content(schema = @Schema(implementation = OAuthError.class))
-            ),
-            @ApiResponse
-            (
-                responseCode = "409",
-                description = "User already exists",
-                content = @Content(schema = @Schema(implementation = OAuthError.class))
-            ),
-            @ApiResponse
-            (
-                responseCode = "500",
-                description = "An unexpected error occurred",
-                content = @Content(schema = @Schema(implementation = OAuthError.class))
+                    value =
+                            {
+                                    @ApiResponse
+                                            (
+                                                    responseCode = "201",
+                                                    description = "User created",
+                                                    content = @Content(schema = @Schema(implementation = CreateUserResponse.class))
+                                            ),
+                                    @ApiResponse
+                                            (
+                                                    responseCode = "400",
+                                                    description = "Invalid request or email",
+                                                    content = @Content(schema = @Schema(implementation = OAuthError.class))
+                                            ),
+                                    @ApiResponse
+                                            (
+                                                    responseCode = "401",
+                                                    description = "Invalid access token",
+                                                    content = @Content(schema = @Schema(implementation = OAuthError.class))
+                                            ),
+                                    @ApiResponse
+                                            (
+                                                    responseCode = "403",
+                                                    description = "Access token lacks required admin scopes",
+                                                    content = @Content(schema = @Schema(implementation = OAuthError.class))
+                                            ),
+                                    @ApiResponse
+                                            (
+                                                    responseCode = "409",
+                                                    description = "User already exists",
+                                                    content = @Content(schema = @Schema(implementation = OAuthError.class))
+                                            ),
+                                    @ApiResponse
+                                            (
+                                                    responseCode = "500",
+                                                    description = "An unexpected error occurred",
+                                                    content = @Content(schema = @Schema(implementation = OAuthError.class))
+                                            )
+                            }
             )
-        }
-    )
     public ResponseEntity<?> createUser(@Schema(hidden = true) @RequestHeader(value = "Authorization", required = false) String accessToken, @RequestBody CreateUserRequest createUserRequest)
     {
 
         if (accessToken == null || accessToken.trim().isEmpty())
-		{
-			return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(OAuthError.internalError("Access token is missing"));
-		}
+        {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(OAuthError.internalError("Access token is missing"));
+        }
 
         try (Keycloak keycloakClient = keycloakAdminClient.fromAdminAccessToken(accessToken))
         {
@@ -326,9 +290,12 @@ public class UsersController
                 return switch (status)
                 {
                     case 400 -> ResponseEntity.badRequest().body(OAuthError.keycloakError("Invalid request or email"));
-                    case 409 -> ResponseEntity.status(HttpStatus.CONFLICT).body(OAuthError.keycloakError("User already exists"));
-                    case 401 -> ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(OAuthError.keycloakError("Invalid access token"));
-                    case 403 -> ResponseEntity.status(HttpStatus.FORBIDDEN).body(OAuthError.keycloakError("Access token lacks required admin scopes"));
+                    case 409 ->
+                            ResponseEntity.status(HttpStatus.CONFLICT).body(OAuthError.keycloakError("User already exists"));
+                    case 401 ->
+                            ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(OAuthError.keycloakError("Invalid access token"));
+                    case 403 ->
+                            ResponseEntity.status(HttpStatus.FORBIDDEN).body(OAuthError.keycloakError("Access token lacks required admin scopes"));
                     default -> ResponseEntity.status(status).body(OAuthError.keycloakError("Unexpected error"));
                 };
             }
@@ -340,52 +307,52 @@ public class UsersController
      */
     @PutMapping("/{id}")
     @ApiResponses
-    (
-        value =
-        {
-            @ApiResponse
             (
-                responseCode = "204",
-                description = "User updated",
-                content = @Content(schema = @Schema())
-            ),
-            @ApiResponse
-            (
-                responseCode = "400",
-                description = "Invalid request",
-                content = @Content(schema = @Schema(implementation = OAuthError.class))
-            ),
-            @ApiResponse
-            (
-                responseCode = "401",
-                description = "Invalid access token",
-                content = @Content(schema = @Schema(implementation = OAuthError.class))
-            ),
-            @ApiResponse
-            (
-                responseCode = "403",
-                description = "Access token lacks required admin scopes",
-                content = @Content(schema = @Schema(implementation = OAuthError.class))
-            ),
-            @ApiResponse
-            (
-                responseCode = "404",
-                description = "User not found",
-                content = @Content(schema = @Schema(implementation = OAuthError.class))
-            ),
-            @ApiResponse
-            (
-                responseCode = "500",
-                description = "An unexpected error occurred",
-                content = @Content(schema = @Schema(implementation = OAuthError.class))
+                    value =
+                            {
+                                    @ApiResponse
+                                            (
+                                                    responseCode = "204",
+                                                    description = "User updated",
+                                                    content = @Content(schema = @Schema())
+                                            ),
+                                    @ApiResponse
+                                            (
+                                                    responseCode = "400",
+                                                    description = "Invalid request",
+                                                    content = @Content(schema = @Schema(implementation = OAuthError.class))
+                                            ),
+                                    @ApiResponse
+                                            (
+                                                    responseCode = "401",
+                                                    description = "Invalid access token",
+                                                    content = @Content(schema = @Schema(implementation = OAuthError.class))
+                                            ),
+                                    @ApiResponse
+                                            (
+                                                    responseCode = "403",
+                                                    description = "Access token lacks required admin scopes",
+                                                    content = @Content(schema = @Schema(implementation = OAuthError.class))
+                                            ),
+                                    @ApiResponse
+                                            (
+                                                    responseCode = "404",
+                                                    description = "User not found",
+                                                    content = @Content(schema = @Schema(implementation = OAuthError.class))
+                                            ),
+                                    @ApiResponse
+                                            (
+                                                    responseCode = "500",
+                                                    description = "An unexpected error occurred",
+                                                    content = @Content(schema = @Schema(implementation = OAuthError.class))
+                                            )
+                            }
             )
-        }
-    )
     public ResponseEntity<?> updateUser
     (
-        @Schema(hidden = true) @RequestHeader(value = "Authorization", required = false) String accessToken,
-        @PathVariable("id") String id,
-        @RequestBody UpdateUserRequest updateUserRequest
+            @Schema(hidden = true) @RequestHeader(value = "Authorization", required = false) String accessToken,
+            @PathVariable("id") String id,
+            @RequestBody UpdateUserRequest updateUserRequest
     )
     {
         if (id == null || id.trim().isEmpty())
@@ -394,13 +361,13 @@ public class UsersController
         }
 
         if (accessToken == null || accessToken.trim().isEmpty())
-		{
-			return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(OAuthError.internalError("Access token is missing"));
-		}
+        {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(OAuthError.internalError("Access token is missing"));
+        }
 
         if (updateUserRequest == null ||
-            updateUserRequest.firstName() == null ||
-            updateUserRequest.lastName() == null)
+                updateUserRequest.firstName() == null ||
+                updateUserRequest.lastName() == null)
         {
             return ResponseEntity.badRequest().body("Invalid request body: missing required fields");
         }
@@ -411,26 +378,8 @@ public class UsersController
 
             return ResponseEntity.noContent().build();
         }
-        catch (NotAuthorizedException e)
-        {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(OAuthError.keycloakError("Invalid access token"));
-        }
-        catch (ForbiddenException e)
-        {
-            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(OAuthError.keycloakError("Access token lacks required admin scopes"));
-        }
-        catch (NotFoundException e)
-        {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(OAuthError.keycloakError("User not found"));
-        }
-        catch (BadRequestException e)
-        {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(OAuthError.keycloakError("Invalid request or invalid email"));
-        }
-        catch (Exception e)
-        {
-            return ResponseEntity.internalServerError().body(OAuthError.keycloakError("An unexpected error occurred: %s".formatted(e.getMessage())));
-        }
+
+
     }
 
     /**
@@ -438,54 +387,54 @@ public class UsersController
      */
     @PatchMapping("/{id}")
     @ApiResponses
-    (
-        value =
-        {
-            @ApiResponse
             (
-                responseCode = "204",
-                description = "User password updated",
-                content = @Content(schema = @Schema())
-            ),
-            @ApiResponse
-            (
-                responseCode = "400",
-                description = "Invalid request or email",
-                content = @Content(schema = @Schema(implementation = OAuthError.class))
-            ),
-            @ApiResponse
-            (
-                responseCode = "401",
-                description = "Invalid access token",
-                content = @Content(schema = @Schema(implementation = OAuthError.class))
-            ),
-            @ApiResponse
-            (
-                responseCode = "403",
-                description = "Access token lacks required admin scopes",
-                content = @Content(schema = @Schema(implementation = OAuthError.class))
-            ),
-            @ApiResponse
-            (
-                responseCode = "404",
-                description = "User not found",
-                content = @Content(schema = @Schema(implementation = OAuthError.class))
-            ),
-            @ApiResponse
-            (
-                responseCode = "500",
-                description = "An unexpected error occurred",
-                content = @Content(schema = @Schema(implementation = OAuthError.class))
+                    value =
+                            {
+                                    @ApiResponse
+                                            (
+                                                    responseCode = "204",
+                                                    description = "User password updated",
+                                                    content = @Content(schema = @Schema())
+                                            ),
+                                    @ApiResponse
+                                            (
+                                                    responseCode = "400",
+                                                    description = "Invalid request or email",
+                                                    content = @Content(schema = @Schema(implementation = OAuthError.class))
+                                            ),
+                                    @ApiResponse
+                                            (
+                                                    responseCode = "401",
+                                                    description = "Invalid access token",
+                                                    content = @Content(schema = @Schema(implementation = OAuthError.class))
+                                            ),
+                                    @ApiResponse
+                                            (
+                                                    responseCode = "403",
+                                                    description = "Access token lacks required admin scopes",
+                                                    content = @Content(schema = @Schema(implementation = OAuthError.class))
+                                            ),
+                                    @ApiResponse
+                                            (
+                                                    responseCode = "404",
+                                                    description = "User not found",
+                                                    content = @Content(schema = @Schema(implementation = OAuthError.class))
+                                            ),
+                                    @ApiResponse
+                                            (
+                                                    responseCode = "500",
+                                                    description = "An unexpected error occurred",
+                                                    content = @Content(schema = @Schema(implementation = OAuthError.class))
+                                            )
+                            }
             )
-        }
-    )
     public ResponseEntity<?> updateUserPassword(@Schema(hidden = true) @RequestHeader(value = "Authorization", required = false) String accessToken, @PathVariable("id") String id, @RequestBody UpdateUserPasswordRequest passwordReset)
     {
 
         if (accessToken == null || accessToken.trim().isEmpty())
-		{
-			return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(OAuthError.internalError("Access token is missing"));
-		}
+        {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(OAuthError.internalError("Access token is missing"));
+        }
 
         try (Keycloak keycloakClient = keycloakAdminClient.fromAdminAccessToken(accessToken))
         {
@@ -496,73 +445,60 @@ public class UsersController
             keycloakClient.realm(realmName).users().get(id).resetPassword(credentialRepresentation);
 
             return ResponseEntity.noContent().build();
-        } catch (NotAuthorizedException e)
-        {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(OAuthError.keycloakError("Invalid access token"));
         }
-        catch (ForbiddenException e)
-        {
-            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(OAuthError.keycloakError("Access token lacks required admin scopes"));
-        }
-        catch (NotFoundException e)
-        {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(OAuthError.keycloakError("User not found"));
-        }
-        catch (Exception e)
-        {
-            return ResponseEntity.internalServerError().body(OAuthError.keycloakError("An unexpected error occurred: %s".formatted(e.getMessage())));
-        }
+
+
     }
 
     @DeleteMapping("/{id}")
     @ApiResponses
-    (
-        value =
-        {
-            @ApiResponse
             (
-                responseCode = "200",
-                description = "User disabled successfully",
-                content = @Content(schema = @Schema(implementation = String.class, defaultValue = "User disabled successfully"))
-            ),
-            @ApiResponse
-            (
-                responseCode = "400",
-                description = "Invalid request or email"
-            ),
-            @ApiResponse
-            (
-                responseCode = "401",
-                description = "Invalid access token",
-                content = @Content(schema = @Schema(implementation = OAuthError.class))
-            ),
-            @ApiResponse
-            (
-                responseCode = "403",
-                description = "Access token lacks required admin scopes",
-                content = @Content(schema = @Schema(implementation = OAuthError.class))
-            ),
-            @ApiResponse
-            (
-                responseCode = "404",
-                description = "User not found",
-                content = @Content(schema = @Schema(implementation = OAuthError.class))
-            ),
-            @ApiResponse
-            (
-                responseCode = "500",
-                description = "Failed to disable user",
-                content = @Content(schema = @Schema(implementation = OAuthError.class))
+                    value =
+                            {
+                                    @ApiResponse
+                                            (
+                                                    responseCode = "200",
+                                                    description = "User disabled successfully",
+                                                    content = @Content(schema = @Schema(implementation = String.class, defaultValue = "User disabled successfully"))
+                                            ),
+                                    @ApiResponse
+                                            (
+                                                    responseCode = "400",
+                                                    description = "Invalid request or email"
+                                            ),
+                                    @ApiResponse
+                                            (
+                                                    responseCode = "401",
+                                                    description = "Invalid access token",
+                                                    content = @Content(schema = @Schema(implementation = OAuthError.class))
+                                            ),
+                                    @ApiResponse
+                                            (
+                                                    responseCode = "403",
+                                                    description = "Access token lacks required admin scopes",
+                                                    content = @Content(schema = @Schema(implementation = OAuthError.class))
+                                            ),
+                                    @ApiResponse
+                                            (
+                                                    responseCode = "404",
+                                                    description = "User not found",
+                                                    content = @Content(schema = @Schema(implementation = OAuthError.class))
+                                            ),
+                                    @ApiResponse
+                                            (
+                                                    responseCode = "500",
+                                                    description = "Failed to disable user",
+                                                    content = @Content(schema = @Schema(implementation = OAuthError.class))
+                                            )
+                            }
             )
-        }
-    )
     public ResponseEntity<?> deleteUser(@PathVariable String id, @Schema(hidden = true) @RequestHeader(value = "Authorization", required = false) String accessToken)
     {
 
         if (accessToken == null || accessToken.trim().isEmpty())
-		{
-			return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(OAuthError.internalError("Access token is missing"));
-		}
+        {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(OAuthError.internalError("Access token is missing"));
+        }
 
         try (Keycloak keycloakClient = keycloakAdminClient.fromAdminAccessToken(accessToken))
         {
@@ -574,68 +510,54 @@ public class UsersController
 
             return ResponseEntity.ok("User disabled successfully");
         }
-        catch (NotAuthorizedException e)
-        {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(OAuthError.keycloakError("Invalid access token"));
-        }
-        catch (ForbiddenException e)
-        {
-            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(OAuthError.keycloakError("Access token lacks required admin scopes"));
-        }
-        catch (NotFoundException e)
-        {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(OAuthError.keycloakError("User not found"));
-        }
-        catch (Exception e)
-        {
-            return ResponseEntity.internalServerError().body(OAuthError.keycloakError("Failed to disable user: %s".formatted(e.getMessage())));
-        }
+
+
     }
 
     @GetMapping("/{id}/role-mappings")
     @ApiResponses
-    (
-        value =
-        {
-            @ApiResponse
             (
-                responseCode = "200",
-                description = "User role mappings retrieved",
-                content = @Content(array = @ArraySchema(schema = @Schema(implementation = RoleRepresentation.class)))
-            ),
-            @ApiResponse
-            (
-                responseCode = "401",
-                description = "Invalid access token",
-                content = @Content(schema = @Schema(implementation = OAuthError.class))
-            ),
-            @ApiResponse
-            (
-                responseCode = "403",
-                description = "Access token lacks required admin scopes",
-                content = @Content(schema = @Schema(implementation = OAuthError.class))
-            ),
-            @ApiResponse
-            (
-                responseCode = "404",
-                description = "User not found",
-                content = @Content(schema = @Schema(implementation = OAuthError.class))
-            ),
-            @ApiResponse
-            (
-                responseCode = "500",
-                description = "An unexpected error occurred",
-                content = @Content(schema = @Schema(implementation = OAuthError.class))
+                    value =
+                            {
+                                    @ApiResponse
+                                            (
+                                                    responseCode = "200",
+                                                    description = "User role mappings retrieved",
+                                                    content = @Content(array = @ArraySchema(schema = @Schema(implementation = RoleRepresentation.class)))
+                                            ),
+                                    @ApiResponse
+                                            (
+                                                    responseCode = "401",
+                                                    description = "Invalid access token",
+                                                    content = @Content(schema = @Schema(implementation = OAuthError.class))
+                                            ),
+                                    @ApiResponse
+                                            (
+                                                    responseCode = "403",
+                                                    description = "Access token lacks required admin scopes",
+                                                    content = @Content(schema = @Schema(implementation = OAuthError.class))
+                                            ),
+                                    @ApiResponse
+                                            (
+                                                    responseCode = "404",
+                                                    description = "User not found",
+                                                    content = @Content(schema = @Schema(implementation = OAuthError.class))
+                                            ),
+                                    @ApiResponse
+                                            (
+                                                    responseCode = "500",
+                                                    description = "An unexpected error occurred",
+                                                    content = @Content(schema = @Schema(implementation = OAuthError.class))
+                                            )
+                            }
             )
-        }
-    )
     public ResponseEntity<?> getUserRoleMappings(@Schema(hidden = true) @RequestHeader(value = "Authorization", required = false) String accessToken, @PathVariable("id") String id)
     {
 
         if (accessToken == null || accessToken.trim().isEmpty())
-		{
-			return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(OAuthError.internalError("Access token is missing"));
-		}
+        {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(OAuthError.internalError("Access token is missing"));
+        }
 
         try (Keycloak keycloakClient = keycloakAdminClient.fromAdminAccessToken(accessToken))
         {
@@ -645,68 +567,54 @@ public class UsersController
 
             return ResponseEntity.ok(allRolesList.toArray(RoleRepresentation[]::new));
         }
-        catch (NotAuthorizedException e)
-        {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(OAuthError.keycloakError("Invalid access token"));
-        }
-        catch (ForbiddenException e)
-        {
-            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(OAuthError.keycloakError("Access token lacks required admin scopes"));
-        }
-        catch (NotFoundException e)
-        {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(OAuthError.keycloakError("User not found"));
-        }
-        catch (Exception e)
-        {
-            return ResponseEntity.internalServerError().body(OAuthError.keycloakError("An unexpected error occurred: %s".formatted(e.getMessage())));
-        }
+
+
     }
 
     @PostMapping("/{id}/role-mappings")
     @ApiResponses
-    (
-        value =
-        {
-            @ApiResponse
             (
-                responseCode = "201",
-                description = "Role mappings created",
-                content = @Content(schema = @Schema(implementation = OAuthError.class))
-            ),
-            @ApiResponse
-            (
-                responseCode = "400",
-                description = "Invalid request or email",
-                content = @Content(schema = @Schema(implementation = OAuthError.class))
-            ),
-            @ApiResponse
-            (
-                responseCode = "401",
-                description = "Invalid access token",
-                content = @Content(schema = @Schema(implementation = OAuthError.class))
-            ),
-            @ApiResponse
-            (
-                responseCode = "403",
-                description = "Access token lacks required admin scopes",
-                content = @Content(schema = @Schema(implementation = OAuthError.class))
-            ),
-            @ApiResponse
-            (
-                responseCode = "404",
-                description = "User not found",
-                content = @Content(schema = @Schema(implementation = OAuthError.class))
+                    value =
+                            {
+                                    @ApiResponse
+                                            (
+                                                    responseCode = "201",
+                                                    description = "Role mappings created",
+                                                    content = @Content(schema = @Schema(implementation = OAuthError.class))
+                                            ),
+                                    @ApiResponse
+                                            (
+                                                    responseCode = "400",
+                                                    description = "Invalid request or email",
+                                                    content = @Content(schema = @Schema(implementation = OAuthError.class))
+                                            ),
+                                    @ApiResponse
+                                            (
+                                                    responseCode = "401",
+                                                    description = "Invalid access token",
+                                                    content = @Content(schema = @Schema(implementation = OAuthError.class))
+                                            ),
+                                    @ApiResponse
+                                            (
+                                                    responseCode = "403",
+                                                    description = "Access token lacks required admin scopes",
+                                                    content = @Content(schema = @Schema(implementation = OAuthError.class))
+                                            ),
+                                    @ApiResponse
+                                            (
+                                                    responseCode = "404",
+                                                    description = "User not found",
+                                                    content = @Content(schema = @Schema(implementation = OAuthError.class))
+                                            )
+                            }
             )
-        }
-    )
     public ResponseEntity<?> createUserRoleMappings(@Schema(hidden = true) @RequestHeader(value = "Authorization", required = false) String accessToken, @PathVariable("id") String id, @RequestBody String[] roleNamesToAdd)
     {
 
         if (accessToken == null || accessToken.trim().isEmpty())
-		{
-			return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(OAuthError.internalError("Access token is missing"));
-		}
+        {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(OAuthError.internalError("Access token is missing"));
+        }
 
         try (Keycloak keycloakClient = keycloakAdminClient.fromAdminAccessToken(accessToken))
         {
@@ -717,73 +625,59 @@ public class UsersController
 
             return ResponseEntity.created(URI.create("/users/%s/role-mappings".formatted(id))).build();
         }
-        catch (NotAuthorizedException e)
-        {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(OAuthError.keycloakError("Invalid access token"));
-        }
-        catch (ForbiddenException e)
-        {
-            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(OAuthError.keycloakError("Access token lacks required admin scopes"));
-        }
-        catch (NotFoundException e)
-        {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(OAuthError.keycloakError("User not found"));
-        }
-        catch (Exception e)
-        {
-            return ResponseEntity.internalServerError().body(OAuthError.keycloakError("An unexpected error occurred: %s".formatted(e.getMessage())));
-        }
+
+
     }
 
     @DeleteMapping("/{id}/role-mappings")
     @ApiResponses
-    (
-        value =
-        {
-            @ApiResponse
             (
-                responseCode = "204",
-                description = "Role mappings deleted"
-            ),
-            @ApiResponse
-            (
-                responseCode = "400",
-                description = "Invalid request or email",
-                content = @Content(schema = @Schema(implementation = OAuthError.class))
-            ),
-            @ApiResponse
-            (
-                responseCode = "401",
-                description = "Invalid access token",
-                content = @Content(schema = @Schema(implementation = OAuthError.class))
-            ),
-            @ApiResponse
-            (
-                responseCode = "403",
-                description = "Access token lacks required admin scopes",
-                content = @Content(schema = @Schema(implementation = OAuthError.class))
-            ),
-            @ApiResponse
-            (
-                responseCode = "404",
-                description = "User not found",
-                content = @Content(schema = @Schema(implementation = OAuthError.class))
-            ),
-            @ApiResponse
-            (
-                responseCode = "500",
-                description = "An unexpected error occurred",
-                content = @Content(schema = @Schema(implementation = OAuthError.class))
+                    value =
+                            {
+                                    @ApiResponse
+                                            (
+                                                    responseCode = "204",
+                                                    description = "Role mappings deleted"
+                                            ),
+                                    @ApiResponse
+                                            (
+                                                    responseCode = "400",
+                                                    description = "Invalid request or email",
+                                                    content = @Content(schema = @Schema(implementation = OAuthError.class))
+                                            ),
+                                    @ApiResponse
+                                            (
+                                                    responseCode = "401",
+                                                    description = "Invalid access token",
+                                                    content = @Content(schema = @Schema(implementation = OAuthError.class))
+                                            ),
+                                    @ApiResponse
+                                            (
+                                                    responseCode = "403",
+                                                    description = "Access token lacks required admin scopes",
+                                                    content = @Content(schema = @Schema(implementation = OAuthError.class))
+                                            ),
+                                    @ApiResponse
+                                            (
+                                                    responseCode = "404",
+                                                    description = "User not found",
+                                                    content = @Content(schema = @Schema(implementation = OAuthError.class))
+                                            ),
+                                    @ApiResponse
+                                            (
+                                                    responseCode = "500",
+                                                    description = "An unexpected error occurred",
+                                                    content = @Content(schema = @Schema(implementation = OAuthError.class))
+                                            )
+                            }
             )
-        }
-    )
     public ResponseEntity<?> deleteUserRoleMappings(@Schema(hidden = true) @RequestHeader(value = "Authorization", required = false) String accessToken, @PathVariable("id") String id, @RequestBody String[] roleNamesToRemove)
     {
 
         if (accessToken == null || accessToken.trim().isEmpty())
-		{
-			return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(OAuthError.internalError("Access token is missing"));
-		}
+        {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(OAuthError.internalError("Access token is missing"));
+        }
 
         try (Keycloak keycloakClient = keycloakAdminClient.fromAdminAccessToken(accessToken))
         {
@@ -794,22 +688,8 @@ public class UsersController
 
             return ResponseEntity.noContent().build();
         }
-        catch (NotAuthorizedException e)
-        {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(OAuthError.keycloakError("Invalid access token"));
-        }
-        catch (ForbiddenException e)
-        {
-            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(OAuthError.keycloakError("Access token lacks required admin scopes"));
-        }
-        catch (NotFoundException e)
-        {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(OAuthError.keycloakError("User not found"));
-        }
-        catch (Exception e)
-        {
-            return ResponseEntity.internalServerError().body(OAuthError.keycloakError("An unexpected error occurred: %s".formatted(e.getMessage())));
-        }
+
+
     }
 
     @Value("${keycloak.realm}")

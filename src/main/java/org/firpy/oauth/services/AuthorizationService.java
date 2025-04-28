@@ -11,38 +11,34 @@ import java.util.Map;
 @Service
 public class AuthorizationService
 {
-	public AuthorizationService(KeycloakAuthClient client)
-	{
-		this.keycloakAuthClient = client;
-	}
+    public AuthorizationService(KeycloakAuthClient client)
+    {
+        this.keycloakAuthClient = client;
+    }
 
-	public boolean isAuthorized(String authorization, String resource)
-	{
-		try
-		{
-			MultiValueMap<String, String> form = new LinkedMultiValueMap<>();
-			form.add("grant_type", "urn:ietf:params:oauth:grant-type:uma-ticket");
-			form.add("audience", clientId);
-			form.add("permission", "%s".formatted(resource));
+    public boolean isAuthorized(String authorization, String resource)
+    {
+        try
+        {
+            MultiValueMap<String, String> form = new LinkedMultiValueMap<>();
+            form.add("grant_type", "urn:ietf:params:oauth:grant-type:uma-ticket");
+            form.add("audience", clientId);
+            form.add("permission", "%s".formatted(resource));
 
-			Map<String, Object> response = keycloakAuthClient.requestAuthorization(authorization, form);
+            Map<String, Object> response = keycloakAuthClient.requestAuthorization(authorization, form);
 
-			return response.containsKey("access_token");
+            return response.containsKey("access_token");
 
-		}
-		catch (feign.FeignException.Forbidden exception)
-		{
-			return false;
-		}
-		catch (Exception exception)
-		{
-			throw new RuntimeException("Authorization check failed", exception);
-		}
-	}
+        }
+        catch (feign.FeignException.Forbidden exception)
+        {
+            return false;
+        }
+    }
 
-	private final KeycloakAuthClient keycloakAuthClient;
+    private final KeycloakAuthClient keycloakAuthClient;
 
-	@Value("${keycloak.client-id}")
-	private String clientId;
+    @Value("${keycloak.client-id}")
+    private String clientId;
 }
 
