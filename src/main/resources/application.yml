@@ -1,6 +1,3 @@
-server:
-  port: 8080
-
 spring:
   application:
     name: oauth-grupo-4
@@ -8,3 +5,29 @@ spring:
     exclude:
       - org.springframework.boot.autoconfigure.orm.jpa.HibernateJpaAutoConfiguration
       - org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration
+
+server:
+  port: ${OAUTH_INTERNAL_PORT:8080}
+
+keycloak:
+  internal:
+    host: ${KEYCLOAK_INTERNAL_HOST:keycloak}
+    port: ${KEYCLOAK_INTERNAL_PORT:8080}
+  external:
+    host: ${KEYCLOAK_EXTERNAL_HOST:localhost}
+    port: ${KEYCLOAK_EXTERNAL_PORT:8090}
+  realm: ${KEYCLOAK_REALM:constrsw}
+  client:
+    id: ${KEYCLOAK_CLIENT_ID:oauth}
+    secret: ${KEYCLOAK_CLIENT_SECRET:wsNXUxaupU9X6jCncsn3rOEy6PDt7oJO}
+  grant:
+    type: ${KEYCLOAK_GRANT_TYPE:password}
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health
+  endpoint:
+    health:
+      show-details: always
