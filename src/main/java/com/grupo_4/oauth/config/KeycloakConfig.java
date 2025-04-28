@@ -32,14 +32,6 @@ public class KeycloakConfig {
     @Value("${keycloak.grant.type}")
     private String grantType;
 
-    public String getKeycloakHost() {
-        return keycloakExternalHost;
-    }
-
-    public String getKeycloakPort() {
-        return keycloakExternalPort;
-    }
-
     public String getRealm() {
         return realm;
     }
@@ -63,6 +55,11 @@ public class KeycloakConfig {
 
     public String getUserInfoUrl() {
         return String.format("http://%s:%s/realms/%s/protocol/openid-connect/userinfo", 
+                keycloakInternalHost, keycloakInternalPort, realm);
+    }
+
+    public String getUsersAdminUrl() {
+        return String.format("http://%s:%s/admin/realms/%s/users", 
                 keycloakInternalHost, keycloakInternalPort, realm);
     }
 } 
