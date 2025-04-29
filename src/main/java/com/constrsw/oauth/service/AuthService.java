@@ -26,13 +26,16 @@ public class AuthService {
 
     @Value("${keycloak.client.secret}")
     private String clientSecret;
+    
+    @Value("${KEYCLOAK_GRANT_TYPE:password}")
+    private String grantType;
 
     public AuthResponse authenticate(AuthRequest authRequest) {
         try {
             Keycloak keycloak = KeycloakBuilder.builder()
                     .serverUrl(serverUrl)
                     .realm(realm)
-                    .grantType(OAuth2Constants.PASSWORD)
+                    .grantType(grantType)
                     .clientId(clientId)
                     .clientSecret(clientSecret)
                     .username(authRequest.getUsername())
@@ -53,7 +56,8 @@ public class AuthService {
                 "AUTH_ERROR",
                 "Authentication failed: " + e.getMessage(),
                 "AuthService",
-                HttpStatus.UNAUTHORIZED
+                HttpStatus.UNAUTHORIZED,
+                e
             );
         }
     }

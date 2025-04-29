@@ -11,15 +11,24 @@ public class KeycloakConfig {
 
     @Value("${keycloak.server.url}")
     private String serverUrl;
-    
+
     @Value("${keycloak.realm}")
     private String realm;
-    
+
     @Value("${keycloak.client.id}")
     private String clientId;
-    
+
     @Value("${keycloak.client.secret}")
     private String clientSecret;
+
+    @Value("${keycloak.admin.pool.max-size:10}")
+    private int poolMaxSize;
+
+    @Value("${keycloak.admin.pool.min-size:1}")
+    private int poolMinSize;
+
+    @Value("${keycloak.admin.pool.max-wait:3000}")
+    private int poolMaxWait;
 
     @Bean
     public Keycloak keycloakAdminClient() {
@@ -29,6 +38,7 @@ public class KeycloakConfig {
                 .clientId(clientId)
                 .clientSecret(clientSecret)
                 .grantType("client_credentials")
+                .connectionPoolSize(poolMaxSize)
                 .build();
     }
 }

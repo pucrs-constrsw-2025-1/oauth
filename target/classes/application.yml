@@ -12,7 +12,7 @@ server:
 
 keycloak:
   server:
-    url: ${KEYCLOAK_SERVER_URL:http://keycloak:8080}
+    url: ${OAUTH_INTERNAL_PROTOCOL:http}://${KEYCLOAK_INTERNAL_HOST:keycloak}:${KEYCLOAK_INTERNAL_API_PORT:8080}
     connection-timeout: 5000
     socket-timeout: 5000
   realm: ${KEYCLOAK_REALM:constrsw}
@@ -24,6 +24,10 @@ keycloak:
       max-size: 10
       min-size: 1
       max-wait: 3000
+  security:
+    jwt:
+      token-validity: 3600  # Token validity in seconds (1 hour)
+      refresh-token-validity: 86400  # Refresh token validity in seconds (24 hours)
 
 spring:
   config.import: optional:configtree:/config/
@@ -37,6 +41,15 @@ spring:
     serialization:
       write-dates-as-timestamps: false
     time-zone: America/Sao_Paulo
+  mvc:
+    pathmatch:
+      matching-strategy: ant_path_matcher
+  security:
+    user:
+      name: admin
+      password: admin
+      roles: ADMIN,USER_MANAGER
+
 springdoc:
   swagger-ui:
     path: /swagger-ui.html
@@ -46,14 +59,7 @@ springdoc:
     path: /v3/api-docs
   default-consumes-media-type: application/json
   default-produces-media-type: application/json
-  mvc:
-    pathmatch:
-      matching-strategy: ant_path_matcher
-  security:
-    oauth2:
-      resourceserver:
-        jwt:
-          issuer-uri: ${KEYCLOAK_SERVER_URL:http://keycloak:8080}/realms/${KEYCLOAK_REALM:constrsw}
+
 management:
   endpoints:
     web:
