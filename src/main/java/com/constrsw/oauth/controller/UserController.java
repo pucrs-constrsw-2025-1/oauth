@@ -1,6 +1,8 @@
 package com.constrsw.oauth.controller;
 
+import com.constrsw.oauth.model.LoginRequest;
 import com.constrsw.oauth.model.PasswordUpdateRequest;
+import com.constrsw.oauth.model.TokenResponse;
 import com.constrsw.oauth.model.UserRequest;
 import com.constrsw.oauth.model.UserResponse;
 import com.constrsw.oauth.service.KeycloakUserService;
@@ -104,5 +106,21 @@ public class UserController {
 
             keycloakService.updatePassword(id, pw.getPassword());
         return ResponseEntity.ok().build();
+    }
+
+       @PostMapping("/login")
+    public ResponseEntity<?> login(@RequestParam("username") String username,
+                                   @RequestParam("password") String password) {
+        try {
+            LoginRequest loginRequest = new LoginRequest(username, password);
+            TokenResponse tokenResponse = keycloakService.login(loginRequest);
+            return ResponseEntity.status(HttpStatus.CREATED).body(tokenResponse);
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        } catch (SecurityException e) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(e.getMessage());
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Erro interno ao autenticar o usuário.");
+        }
     }
 }
