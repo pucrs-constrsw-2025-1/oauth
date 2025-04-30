@@ -6,8 +6,8 @@ import com.constrsw.oauth.exception.GlobalException;
 import jakarta.ws.rs.NotFoundException;
 import jakarta.ws.rs.core.Response;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.keycloak.admin.client.Keycloak;
-import org.keycloak.admin.client.resource.RealmResource;
 import org.keycloak.admin.client.resource.UserResource;
 import org.keycloak.admin.client.resource.UsersResource;
 import org.keycloak.representations.idm.CredentialRepresentation;
@@ -19,8 +19,12 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.stream.Collectors;
 
+/**
+ * Serviço para gerenciamento de usuários no Keycloak
+ */
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class UserService {
 
     private final Keycloak keycloak;
@@ -28,22 +32,29 @@ public class UserService {
     @Value("${keycloak.realm}")
     private String realm;
 
+    /**
+     * Cria um novo usuário
+     *
+     * @param userRequest Dados do usuário a ser criado
+     * @return Dados do usuário criado
+     * @throws GlobalException Se ocorrer um erro na criação
+     */
     public UserResponse createUser(UserRequest userRequest) {
-        UsersResource usersResource = getUsersResource();
-
         try {
-            // Check if user exists
+            UsersResource usersResource = getUsersResource();
+
+            // Verifica se o usuário já existe
             List<UserRepresentation> existingUsers = usersResource.search(userRequest.getUsername(), true);
             if (!existingUsers.isEmpty()) {
                 throw new GlobalException(
                     "USER_EXISTS",
-                    "Username already exists",
+                    "Usuário já existe",
                     "UserService",
                     HttpStatus.CONFLICT
                 );
             }
 
-            // Create user
+            // Cria a representação do usuário
             UserRepresentation user = new UserRepresentation();
             user.setUsername(userRequest.getUsername());
             user.setEmail(userRequest.getUsername());
@@ -52,37 +63,48 @@ public class UserService {
             user.setEnabled(true);
             user.setEmailVerified(true);
 
+            // Cria o usuário
             Response response = usersResource.create(user);
             if (response.getStatus() != 201) {
                 throw new GlobalException(
                     "CREATE_USER_FAILED",
-                    "Failed to create user",
+                    "Falha ao criar usuário",
                     "UserService",
                     HttpStatus.INTERNAL_SERVER_ERROR
                 );
             }
 
+            // Obtém o ID do usuário criado
             String userId = response.getLocation().getPath().replaceAll(".*/([^/]+)$", "$1");
 
-            // Set password
+            // Define a senha
             CredentialRepresentation credential = new CredentialRepresentation();
             credential.setType(CredentialRepresentation.PASSWORD);
             credential.setValue(userRequest.getPassword());
             credential.setTemporary(false);
-
             usersResource.get(userId).resetPassword(credential);
 
+            // Retorna o usuário criado
             return getUserById(userId);
+        } catch (GlobalException e) {
+            throw e;
         } catch (Exception e) {
+            log.error("Erro ao criar usuário: {}", e.getMessage());
             throw new GlobalException(
                 "USER_CREATION_ERROR",
-                "Error creating user: " + e.getMessage(),
+                "Erro ao criar usuário: " + e.getMessage(),
                 "UserService",
                 HttpStatus.INTERNAL_SERVER_ERROR
             );
         }
     }
 
+    /**
+     * Recupera todos os usuários
+     *
+     * @param enabled Filtro por status (ativo/inativo)
+     * @return Lista de usuários
+     */
     public List<UserResponse> getAllUsers(Boolean enabled) {
         try {
             UsersResource usersResource = getUsersResource();
@@ -94,15 +116,22 @@ public class UserService {
                     .map(this::mapToUserResponse)
                     .collect(Collectors.toList());
         } catch (Exception e) {
+            log.error("Erro ao recuperar usuários: {}", e.getMessage());
             throw new GlobalException(
                 "GET_USERS_ERROR",
-                "Error fetching users: " + e.getMessage(),
+                "Erro ao recuperar usuários: " + e.getMessage(),
                 "UserService",
                 HttpStatus.INTERNAL_SERVER_ERROR
             );
         }
     }
 
+    /**
+     * Recupera um usuário pelo ID
+     *
+     * @param id ID do usuário
+     * @return Dados do usuário
+     */
     public UserResponse getUserById(String id) {
         try {
             UserRepresentation user = getUsersResource().get(id).toRepresentation();
@@ -110,13 +139,19 @@ public class UserService {
         } catch (NotFoundException e) {
             throw new GlobalException(
                 "USER_NOT_FOUND",
-                "User not found with id: " + id,
+                "Usuário não encontrado com id: " + id,
                 "UserService",
                 HttpStatus.NOT_FOUND
             );
         }
     }
 
+    /**
+     * Atualiza os dados de um usuário
+     *
+     * @param id ID do usuário
+     * @param userRequest Novos dados do usuário
+     */
     public void updateUser(String id, UserRequest userRequest) {
         try {
             UserResource userResource = getUsersResource().get(id);
@@ -127,13 +162,19 @@ public class UserService {
         } catch (NotFoundException e) {
             throw new GlobalException(
                 "USER_NOT_FOUND",
-                "User not found with id: " + id,
+                "Usuário não encontrado com id: " + id,
                 "UserService",
                 HttpStatus.NOT_FOUND
             );
         }
     }
 
+    /**
+     * Atualiza a senha de um usuário
+     *
+     * @param id ID do usuário
+     * @param newPassword Nova senha
+     */
     public void updatePassword(String id, String newPassword) {
         try {
             UserResource userResource = getUsersResource().get(id);
@@ -145,13 +186,18 @@ public class UserService {
         } catch (NotFoundException e) {
             throw new GlobalException(
                 "USER_NOT_FOUND",
-                "User not found with id: " + id,
+                "Usuário não encontrado com id: " + id,
                 "UserService",
                 HttpStatus.NOT_FOUND
             );
         }
     }
 
+    /**
+     * Desativa um usuário
+     *
+     * @param id ID do usuário
+     */
     public void disableUser(String id) {
         try {
             UserResource userResource = getUsersResource().get(id);
@@ -161,18 +207,28 @@ public class UserService {
         } catch (NotFoundException e) {
             throw new GlobalException(
                 "USER_NOT_FOUND",
-                "User not found with id: " + id,
+                "Usuário não encontrado com id: " + id,
                 "UserService",
                 HttpStatus.NOT_FOUND
             );
         }
     }
 
+    /**
+     * Obtém o recurso de usuários do Keycloak
+     *
+     * @return UsersResource
+     */
     private UsersResource getUsersResource() {
-        RealmResource realmResource = keycloak.realm(realm);
-        return realmResource.users();
+        return keycloak.realm(realm).users();
     }
 
+    /**
+     * Mapeia a representação do usuário para o DTO de resposta
+     *
+     * @param user Representação do usuário
+     * @return DTO de resposta
+     */
     private UserResponse mapToUserResponse(UserRepresentation user) {
         return UserResponse.builder()
                 .id(user.getId())

@@ -1,91 +1,50 @@
 server:
   port: ${OAUTH_INTERNAL_PORT:8080}
-  shutdown: graceful
   servlet:
     context-path: /
-    session:
-      timeout: 30m
-  error:
-    include-message: always
-    include-binding-errors: always
-    include-stacktrace: on_param
 
 keycloak:
   server:
     url: ${OAUTH_INTERNAL_PROTOCOL:http}://${KEYCLOAK_INTERNAL_HOST:keycloak}:${KEYCLOAK_INTERNAL_API_PORT:8080}
-    connection-timeout: 5000
-    socket-timeout: 5000
   realm: ${KEYCLOAK_REALM:constrsw}
   client:
     id: ${KEYCLOAK_CLIENT_ID:oauth}
     secret: ${KEYCLOAK_CLIENT_SECRET:wsNXUxaupU9X6jCncsn3rOEy6PDt7oJO}
-  admin:
-    pool:
-      max-size: 10
-      min-size: 1
-      max-wait: 3000
-  security:
-    jwt:
-      token-validity: 3600  # Token validity in seconds (1 hour)
-      refresh-token-validity: 86400  # Refresh token validity in seconds (24 hours)
+  grant:
+    type: ${KEYCLOAK_GRANT_TYPE:password}
 
 spring:
-  config.import: optional:configtree:/config/
-  main:
-    allow-bean-definition-overriding: true
-    banner-mode: off
   application:
     name: oauth-service
-  jackson:
-    default-property-inclusion: non_null
-    serialization:
-      write-dates-as-timestamps: false
-    time-zone: America/Sao_Paulo
+  main:
+    allow-bean-definition-overriding: true
   mvc:
     pathmatch:
       matching-strategy: ant_path_matcher
   security:
     user:
-      name: admin
-      password: admin
-      roles: ADMIN,USER_MANAGER
+      name: ${KEYCLOAK_ADMIN:admin}
+      password: ${KEYCLOAK_ADMIN_PASSWORD:a12345678}
 
 springdoc:
   swagger-ui:
     path: /swagger-ui.html
-    tags-sorter: alpha
-    operations-sorter: alpha
   api-docs:
     path: /v3/api-docs
-  default-consumes-media-type: application/json
-  default-produces-media-type: application/json
 
 management:
   endpoints:
     web:
       exposure:
-        include: health,info,metrics,prometheus
+        include: health
       base-path: /manage
-      path-mapping:
-        health: health
   endpoint:
     health:
       show-details: always
+      enabled: true
       probes:
         enabled: true
-    metrics:
-      enabled: true
-    prometheus:
-      enabled: true
-  health:
-    keycloak:
-      enabled: true
-    diskspace:
-      enabled: true
-  info:
-    env:
-      enabled: true
-
+      
 logging:
   level:
     root: INFO
@@ -96,7 +55,5 @@ logging:
     name: /var/log/oauth/application.log
     max-size: 10MB
     max-history: 7
-    total-size-cap: 100MB
   pattern:
-    file: "%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n"
     console: "%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %highlight(%-5level) %logger{36} - %msg%n"

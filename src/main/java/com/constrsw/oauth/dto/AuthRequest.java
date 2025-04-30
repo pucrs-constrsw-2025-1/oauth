@@ -1,16 +1,16 @@
 package com.constrsw.oauth.dto;
 
-import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotBlank;
 import lombok.Data;
 
+/**
+ * DTO para requisição de autenticação
+ */
 @Data
 public class AuthRequest {
-    @NotBlank(message = "Username is required")
-    @Schema(description = "Username for authentication", example = "user@example.com", required = true)
+    @NotBlank(message = "Username é obrigatório")
     private String username;
 
-    @NotBlank(message = "Password is required")
-    @Schema(description = "Password for authentication", example = "password123", required = true)
+    @NotBlank(message = "Password é obrigatório")
     private String password;
 }

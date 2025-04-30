@@ -3,6 +3,9 @@ package com.constrsw.oauth.exception;
 import org.springframework.http.HttpStatus;
 import lombok.Getter;
 
+/**
+ * Exceção global para erros da aplicação
+ */
 @Getter
 public class GlobalException extends RuntimeException {
     private final String errorCode;

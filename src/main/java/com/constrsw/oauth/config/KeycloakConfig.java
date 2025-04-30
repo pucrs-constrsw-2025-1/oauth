@@ -6,6 +6,9 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
+/**
+ * Configuração do Keycloak
+ */
 @Configuration
 public class KeycloakConfig {
 
@@ -21,15 +24,12 @@ public class KeycloakConfig {
     @Value("${keycloak.client.secret}")
     private String clientSecret;
 
-    @Value("${keycloak.admin.pool.max-size:10}")
-    private int poolMaxSize;
+    @Value("${keycloak.grant.type}")
+    private String grantType;
 
-    @Value("${keycloak.admin.pool.min-size:1}")
-    private int poolMinSize;
-
-    @Value("${keycloak.admin.pool.max-wait:3000}")
-    private int poolMaxWait;
-
+    /**
+     * Cliente administrativo do Keycloak para operações de gerenciamento
+     */
     @Bean
     public Keycloak keycloakAdminClient() {
         return KeycloakBuilder.builder()
@@ -37,8 +37,7 @@ public class KeycloakConfig {
                 .realm(realm)
                 .clientId(clientId)
                 .clientSecret(clientSecret)
-                .grantType("client_credentials")
-                .connectionPoolSize(poolMaxSize)
+                .grantType(grantType)
                 .build();
     }
 }
