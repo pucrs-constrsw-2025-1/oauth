@@ -1,0 +1,17 @@
+spring:
+  application:
+    name: OAuth
+  security:
+    oauth2:
+      resource server:
+        jwt:
+          issuer-uri: http://${KEYCLOAK_INTERNAL_HOST:localhost}:${KEYCLOAK_INTERNAL_PORT:8090}/realms/${KEYCLOAK_REALM:constrsw}
+
+server:
+  port: 8080
+
+keycloak:
+  realm: ${KEYCLOAK_REALM:constrsw}
+  url: http://${KEYCLOAK_INTERNAL_HOST:localhost}:${KEYCLOAK_INTERNAL_PORT:8090}
+  client-id: ${KEYCLOAK_CLIENT_ID:oauth}
+  client-secret: ${KEYCLOAK_CLIENT_SECRET:04bfUatIDO6ipwg1TF2mTzHrX8UZD02Z}
