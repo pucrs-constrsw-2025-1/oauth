@@ -1,9 +1,9 @@
 package com.constrsw.oauth.usecases.auth;
 
 import com.constrsw.oauth.exception.GlobalExceptionHandler;
-import com.constrsw.oauth.exception.user_exceptions.InvalidPasswordException;
-import com.constrsw.oauth.exception.user_exceptions.PasswordEmptyException;
-import com.constrsw.oauth.exception.user_exceptions.UsernameEmptyException;
+import com.constrsw.oauth.exception.custom_exceptions.InvalidPasswordException;
+import com.constrsw.oauth.exception.custom_exceptions.PasswordEmptyException;
+import com.constrsw.oauth.exception.custom_exceptions.UsernameEmptyException;
 import com.constrsw.oauth.model.TokenResponse;
 import com.constrsw.oauth.service.KeycloakAuthService;
 import com.constrsw.oauth.usecases.interfaces.ILoginUseCase;
@@ -31,13 +31,12 @@ public class LoginUseCase implements ILoginUseCase {
 
             return keycloakAuthService.authenticate(username, password);
         } catch (HttpClientErrorException e) {
-            if (e.getStatusCode() == HttpStatus.UNAUTHORIZED ||
-                    (e.getStatusCode() == HttpStatus.BAD_REQUEST &&
-                            e.getResponseBodyAsString().contains("invalid_grant"))) {
+            if (e.getStatusCode() == HttpStatus.UNAUTHORIZED) {
                 throw new InvalidPasswordException();
             }
+
             GlobalExceptionHandler.handleKeycloakException(e, "authentication");
-            return  null;
+            return null;
         }
     }
 }

@@ -7,8 +7,6 @@ import org.keycloak.admin.client.resource.UsersResource;
 import org.keycloak.representations.idm.RoleRepresentation;
 import org.springframework.stereotype.Service;
 
-import jakarta.ws.rs.NotFoundException;
-
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -35,29 +33,28 @@ public class KeycloakRoleService {
         return rolesResource.list();
     }
 
-    public RoleRepresentation getRoleById(String id) {
+    public RoleRepresentation getRoleById(String roleId) {
         return rolesResource.list().stream()
-                .filter(role -> role.getId().equals(id))
+                .filter(role -> role.getId().equals(roleId))
                 .findFirst().orElse(null);
     }
 
-    public void updateRole(String id, String newRoleName, String description) {
-            RoleRepresentation role = getRoleById(id);
-            if (role == null) {
-                throw new NotFoundException("Role não encontrada com o ID: " + id);
+    public void updateRole(String roleName, String newRoleName, String description) {
+            RoleResource roleResource = rolesResource.get(roleName);
+            RoleRepresentation role = roleResource.toRepresentation();
+
+            if (newRoleName != null && !newRoleName.isEmpty()) {
+                role.setName(newRoleName);
             }
-            
-            role.setName(newRoleName);
+
             role.setDescription(description);
-            
-            rolesResource.get(role.getName()).update(role);
+
+            roleResource.update(role);
     }
 
-    public void patchRole(String id, Map<String, Object> updates) {
-            RoleRepresentation role = getRoleById(id);
-            if (role == null) {
-                throw new NotFoundException("Role não encontrada com o ID: " + id);
-            }
+    public void patchRole(String roleName, Map<String, Object> updates) {
+            RoleResource roleResource = rolesResource.get(roleName);
+            RoleRepresentation role = roleResource.toRepresentation();
 
             if (updates.containsKey("name")) {
                 role.setName((String) updates.get("name"));
@@ -67,21 +64,20 @@ public class KeycloakRoleService {
                 role.setDescription((String) updates.get("description"));
             }
 
-            rolesResource.get(role.getName()).update(role);
+            roleResource.update(role);
     }
 
-    public void deleteRole(String id) {
-            RoleRepresentation role = getRoleById(id);
-            rolesResource.deleteRole(role.getName());
+    public void deleteRole(String roleName) {
+            rolesResource.deleteRole(roleName);
     }
 
-    public void assignRoleToUser(String userId, String id) {
-            RoleRepresentation role = getRoleById(id);
+    public void assignRoleToUser(String userId, String roleName) {
+            RoleRepresentation role = rolesResource.get(roleName).toRepresentation();
             usersResource.get(userId).roles().realmLevel().add(Collections.singletonList(role));
     }
 
-    public void removeRoleFromUser(String userId, String id) {
-            RoleRepresentation role = getRoleById(id);
+    public void removeRoleFromUser(String userId, String roleName) {
+            RoleRepresentation role = rolesResource.get(roleName).toRepresentation();
             usersResource.get(userId).roles().realmLevel().remove(Collections.singletonList(role));
     }
 

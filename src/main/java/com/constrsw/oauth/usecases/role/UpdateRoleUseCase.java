@@ -34,7 +34,7 @@ public class UpdateRoleUseCase implements IUpdateRoleUseCase {
             }
             
             keycloakRoleService.updateRole(
-                    roleId, 
+                    role.getName(),
                     roleRequest.getName(), 
                     roleRequest.getDescription());
         } catch (RuntimeException e) {

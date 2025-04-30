@@ -3,6 +3,7 @@ package com.constrsw.oauth.config;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.convert.converter.Converter;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -28,7 +29,12 @@ public class SecurityConfig {
         http
                 .csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(auth -> auth
+                        .requestMatchers(HttpMethod.POST,"/api/admin/users").permitAll()
+                        .requestMatchers(HttpMethod.POST,"/api/admin/roles").permitAll()
+                        .requestMatchers(HttpMethod.GET,"/api/admin/roles").permitAll()
+                        .requestMatchers(HttpMethod.POST,"/api/admin/users/*/roles/*").permitAll()
                         .requestMatchers("/api/admin/**").hasRole("ADMINISTRADOR")
+                        .requestMatchers("/v3/api-docs/", "/swagger-ui/", "/swagger-ui.html").permitAll()
                         .anyRequest().permitAll()
                 )
                 .oauth2ResourceServer(oauth2 -> oauth2

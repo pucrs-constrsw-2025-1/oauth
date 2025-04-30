@@ -20,10 +20,6 @@ public class GetUserByIdUseCase implements IGetUserByIdUseCase {
         try {
             UserRepresentation user = keycloakUserService.getUserById(userId);
 
-            if (user == null) {
-                throw new NotFoundException("Usuário não encontrado com o ID: " + userId);
-            }
-
             return UserResponse.fromUserRepresentation(user);
         } catch (RuntimeException e) {
             GlobalExceptionHandler.handleKeycloakException(e, "users");

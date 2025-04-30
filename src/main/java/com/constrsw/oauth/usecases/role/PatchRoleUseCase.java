@@ -21,9 +21,6 @@ public class PatchRoleUseCase implements IPatchRoleUseCase {
     public void execute(String roleId, Map<String, Object> updates) {
         try {
             RoleRepresentation role = keycloakRoleService.getRoleById(roleId);
-            if (role == null) {
-                throw new NotFoundException("Role não encontrada com o ID: " + roleId);
-            }
 
             if (updates.containsKey("name")) {
                 String newName = (String) updates.get("name");
@@ -33,7 +30,7 @@ public class PatchRoleUseCase implements IPatchRoleUseCase {
                 }
             }
 
-            keycloakRoleService.patchRole(roleId, updates);
+            keycloakRoleService.patchRole(role.getName(), updates);
         } catch (RuntimeException e) {
             GlobalExceptionHandler.handleKeycloakException(e, "roles");
         }

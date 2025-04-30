@@ -19,10 +19,6 @@ public class UpdatePasswordUseCase implements IUpdatePasswordUseCase {
         try {
             UserRepresentation user = keycloakUserService.getUserById(userId);
 
-            if (user == null) {
-                throw new NotFoundException("Usuário não encontrado com o ID: " + userId);
-            }
-
             keycloakUserService.resetPassword(userId, newPassword);
         } catch (RuntimeException e) {
             GlobalExceptionHandler.handleKeycloakException(e, "users");

@@ -40,7 +40,7 @@ public class AssignRoleToUserUseCase implements IAssignRoleToUserUseCase {
                 return;
             }
 
-            keycloakRoleService.assignRoleToUser(userId, roleId);
+            keycloakRoleService.assignRoleToUser(userId, role.getName());
         } catch (RuntimeException e) {
             GlobalExceptionHandler.handleKeycloakException(e, "roles");
         }

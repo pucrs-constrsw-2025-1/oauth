@@ -18,11 +18,8 @@ public class DeleteRoleUseCase implements IDeleteRoleUseCase {
     public void execute(String roleId) {
         try {
             RoleRepresentation role = keycloakRoleService.getRoleById(roleId);
-            if (role == null) {
-                throw new NotFoundException("Role não encontrada com o ID: " + roleId);
-            }
 
-            keycloakRoleService.deleteRole(roleId);
+            keycloakRoleService.deleteRole(role.getName());
         } catch (RuntimeException e) {
             GlobalExceptionHandler.handleKeycloakException(e, "roles");
         }

@@ -1,4 +1,4 @@
-package com.constrsw.oauth.exception.user_exceptions;
+package com.constrsw.oauth.exception.custom_exceptions;
 
 import jakarta.ws.rs.NotAuthorizedException;
 

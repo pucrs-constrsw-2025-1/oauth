@@ -23,9 +23,6 @@ public class RemoveRoleFromUserUseCase implements IRemoveRoleFromUserUseCase {
     public void execute(String userId, String roleId) {
         try {
             UserRepresentation user = keycloakUserService.getUserById(userId);
-            if (user == null) {
-                throw new NotFoundException("Usuário não encontrado com o ID: " + userId);
-            }
 
             RoleRepresentation role = keycloakRoleService.getRoleById(roleId);
             if (role == null) {

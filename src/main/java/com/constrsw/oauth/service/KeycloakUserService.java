@@ -1,13 +1,13 @@
 package com.constrsw.oauth.service;
 
+import com.constrsw.oauth.exception.custom_exceptions.UserNotFoundException;
 import com.constrsw.oauth.model.UserRequest;
+import jakarta.ws.rs.NotFoundException;
 import jakarta.ws.rs.core.Response;
 import lombok.AllArgsConstructor;
-import org.keycloak.admin.client.resource.UserResource;
 import org.keycloak.admin.client.resource.UsersResource;
 import org.keycloak.representations.idm.CredentialRepresentation;
 import org.keycloak.representations.idm.UserRepresentation;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.Collections;
@@ -42,7 +42,11 @@ public class KeycloakUserService {
     }
 
     public UserRepresentation getUserById(String userId) {
-        return usersResource.get(userId).toRepresentation();
+        try {
+            return usersResource.get(userId).toRepresentation();
+        } catch (NotFoundException e) {
+            throw new UserNotFoundException(userId);
+        }
     }
 
     public List<UserRepresentation> getAllUsers() {

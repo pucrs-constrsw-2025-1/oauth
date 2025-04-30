@@ -20,10 +20,6 @@ public class UpdateUserUseCase implements IUpdateUserUseCase {
         try {
             UserRepresentation userRepresentation = keycloakUserService.getUserById(id);
 
-            if (userRepresentation == null) {
-                throw new NotFoundException("Usuário não encontrado com o ID: " + id);
-            }
-
             userRepresentation.setUsername(user.getUsername());
             userRepresentation.setFirstName(user.getFirstName());
             userRepresentation.setLastName(user.getLastName());
