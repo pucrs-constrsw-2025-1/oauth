@@ -5,6 +5,6 @@ import jakarta.ws.rs.core.Response;
 
 public class UsernameConflictException extends ClientErrorException {
     public UsernameConflictException(String username) {
-        super("Usuário com nome '" + username + "' já existe", Response.Status.CONFLICT);
+        super("Usuário com username '" + username + "' já existe", Response.Status.CONFLICT);
     }
 }

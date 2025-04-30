@@ -3,6 +3,7 @@ package com.constrsw.oauth.service;
 import com.constrsw.oauth.model.UserRequest;
 import jakarta.ws.rs.core.Response;
 import lombok.AllArgsConstructor;
+import org.keycloak.admin.client.resource.UserResource;
 import org.keycloak.admin.client.resource.UsersResource;
 import org.keycloak.representations.idm.CredentialRepresentation;
 import org.keycloak.representations.idm.UserRepresentation;
@@ -26,6 +27,7 @@ public class KeycloakUserService {
 
             UserRepresentation user = new UserRepresentation();
             user.setUsername(userRequest.getUsername());
+            user.setEmail(userRequest.getUsername());
             user.setFirstName(userRequest.getFirstName());
             user.setLastName(userRequest.getLastName());
             user.setEnabled(true);
@@ -61,6 +63,10 @@ public class KeycloakUserService {
     }
 
     public void deleteUser(String userId) {
-        usersResource.get(userId).remove();
+        UserRepresentation user = usersResource.get(userId).toRepresentation();
+
+        user.setEnabled(false);
+
+        usersResource.get(userId).update(user);
     }
 }

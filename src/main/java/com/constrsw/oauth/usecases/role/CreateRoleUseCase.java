@@ -20,16 +20,15 @@ public class CreateRoleUseCase implements ICreateRoleUseCase {
             if (roleRequest.getName() == null || roleRequest.getName().trim().isEmpty()) {
                 throw new BadRequestException("O nome da role é obrigatório");
             }
-            
-            if (keycloakRoleService.getRoleById(roleRequest.getName()) != null) {
+
+          if (keycloakRoleService.getRoleById(roleRequest.getName()) != null) {
                 throw new BadRequestException("Já existe uma role com o nome: " + roleRequest.getName());
-            }
-            
+           }
+
             keycloakRoleService.createRole(
                     roleRequest.getName(), 
                     roleRequest.getDescription());
         } catch (RuntimeException e) {
-            System.out.println("Caiu aqui " + e.getMessage());
             GlobalExceptionHandler.handleKeycloakException(e, "roles");
         }
     }

@@ -33,8 +33,10 @@ public class KeycloakRoleService {
         return rolesResource.list();
     }
 
-    public RoleRepresentation getRoleById(String roleName) {
-        return rolesResource.get(roleName).toRepresentation();
+    public RoleRepresentation getRoleById(String id) {
+        return rolesResource.list().stream()
+                .filter(role -> role.getId().equals(id))
+                .findFirst().orElse(null);
     }
 
     public void updateRole(String roleName, String newRoleName, String description) {

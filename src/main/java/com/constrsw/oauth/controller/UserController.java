@@ -7,6 +7,7 @@ import com.constrsw.oauth.usecases.interfaces.IGetAllUsersUseCase;
 import com.constrsw.oauth.usecases.interfaces.IGetUserByIdUseCase;
 import com.constrsw.oauth.usecases.interfaces.IUpdateUserUseCase;
 import com.constrsw.oauth.usecases.interfaces.IUpdatePasswordUseCase;
+import com.constrsw.oauth.usecases.user.DeleteUserUseCase;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -23,6 +24,7 @@ public class UserController {
     private final IGetUserByIdUseCase getUserByIdUseCase;
     private final IUpdateUserUseCase updateUserUseCase;
     private final IUpdatePasswordUseCase updatePasswordUseCase;
+    private final DeleteUserUseCase deleteUserUseCase;
 
     @PostMapping("/users")
     public ResponseEntity<String> createUser(@Valid @RequestBody UserRequest userRequest) {
@@ -52,6 +54,12 @@ public class UserController {
     @PutMapping("/users/{id}/password")
     public ResponseEntity<Void> updatePassword(@PathVariable String id, @RequestBody String newPassword) {
         updatePasswordUseCase.execute(id, newPassword);
+        return ResponseEntity.noContent().build();
+    }
+
+    @DeleteMapping("/users/{id}")
+    public ResponseEntity<Void> deleteUser(@PathVariable String id) {
+        deleteUserUseCase.execute(id);
         return ResponseEntity.noContent().build();
     }
 }

@@ -28,13 +28,8 @@ public class SecurityConfig {
         http
                 .csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/api/auth/login").permitAll()
-                        .requestMatchers("/api/users").permitAll()
-                        .requestMatchers("/api/test").permitAll()
-                        .requestMatchers("/api/roles/**").permitAll()
-                        .requestMatchers("/health").permitAll()
-                        .requestMatchers("/api/users/admin/**").hasRole("ADMINISTRADOR")
-                        .anyRequest().authenticated()
+                        .requestMatchers("/api/admin/**").hasRole("ADMINISTRADOR")
+                        .anyRequest().permitAll()
                 )
                 .oauth2ResourceServer(oauth2 -> oauth2
                         .jwt(jwt -> jwt.jwtAuthenticationConverter(jwtAuthenticationConverter()))

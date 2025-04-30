@@ -15,8 +15,14 @@ public class KeycloakUsersResourceProvider {
 
     @Bean
     public UsersResource usersResource(Keycloak keycloak) {
-        System.out.println(keycloak.tokenManager().getAccessToken().toString());
-        RealmResource realmResource = keycloak.realm(realm);
-        return realmResource.users();
+        try {
+            RealmResource realmResource = keycloak.realm(realm);
+            return realmResource.users();
+        } catch (Exception e) {
+            System.err.println("Erro ao acessar Keycloak: " + e.getMessage());
+            e.printStackTrace();
+            throw e;
+        }
+
     }
 }

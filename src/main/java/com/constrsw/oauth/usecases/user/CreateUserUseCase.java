@@ -12,6 +12,7 @@ import com.constrsw.oauth.service.KeycloakUserService;
 import com.constrsw.oauth.usecases.interfaces.ICreateUserUseCase;
 import jakarta.ws.rs.core.Response;
 import lombok.RequiredArgsConstructor;
+import org.apache.james.mime4j.dom.Entity;
 import org.keycloak.representations.idm.UserRepresentation;
 import org.springframework.stereotype.Service;
 import java.util.List;
@@ -36,6 +37,8 @@ public class CreateUserUseCase implements ICreateUserUseCase {
             validateUserRequest(userRequest);
 
             Response response = keycloakUserService.createUser(userRequest, isTemporary);
+            Object entity = response.readEntity(String.class);
+
             return processUserCreationResponse(response);
         } catch (RuntimeException e) {
             throw e;
@@ -58,9 +61,9 @@ public class CreateUserUseCase implements ICreateUserUseCase {
             throw new PasswordEmptyException();
         }
 
-        if (!username.matches(EMAIL_REGEX)) {
-            throw new InvalidEmailFormatException();
-        }
+//        if (!username.matches(EMAIL_REGEX)) {
+//            throw new InvalidEmailFormatException();
+//        }
     }
 
     private String processUserCreationResponse(Response response) {
