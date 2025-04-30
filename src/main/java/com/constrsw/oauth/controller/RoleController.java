@@ -50,6 +50,7 @@ public class RoleController {
         return ResponseEntity.noContent().build();
     }
 
+    @PatchMapping("/roles/{id}")
     public ResponseEntity<Void> patchRole(@PathVariable String id, @RequestBody Map<String, Object> updates) {
         patchRoleUseCase.execute(id, updates);
         return ResponseEntity.noContent().build();

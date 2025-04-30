@@ -51,7 +51,7 @@ public class UserController {
         return ResponseEntity.noContent().build();
     }
 
-    @PutMapping("/users/{id}/password")
+    @PatchMapping("/users/{id}/password")
     public ResponseEntity<Void> updatePassword(@PathVariable String id, @RequestBody String newPassword) {
         updatePasswordUseCase.execute(id, newPassword);
         return ResponseEntity.noContent().build();
