@@ -12,7 +12,6 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.oauth2.core.ClaimAccessor;
 import org.springframework.security.oauth2.core.oidc.StandardClaimNames;
 import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationToken;
@@ -81,8 +80,11 @@ public class SecurityConfig {
         }
 
         @Bean
-        public AuthenticationConverter authenticationConverter(AuthoritiesConverter authoritiesConverter) {
-                return jwt -> new JwtAuthenticationToken((Jwt) jwt, authoritiesConverter.convert((Jwt) jwt),
-                                ((ClaimAccessor) jwt).getClaimAsString(StandardClaimNames.PREFERRED_USERNAME));
+        public Converter<Jwt, AbstractAuthenticationToken> authenticationConverter(
+                        AuthoritiesConverter authoritiesConverter) {
+                return jwt -> new JwtAuthenticationToken(
+                                jwt,
+                                authoritiesConverter.convert(jwt),
+                                jwt.getClaimAsString(StandardClaimNames.PREFERRED_USERNAME));
         }
 }

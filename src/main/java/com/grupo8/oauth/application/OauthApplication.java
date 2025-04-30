@@ -5,7 +5,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.ComponentScan;
 
 @SpringBootApplication
-@ComponentScan(basePackages = "com.grupo8")
+@ComponentScan("com.grupo8.oauth")
 public class OauthApplication {
 
 	public static void main(String[] args) {

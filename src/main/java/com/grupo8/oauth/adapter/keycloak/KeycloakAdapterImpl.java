@@ -30,10 +30,10 @@ public class KeycloakAdapterImpl implements KeycloakAdapter {
         private final WebClient webClient;
 
         public KeycloakAdapterImpl(
-                        @Value("${keycloak.url}") String url,
-                        @Value("${keycloak.realm}") String realm,
-                        @Value("${keycloak.client-id}") String clientId,
-                        @Value("${keycloak.client-secret}") String clientSecret) {
+                        @Value("${KEYCLOAK_INTERNAL_HOST}") String url,
+                        @Value("${KEYCLOAK_REALM}") String realm,
+                        @Value("${KEYCLOAK_CLIENT_ID}") String clientId,
+                        @Value("${KEYCLOAK_CLIENT_SECRET}") String clientSecret) {
                 this.realm = realm;
                 this.clientId = clientId;
                 this.clientSecret = clientSecret;
