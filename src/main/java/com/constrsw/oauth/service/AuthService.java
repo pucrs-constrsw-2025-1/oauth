@@ -6,48 +6,38 @@ import com.constrsw.oauth.exception.GlobalException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.keycloak.OAuth2Constants;
+import org.keycloak.admin.client.Keycloak;
 import org.keycloak.admin.client.KeycloakBuilder;
 import org.keycloak.representations.AccessTokenResponse;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
-/**
- * Serviço para autenticação de usuários usando Keycloak
- */
 @Service
 @RequiredArgsConstructor
 @Slf4j
 public class AuthService {
 
-    @Value("${keycloak.server.url}")
+    @Value("${keycloak.auth-server-url}")
     private String serverUrl;
 
     @Value("${keycloak.realm}")
     private String realm;
 
-    @Value("${keycloak.client.id}")
+    @Value("${keycloak.resource.client-id}")
     private String clientId;
 
-    @Value("${keycloak.client.secret}")
+    @Value("${keycloak.credentials.secret}")
     private String clientSecret;
-    
-    @Value("${keycloak.grant.type}")
+
+    @Value("${keycloak.grant-type:password}")
     private String grantType;
 
-    /**
-     * Autentica um usuário usando username e password
-     *
-     * @param authRequest Requisição de autenticação contendo username e password
-     * @return Resposta de autenticação contendo os tokens
-     * @throws GlobalException Se ocorrer um erro na autenticação
-     */
     public AuthResponse authenticate(AuthRequest authRequest) {
         log.info("Autenticando usuário: {}", authRequest.getUsername());
 
         try {
-            // Obtém o token diretamente do Keycloak
-            AccessTokenResponse tokenResponse = KeycloakBuilder.builder()
+            Keycloak keycloak = KeycloakBuilder.builder()
                     .serverUrl(serverUrl)
                     .realm(realm)
                     .clientId(clientId)
@@ -55,23 +45,22 @@ public class AuthService {
                     .username(authRequest.getUsername())
                     .password(authRequest.getPassword())
                     .grantType(grantType)
-                    .build()
-                    .tokenManager()
-                    .getAccessToken();
+                    .build();
 
-            // Constrói a resposta
+            AccessTokenResponse tokenResponse = keycloak.tokenManager().getAccessToken();
+
             return AuthResponse.builder()
                     .tokenType(tokenResponse.getTokenType())
                     .accessToken(tokenResponse.getToken())
-                    .expiresIn(tokenResponse.getExpiresIn())
+                    .expiresIn(tokenResponse.getExpiresIn() > 0 ? (int) tokenResponse.getExpiresIn() : null)
                     .refreshToken(tokenResponse.getRefreshToken())
-                    .refreshExpiresIn(tokenResponse.getRefreshExpiresIn())
+                    .refreshExpiresIn(tokenResponse.getRefreshExpiresIn() > 0 ? (int) tokenResponse.getRefreshExpiresIn() : null)
                     .build();
         } catch (Exception e) {
-            log.error("Erro na autenticação: {}", e.getMessage());
+            log.error("Erro na autenticação para usuário {}: {}", authRequest.getUsername(), e.getMessage());
             throw new GlobalException(
                     "AUTH_ERROR",
-                    "Falha na autenticação: " + e.getMessage(),
+                    "Credenciais inválidas ou serviço de autenticação indisponível",
                     "AuthService",
                     HttpStatus.UNAUTHORIZED
             );

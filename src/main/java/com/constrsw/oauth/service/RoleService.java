@@ -4,8 +4,10 @@ import com.constrsw.oauth.dto.RoleRequest;
 import com.constrsw.oauth.dto.RoleResponse;
 import com.constrsw.oauth.exception.GlobalException;
 import jakarta.ws.rs.NotFoundException;
+import jakarta.ws.rs.core.Response;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+
 import org.keycloak.admin.client.Keycloak;
 import org.keycloak.admin.client.resource.RealmResource;
 import org.keycloak.admin.client.resource.RoleResource;
@@ -20,9 +22,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
-/**
- * Serviço para gerenciamento de roles no Keycloak
- */
 @Service
 @RequiredArgsConstructor
 @Slf4j
@@ -33,58 +32,48 @@ public class RoleService {
     @Value("${keycloak.realm}")
     private String realm;
 
-    /**
-     * Cria uma nova role
-     *
-     * @param roleRequest Dados da role a ser criada
-     * @return Dados da role criada
-     */
     public RoleResponse createRole(RoleRequest roleRequest) {
         try {
             RolesResource rolesResource = getRolesResource();
 
-            // Verifica se a role já existe
+            // Check if role exists
             try {
                 RoleRepresentation existingRole = rolesResource.get(roleRequest.getName()).toRepresentation();
                 if (existingRole != null) {
                     throw new GlobalException(
                         "ROLE_EXISTS",
-                        "Role já existe: " + roleRequest.getName(),
+                        "Role with name '" + roleRequest.getName() + "' already exists",
                         "RoleService",
                         HttpStatus.CONFLICT
                     );
                 }
             } catch (NotFoundException e) {
-                // Role não existe, podemos continuar
+                // Role doesn't exist, we can continue
             }
 
-            // Cria a role
+            // Create role
             RoleRepresentation role = new RoleRepresentation();
             role.setName(roleRequest.getName());
             role.setDescription(roleRequest.getDescription());
+
             rolesResource.create(role);
 
-            // Recupera a role criada
+            // Retrieve created role to get its ID
             RoleRepresentation createdRole = rolesResource.get(roleRequest.getName()).toRepresentation();
             return mapToRoleResponse(createdRole);
         } catch (GlobalException e) {
             throw e;
         } catch (Exception e) {
-            log.error("Erro ao criar role: {}", e.getMessage());
             throw new GlobalException(
                 "ROLE_CREATION_ERROR",
-                "Erro ao criar role: " + e.getMessage(),
+                "Error creating role: " + e.getMessage(),
                 "RoleService",
-                HttpStatus.INTERNAL_SERVER_ERROR
+                HttpStatus.INTERNAL_SERVER_ERROR,
+                e
             );
         }
     }
 
-    /**
-     * Recupera todas as roles
-     *
-     * @return Lista de roles
-     */
     public List<RoleResponse> getAllRoles() {
         try {
             List<RoleRepresentation> roles = getRolesResource().list();
@@ -92,173 +81,180 @@ public class RoleService {
                     .map(this::mapToRoleResponse)
                     .collect(Collectors.toList());
         } catch (Exception e) {
-            log.error("Erro ao recuperar roles: {}", e.getMessage());
             throw new GlobalException(
                 "GET_ROLES_ERROR",
-                "Erro ao recuperar roles: " + e.getMessage(),
+                "Error fetching roles: " + e.getMessage(),
                 "RoleService",
-                HttpStatus.INTERNAL_SERVER_ERROR
+                HttpStatus.INTERNAL_SERVER_ERROR,
+                e
             );
         }
     }
 
-    /**
-     * Recupera uma role pelo ID
-     *
-     * @param id ID da role
-     * @return Dados da role
-     */
     public RoleResponse getRoleById(String id) {
         try {
             List<RoleRepresentation> roles = getRolesResource().list();
             RoleRepresentation role = roles.stream()
                     .filter(r -> r.getId().equals(id))
                     .findFirst()
-                    .orElseThrow(() -> new NotFoundException("Role não encontrada com id: " + id));
+                    .orElseThrow(() -> new NotFoundException("Role not found with id: " + id));
 
             return mapToRoleResponse(role);
         } catch (NotFoundException e) {
             throw new GlobalException(
                 "ROLE_NOT_FOUND",
-                "Role não encontrada com id: " + id,
+                "Role not found with id: " + id,
                 "RoleService",
                 HttpStatus.NOT_FOUND
             );
         } catch (Exception e) {
-            log.error("Erro ao recuperar role: {}", e.getMessage());
             throw new GlobalException(
                 "GET_ROLE_ERROR",
-                "Erro ao recuperar role: " + e.getMessage(),
+                "Error fetching role: " + e.getMessage(),
                 "RoleService",
-                HttpStatus.INTERNAL_SERVER_ERROR
+                HttpStatus.INTERNAL_SERVER_ERROR,
+                e
             );
         }
     }
 
-    /**
-     * Atualiza uma role
-     *
-     * @param id ID da role
-     * @param roleRequest Novos dados da role
-     */
     public void updateRole(String id, RoleRequest roleRequest) {
         try {
-            // Busca a role pelo ID
             List<RoleRepresentation> roles = getRolesResource().list();
             RoleRepresentation role = roles.stream()
                     .filter(r -> r.getId().equals(id))
                     .findFirst()
-                    .orElseThrow(() -> new NotFoundException("Role não encontrada com id: " + id));
+                    .orElseThrow(() -> new NotFoundException("Role not found with id: " + id));
 
-            // Atualiza a role
             RoleResource roleResource = getRolesResource().get(role.getName());
             role.setDescription(roleRequest.getDescription());
             
-            // Se o nome está mudando, precisamos excluir e recriar
+            // If the name is changing, we need to delete and recreate the role
             if (!role.getName().equals(roleRequest.getName())) {
-                // Verifica se o novo nome já existe
+                // Check if the new name already exists
                 try {
                     RoleRepresentation existingRole = getRolesResource().get(roleRequest.getName()).toRepresentation();
                     if (existingRole != null) {
                         throw new GlobalException(
                             "ROLE_EXISTS",
-                            "Role já existe com o nome: " + roleRequest.getName(),
+                            "Role with name '" + roleRequest.getName() + "' already exists",
                             "RoleService",
                             HttpStatus.CONFLICT
                         );
                     }
                 } catch (NotFoundException e) {
-                    // Role com novo nome não existe, podemos continuar
+                    // Role with new name doesn't exist, we can continue
                 }
                 
-                // Cria nova role com o nome atualizado
+                // Create new role with updated name
                 RoleRepresentation newRole = new RoleRepresentation();
                 newRole.setName(roleRequest.getName());
                 newRole.setDescription(roleRequest.getDescription());
                 
-                // Exclui a role antiga
+                // Delete old role
                 roleResource.remove();
                 
-                // Cria a nova role
+                // Create new role
                 getRolesResource().create(newRole);
             } else {
-                // Atualiza a role existente
+                // Just update the existing role
                 roleResource.update(role);
             }
         } catch (NotFoundException e) {
             throw new GlobalException(
                 "ROLE_NOT_FOUND",
-                "Role não encontrada com id: " + id,
+                "Role not found with id: " + id,
                 "RoleService",
                 HttpStatus.NOT_FOUND
             );
         } catch (GlobalException e) {
             throw e;
         } catch (Exception e) {
-            log.error("Erro ao atualizar role: {}", e.getMessage());
             throw new GlobalException(
                 "UPDATE_ROLE_ERROR",
-                "Erro ao atualizar role: " + e.getMessage(),
+                "Error updating role: " + e.getMessage(),
                 "RoleService",
-                HttpStatus.INTERNAL_SERVER_ERROR
+                HttpStatus.INTERNAL_SERVER_ERROR,
+                e
             );
         }
     }
 
-    /**
-     * Exclui uma role
-     *
-     * @param id ID da role
-     */
-    public void deleteRole(String id) {
+    public void patchRole(String id, RoleRequest roleRequest) {
         try {
-            // Busca a role pelo ID
             List<RoleRepresentation> roles = getRolesResource().list();
             RoleRepresentation role = roles.stream()
                     .filter(r -> r.getId().equals(id))
                     .findFirst()
-                    .orElseThrow(() -> new NotFoundException("Role não encontrada com id: " + id));
+                    .orElseThrow(() -> new NotFoundException("Role not found with id: " + id));
 
-            // Exclui a role
-            getRolesResource().get(role.getName()).remove();
+            RoleResource roleResource = getRolesResource().get(role.getName());
+            
+            // Update only the provided fields
+            if (roleRequest.getDescription() != null) {
+                role.setDescription(roleRequest.getDescription());
+            }
+            
+            roleResource.update(role);
         } catch (NotFoundException e) {
             throw new GlobalException(
                 "ROLE_NOT_FOUND",
-                "Role não encontrada com id: " + id,
+                "Role not found with id: " + id,
                 "RoleService",
                 HttpStatus.NOT_FOUND
             );
         } catch (Exception e) {
-            log.error("Erro ao excluir role: {}", e.getMessage());
             throw new GlobalException(
-                "DELETE_ROLE_ERROR",
-                "Erro ao excluir role: " + e.getMessage(),
+                "PATCH_ROLE_ERROR",
+                "Error patching role: " + e.getMessage(),
                 "RoleService",
-                HttpStatus.INTERNAL_SERVER_ERROR
+                HttpStatus.INTERNAL_SERVER_ERROR,
+                e
             );
         }
     }
 
-    /**
-     * Atribui roles a um usuário
-     *
-     * @param userId ID do usuário
-     * @param roleIds Lista de IDs de roles
-     */
+    public void deleteRole(String id) {
+        try {
+            List<RoleRepresentation> roles = getRolesResource().list();
+            RoleRepresentation role = roles.stream()
+                    .filter(r -> r.getId().equals(id))
+                    .findFirst()
+                    .orElseThrow(() -> new NotFoundException("Role not found with id: " + id));
+
+            getRolesResource().get(role.getName()).remove();
+        } catch (NotFoundException e) {
+            throw new GlobalException(
+                "ROLE_NOT_FOUND",
+                "Role not found with id: " + id,
+                "RoleService",
+                HttpStatus.NOT_FOUND
+            );
+        } catch (Exception e) {
+            throw new GlobalException(
+                "DELETE_ROLE_ERROR",
+                "Error deleting role: " + e.getMessage(),
+                "RoleService",
+                HttpStatus.INTERNAL_SERVER_ERROR,
+                e
+            );
+        }
+    }
+
     public void assignRolesToUser(String userId, List<String> roleIds) {
         try {
-            // Obtém o usuário
+            // Get user
             UserResource userResource = keycloak.realm(realm).users().get(userId);
             if (userResource == null) {
                 throw new GlobalException(
                     "USER_NOT_FOUND",
-                    "Usuário não encontrado com id: " + userId,
+                    "User not found with id: " + userId,
                     "RoleService",
                     HttpStatus.NOT_FOUND
                 );
             }
 
-            // Obtém as roles
+            // Get roles
             List<RoleRepresentation> allRoles = getRolesResource().list();
             List<RoleRepresentation> rolesToAssign = new ArrayList<>();
             
@@ -266,11 +262,11 @@ public class RoleService {
                 RoleRepresentation role = allRoles.stream()
                         .filter(r -> r.getId().equals(roleId))
                         .findFirst()
-                        .orElseThrow(() -> new NotFoundException("Role não encontrada com id: " + roleId));
+                        .orElseThrow(() -> new NotFoundException("Role not found with id: " + roleId));
                 rolesToAssign.add(role);
             }
             
-            // Atribui roles ao usuário
+            // Assign roles to user
             userResource.roles().realmLevel().add(rolesToAssign);
         } catch (NotFoundException e) {
             throw new GlobalException(
@@ -282,36 +278,30 @@ public class RoleService {
         } catch (GlobalException e) {
             throw e;
         } catch (Exception e) {
-            log.error("Erro ao atribuir roles ao usuário: {}", e.getMessage());
             throw new GlobalException(
                 "ASSIGN_ROLES_ERROR",
-                "Erro ao atribuir roles ao usuário: " + e.getMessage(),
+                "Error assigning roles to user: " + e.getMessage(),
                 "RoleService",
-                HttpStatus.INTERNAL_SERVER_ERROR
+                HttpStatus.INTERNAL_SERVER_ERROR,
+                e
             );
         }
     }
 
-    /**
-     * Remove roles de um usuário
-     *
-     * @param userId ID do usuário
-     * @param roleIds Lista de IDs de roles
-     */
     public void removeRolesFromUser(String userId, List<String> roleIds) {
         try {
-            // Obtém o usuário
+            // Get user
             UserResource userResource = keycloak.realm(realm).users().get(userId);
             if (userResource == null) {
                 throw new GlobalException(
                     "USER_NOT_FOUND",
-                    "Usuário não encontrado com id: " + userId,
+                    "User not found with id: " + userId,
                     "RoleService",
                     HttpStatus.NOT_FOUND
                 );
             }
 
-            // Obtém as roles
+            // Get roles
             List<RoleRepresentation> allRoles = getRolesResource().list();
             List<RoleRepresentation> rolesToRemove = new ArrayList<>();
             
@@ -319,11 +309,11 @@ public class RoleService {
                 RoleRepresentation role = allRoles.stream()
                         .filter(r -> r.getId().equals(roleId))
                         .findFirst()
-                        .orElseThrow(() -> new NotFoundException("Role não encontrada com id: " + roleId));
+                        .orElseThrow(() -> new NotFoundException("Role not found with id: " + roleId));
                 rolesToRemove.add(role);
             }
             
-            // Remove roles do usuário
+            // Remove roles from user
             userResource.roles().realmLevel().remove(rolesToRemove);
         } catch (NotFoundException e) {
             throw new GlobalException(
@@ -335,36 +325,30 @@ public class RoleService {
         } catch (GlobalException e) {
             throw e;
         } catch (Exception e) {
-            log.error("Erro ao remover roles do usuário: {}", e.getMessage());
             throw new GlobalException(
                 "REMOVE_ROLES_ERROR",
-                "Erro ao remover roles do usuário: " + e.getMessage(),
+                "Error removing roles from user: " + e.getMessage(),
                 "RoleService",
-                HttpStatus.INTERNAL_SERVER_ERROR
+                HttpStatus.INTERNAL_SERVER_ERROR,
+                e
             );
         }
     }
 
-    /**
-     * Recupera as roles de um usuário
-     *
-     * @param userId ID do usuário
-     * @return Lista de roles do usuário
-     */
     public List<RoleResponse> getUserRoles(String userId) {
         try {
-            // Obtém o usuário
+            // Get user
             UserResource userResource = keycloak.realm(realm).users().get(userId);
             if (userResource == null) {
                 throw new GlobalException(
                     "USER_NOT_FOUND",
-                    "Usuário não encontrado com id: " + userId,
+                    "User not found with id: " + userId,
                     "RoleService",
                     HttpStatus.NOT_FOUND
                 );
             }
 
-            // Obtém as roles do usuário
+            // Get user roles
             List<RoleRepresentation> userRoles = userResource.roles().realmLevel().listAll();
             
             return userRoles.stream()
@@ -373,40 +357,38 @@ public class RoleService {
         } catch (GlobalException e) {
             throw e;
         } catch (Exception e) {
-            log.error("Erro ao recuperar roles do usuário: {}", e.getMessage());
             throw new GlobalException(
                 "GET_USER_ROLES_ERROR",
-                "Erro ao recuperar roles do usuário: " + e.getMessage(),
+                "Error fetching user roles: " + e.getMessage(),
                 "RoleService",
-                HttpStatus.INTERNAL_SERVER_ERROR
+                HttpStatus.INTERNAL_SERVER_ERROR,
+                e
             );
         }
     }
 
-    /**
-     * Obtém o recurso de roles do Keycloak
-     *
-     * @return RolesResource
-     */
     private RolesResource getRolesResource() {
         RealmResource realmResource = keycloak.realm(realm);
         return realmResource.roles();
     }
 
-    /**
-     * Mapeia a representação da role para o DTO de resposta
-     *
-     * @param role Representação da role
-     * @return DTO de resposta
-     */
     private RoleResponse mapToRoleResponse(RoleRepresentation role) {
+        // Verificação segura para clientRole
+        boolean isClientRole = false;
+        try {
+            // Alternativa para verificar se é uma role de cliente
+            isClientRole = role.getClientRole() != null && role.getClientRole();
+        } catch (Exception e) {
+            log.warn("Could not determine role type for role {}", role.getName(), e);
+        }
+    
         return RoleResponse.builder()
                 .id(role.getId())
                 .name(role.getName())
                 .description(role.getDescription())
                 .composite(role.isComposite())
-                .clientRole(role.isClientRole())
-                .containerId(role.getContainerId())
+                .clientRole(isClientRole)
+                .containerId(role.getContainerId() != null ? role.getContainerId() : "")
                 .build();
     }
 }

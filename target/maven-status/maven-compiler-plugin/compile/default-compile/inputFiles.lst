@@ -1,17 +1,21 @@
-C:\Users\Ochôa\Desktop\constrsw-2025-1\backend\oauth\src\main\java\com\constrsw\oauth\config\SwaggerConfig.java
-C:\Users\Ochôa\Desktop\constrsw-2025-1\backend\oauth\src\main\java\com\constrsw\oauth\exception\GlobalException.java
-C:\Users\Ochôa\Desktop\constrsw-2025-1\backend\oauth\src\main\java\com\constrsw\oauth\service\UserService.java
-C:\Users\Ochôa\Desktop\constrsw-2025-1\backend\oauth\src\main\java\com\constrsw\oauth\dto\UserRequest.java
-C:\Users\Ochôa\Desktop\constrsw-2025-1\backend\oauth\src\main\java\com\constrsw\oauth\config\SecurityConfig.java
-C:\Users\Ochôa\Desktop\constrsw-2025-1\backend\oauth\src\main\java\com\constrsw\oauth\dto\UserResponse.java
-C:\Users\Ochôa\Desktop\constrsw-2025-1\backend\oauth\src\main\java\com\constrsw\oauth\exception\CustomExceptionHandler.java
-C:\Users\Ochôa\Desktop\constrsw-2025-1\backend\oauth\src\main\java\com\constrsw\oauth\exception\ErrorResponse.java
-C:\Users\Ochôa\Desktop\constrsw-2025-1\backend\oauth\src\main\java\com\constrsw\oauth\config\OpenApiConfig.java
-C:\Users\Ochôa\Desktop\constrsw-2025-1\backend\oauth\src\main\java\com\constrsw\oauth\dto\AuthRequest.java
-C:\Users\Ochôa\Desktop\constrsw-2025-1\backend\oauth\src\main\java\com\constrsw\oauth\controller\AuthController.java
-C:\Users\Ochôa\Desktop\constrsw-2025-1\backend\oauth\src\main\java\com\constrsw\oauth\OauthApplication.java
-C:\Users\Ochôa\Desktop\constrsw-2025-1\backend\oauth\src\main\java\com\constrsw\oauth\service\AuthService.java
-C:\Users\Ochôa\Desktop\constrsw-2025-1\backend\oauth\src\main\java\com\constrsw\oauth\config\JwtConfig.java
-C:\Users\Ochôa\Desktop\constrsw-2025-1\backend\oauth\src\main\java\com\constrsw\oauth\config\KeycloakConfig.java
-C:\Users\Ochôa\Desktop\constrsw-2025-1\backend\oauth\src\main\java\com\constrsw\oauth\dto\AuthResponse.java
-C:\Users\Ochôa\Desktop\constrsw-2025-1\backend\oauth\src\main\java\com\constrsw\oauth\controller\UserController.java
+C:\Users\Guilherme Ochoa\Desktop\constrsw-2025-1\backend\oauth\src\main\java\com\constrsw\oauth\controller\RoleController.java
+C:\Users\Guilherme Ochoa\Desktop\constrsw-2025-1\backend\oauth\src\main\java\com\constrsw\oauth\exception\GlobalExceptionHandler.java
+C:\Users\Guilherme Ochoa\Desktop\constrsw-2025-1\backend\oauth\src\main\java\com\constrsw\oauth\controller\UserController.java
+C:\Users\Guilherme Ochoa\Desktop\constrsw-2025-1\backend\oauth\src\main\java\com\constrsw\oauth\service\UserService.java
+C:\Users\Guilherme Ochoa\Desktop\constrsw-2025-1\backend\oauth\src\main\java\com\constrsw\oauth\service\RoleService.java
+C:\Users\Guilherme Ochoa\Desktop\constrsw-2025-1\backend\oauth\src\main\java\com\constrsw\oauth\exception\GlobalException.java
+C:\Users\Guilherme Ochoa\Desktop\constrsw-2025-1\backend\oauth\src\main\java\com\constrsw\oauth\config\NoAutoSecurityConfig.java
+C:\Users\Guilherme Ochoa\Desktop\constrsw-2025-1\backend\oauth\src\main\java\com\constrsw\oauth\dto\RoleRequest.java
+C:\Users\Guilherme Ochoa\Desktop\constrsw-2025-1\backend\oauth\src\main\java\com\constrsw\oauth\dto\UserResponse.java
+C:\Users\Guilherme Ochoa\Desktop\constrsw-2025-1\backend\oauth\src\main\java\com\constrsw\oauth\config\KeycloakConfig.java
+C:\Users\Guilherme Ochoa\Desktop\constrsw-2025-1\backend\oauth\src\main\java\com\constrsw\oauth\controller\UserRoleController.java
+C:\Users\Guilherme Ochoa\Desktop\constrsw-2025-1\backend\oauth\src\main\java\com\constrsw\oauth\config\SwaggerConfig.java
+C:\Users\Guilherme Ochoa\Desktop\constrsw-2025-1\backend\oauth\src\main\java\com\constrsw\oauth\dto\AuthRequest.java
+C:\Users\Guilherme Ochoa\Desktop\constrsw-2025-1\backend\oauth\src\main\java\com\constrsw\oauth\dto\RoleResponse.java
+C:\Users\Guilherme Ochoa\Desktop\constrsw-2025-1\backend\oauth\src\main\java\com\constrsw\oauth\service\AuthService.java
+C:\Users\Guilherme Ochoa\Desktop\constrsw-2025-1\backend\oauth\src\main\java\com\constrsw\oauth\controller\AuthController.java
+C:\Users\Guilherme Ochoa\Desktop\constrsw-2025-1\backend\oauth\src\main\java\com\constrsw\oauth\controller\HealthController.java
+C:\Users\Guilherme Ochoa\Desktop\constrsw-2025-1\backend\oauth\src\main\java\com\constrsw\oauth\config\SecurityConfig.java
+C:\Users\Guilherme Ochoa\Desktop\constrsw-2025-1\backend\oauth\src\main\java\com\constrsw\oauth\OauthApplication.java
+C:\Users\Guilherme Ochoa\Desktop\constrsw-2025-1\backend\oauth\src\main\java\com\constrsw\oauth\dto\AuthResponse.java
+C:\Users\Guilherme Ochoa\Desktop\constrsw-2025-1\backend\oauth\src\main\java\com\constrsw\oauth\dto\UserRequest.java

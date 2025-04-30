@@ -4,23 +4,22 @@ server:
     context-path: /
 
 keycloak:
-  server:
-    url: ${OAUTH_INTERNAL_PROTOCOL:http}://${KEYCLOAK_INTERNAL_HOST:keycloak}:${KEYCLOAK_INTERNAL_API_PORT:8080}
+  auth-server-url: ${OAUTH_INTERNAL_PROTOCOL:http}://${KEYCLOAK_INTERNAL_HOST:keycloak}:${KEYCLOAK_INTERNAL_API_PORT:8080}/auth
   realm: ${KEYCLOAK_REALM:constrsw}
-  client:
-    id: ${KEYCLOAK_CLIENT_ID:oauth}
+  resource:
+    client-id: ${KEYCLOAK_CLIENT_ID:oauth}
+  credentials:
     secret: ${KEYCLOAK_CLIENT_SECRET:wsNXUxaupU9X6jCncsn3rOEy6PDt7oJO}
-  grant:
-    type: ${KEYCLOAK_GRANT_TYPE:password}
+  grant-type: ${KEYCLOAK_GRANT_TYPE:password}
+  admin:
+    username: ${KEYCLOAK_ADMIN:admin}
+    password: ${KEYCLOAK_ADMIN_PASSWORD:a12345678}
 
 spring:
   application:
     name: oauth-service
   main:
     allow-bean-definition-overriding: true
-  mvc:
-    pathmatch:
-      matching-strategy: ant_path_matcher
   security:
     user:
       name: ${KEYCLOAK_ADMIN:admin}
@@ -44,7 +43,7 @@ management:
       enabled: true
       probes:
         enabled: true
-      
+
 logging:
   level:
     root: INFO
