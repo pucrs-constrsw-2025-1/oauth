@@ -1,8 +1,7 @@
-package Group7.OAuth.adapter.keycloak;
+package com.grupo8.oauth.adapter.keycloak;
 
 public record KeycloackCredential(
-        String type,
-        String value,
-        Boolean temporary
-) {
+                String type,
+                String value,
+                Boolean temporary) {
 }
