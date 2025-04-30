@@ -1,4 +1,4 @@
-package Group7.OAuth.application.exception;
+package com.grupo8.oauth.application.exception;
 
 public class InvalidEmailException extends RuntimeException {
     public InvalidEmailException(String username) {
