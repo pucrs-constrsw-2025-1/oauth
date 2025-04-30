@@ -1,0 +1,48 @@
+server:
+  port: ${OAUTH_INTERNAL_PORT:8080}
+  servlet:
+    context-path: /
+
+keycloak:
+  server:
+    url: ${OAUTH_INTERNAL_PROTOCOL:http}://${KEYCLOAK_INTERNAL_HOST:keycloak}:${KEYCLOAK_INTERNAL_API_PORT:8080}
+  realm: ${KEYCLOAK_REALM:constrsw}
+  client:
+    id: ${KEYCLOAK_CLIENT_ID:oauth}
+    secret: ${KEYCLOAK_CLIENT_SECRET:wsNXUxaupU9X6jCncsn3rOEy6PDt7oJO}
+  grant:
+    type: ${KEYCLOAK_GRANT_TYPE:password}
+
+spring:
+  application:
+    name: oauth-service
+  main:
+    allow-bean-definition-overriding: true
+  security:
+    user:
+      name: ${KEYCLOAK_ADMIN:admin}
+      password: ${KEYCLOAK_ADMIN_PASSWORD:a12345678}
+  mvc:
+    pathmatch:
+      matching-strategy: ant_path_matcher
+  
+
+springdoc:
+  swagger-ui:
+    path: /swagger-ui.html
+  api-docs:
+    path: /v3/api-docs
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health
+      base-path: /manage
+  endpoint:
+    health:
+      show-details: always
+      enabled: true
+      probes:
+        enabled: true
+      
