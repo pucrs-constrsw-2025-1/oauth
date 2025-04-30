@@ -1,163 +1,75 @@
 package com.constrsw.oauth.controller;
 
-import lombok.extern.slf4j.Slf4j;
-import org.keycloak.admin.client.Keycloak;
-import org.keycloak.representations.idm.RoleRepresentation;
-import org.springframework.beans.factory.annotation.Value;
+import com.constrsw.oauth.model.RoleRequest;
+import com.constrsw.oauth.model.RoleResponse;
+import com.constrsw.oauth.usecases.interfaces.*;
+import jakarta.validation.Valid;
+import lombok.AllArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
-import com.constrsw.oauth.model.CreateRoleRequest;
-import com.constrsw.oauth.model.RenameRoleRequest;
-import com.constrsw.oauth.model.RoleAssignmentRequest;
-import com.constrsw.oauth.model.RoleDescriptionRequest;
-
 import java.util.List;
-import jakarta.validation.Valid;
+import java.util.Map;
 
-@Slf4j
-@Validated
+@AllArgsConstructor
 @RestController
-@RequestMapping("/api/roles")
+@RequestMapping("/api")
 public class RoleController {
 
-    private final Keycloak keycloak;
-    private final String realm;
+    private final ICreateRoleUseCase createRoleUseCase;
+    private final IGetAllRolesUseCase getAllRolesUseCase;
+    private final IGetRoleByIdUseCase getRoleByIdUseCase;
+    private final IUpdateRoleUseCase updateRoleUseCase;
+    private final IPatchRoleUseCase patchRoleUseCase;
+    private final IDeleteRoleUseCase deleteRoleUseCase;
+    private final IAssignRoleToUserUseCase assignRoleToUserUseCase;
+    private final IRemoveRoleFromUserUseCase removeRoleFromUserUseCase;
 
-    public RoleController(Keycloak keycloak,
-            @Value("${keycloak.realm}") String realm) {
-        this.keycloak = keycloak;
-        this.realm = realm;
+    @PostMapping("/roles")
+    public ResponseEntity<Void> createRole(@Valid @RequestBody RoleRequest roleRequest) {
+        createRoleUseCase.execute(roleRequest);
+        return new ResponseEntity<>(HttpStatus.CREATED);
     }
 
-    /**
-     * Lista todos os roles do realm.
-     * GET /api/roles
-     */
-    @GetMapping
-    public ResponseEntity<List<RoleRepresentation>> listRoles() {
-        var roles = keycloak.realm(realm).roles().list();
+    @GetMapping("/roles")
+    public ResponseEntity<List<RoleResponse>> getAllRoles() {
+        List<RoleResponse> roles = getAllRolesUseCase.execute();
         return ResponseEntity.ok(roles);
     }
 
-    /**
-     * Recupera um role pelo nome.
-     * GET /api/roles/{roleName}
-     */
-    @GetMapping("/{roleName}")
-    public ResponseEntity<RoleRepresentation> getRole(
-            @PathVariable String roleName) {
-        var role = keycloak.realm(realm)
-                .roles()
-                .get(roleName)
-                .toRepresentation();
+    @GetMapping("/roles/{id}")
+    public ResponseEntity<RoleResponse> getRoleById(@PathVariable String id) {
+        RoleResponse role = getRoleByIdUseCase.execute(id);
         return ResponseEntity.ok(role);
     }
 
-    /**
-     * Cria um novo role.
-     * POST /api/roles
-     * Body: { "name": "NOVO_ROLE" }
-     */
-    @PostMapping
-    public ResponseEntity<Void> createRole(
-            @RequestBody @Valid CreateRoleRequest payload) {
-        var r = new RoleRepresentation();
-        r.setName(payload.getName());
-        keycloak.realm(realm).roles().create(r);
-        return ResponseEntity.status(201).build();
-    }
-
-    /**
-     * Renomeia um role.
-     * PUT /api/roles/{roleName}
-     * Body: { "newName": "OUTRO_ROLE" }
-     */
-    @PutMapping("/{roleName}")
-    public ResponseEntity<Void> updateRole(
-            @PathVariable String roleName,
-            @RequestBody @Valid RenameRoleRequest payload) {
-        var r = new RoleRepresentation();
-        r.setName(payload.getNewName());
-        keycloak.realm(realm)
-                .roles()
-                .get(roleName)
-                .update(r);
-        return ResponseEntity.ok().build();
-    }
-
-    /**
-     * Atualiza apenas a descrição de um role.
-     * PATCH /api/roles/{roleName}
-     * Body: { "description": "Descrição aqui" }
-     */
-    @PatchMapping("/{roleName}")
-    public ResponseEntity<Void> patchRole(
-            @PathVariable String roleName,
-            @RequestBody @Valid RoleDescriptionRequest payload) {
-        var existing = keycloak.realm(realm)
-                .roles()
-                .get(roleName)
-                .toRepresentation();
-        existing.setDescription(payload.getDescription());
-        keycloak.realm(realm)
-                .roles()
-                .get(roleName)
-                .update(existing);
-        return ResponseEntity.ok().build();
-    }
-
-    /**
-     * Exclui logicamente um role.
-     * DELETE /api/roles/{roleName}
-     */
-    @DeleteMapping("/{roleName}")
-    public ResponseEntity<Void> deleteRole(
-            @PathVariable String roleName) {
-        keycloak.realm(realm)
-                .roles()
-                .deleteRole(roleName);
+    @PutMapping("/roles/{id}")
+    public ResponseEntity<Void> updateRole(@PathVariable String id, @Valid @RequestBody RoleRequest roleRequest) {
+        updateRoleUseCase.execute(id, roleRequest);
         return ResponseEntity.noContent().build();
     }
 
-    /**
-     * Atribui um role a um usuário.
-     * POST /api/roles/assign
-     * Body: { "userId":"...", "roleName":"..." }
-     */
-    @PostMapping("/assign")
-    public ResponseEntity<Void> assignRoleToUser(
-            @RequestBody @Valid RoleAssignmentRequest payload) {
-        var realmRes = keycloak.realm(realm);
-        var roleRep = realmRes.roles()
-                .get(payload.getRoleName())
-                .toRepresentation();
-        realmRes.users()
-                .get(payload.getUserId())
-                .roles()
-                .realmLevel()
-                .add(List.of(roleRep));
-        return ResponseEntity.ok().build();
+    public ResponseEntity<Void> patchRole(@PathVariable String id, @RequestBody Map<String, Object> updates) {
+        patchRoleUseCase.execute(id, updates);
+        return ResponseEntity.noContent().build();
     }
 
-    /**
-     * Remove um role de um usuário.
-     * POST /api/roles/unassign
-     * Body: { "userId":"...", "roleName":"..." }
-     */
-    @PostMapping("/unassign")
-    public ResponseEntity<Void> removeRoleFromUser(
-            @RequestBody @Valid RoleAssignmentRequest payload) {
-        var realmRes = keycloak.realm(realm);
-        var roleRep = realmRes.roles()
-                .get(payload.getRoleName())
-                .toRepresentation();
-        realmRes.users()
-                .get(payload.getUserId())
-                .roles()
-                .realmLevel()
-                .remove(List.of(roleRep));
-        return ResponseEntity.ok().build();
+    @DeleteMapping("/roles/{id}")
+    public ResponseEntity<Void> deleteRole(@PathVariable String id) {
+        deleteRoleUseCase.execute(id);
+        return ResponseEntity.noContent().build();
+    }
+
+    @PostMapping("/users/{userId}/roles/{roleId}")
+    public ResponseEntity<Void> assignRoleToUser(@PathVariable String userId, @PathVariable String roleId) {
+        assignRoleToUserUseCase.execute(userId, roleId);
+        return ResponseEntity.noContent().build();
+    }
+
+    @DeleteMapping("/users/{userId}/roles/{roleId}")
+    public ResponseEntity<Void> removeRoleFromUser(@PathVariable String userId, @PathVariable String roleId) {
+        removeRoleFromUserUseCase.execute(userId, roleId);
+        return ResponseEntity.noContent().build();
     }
 }

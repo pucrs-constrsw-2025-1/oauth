@@ -8,4 +8,3 @@ public class CreateRoleRequest {
     @NotBlank(message = "O nome do role não pode ser vazio")
     private String name;
 }
-
