@@ -4,7 +4,7 @@ server:
     context-path: /
 
 keycloak:
-  auth-server-url: ${OAUTH_INTERNAL_PROTOCOL:http}://${KEYCLOAK_INTERNAL_HOST:keycloak}:${KEYCLOAK_INTERNAL_API_PORT:8080}/auth
+  auth-server-url: ${OAUTH_INTERNAL_PROTOCOL:http}://${KEYCLOAK_EXTERNAL_HOST:localhost}:${KEYCLOAK_EXTERNAL_PORT:8090}/auth
   realm: ${KEYCLOAK_REALM:constrsw}
   resource:
     client-id: ${KEYCLOAK_CLIENT_ID:oauth}

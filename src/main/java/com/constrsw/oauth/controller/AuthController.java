@@ -17,7 +17,10 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 
 /**
  * Controller para autenticação de usuários
@@ -39,10 +42,7 @@ public class AuthController {
         @ApiResponse(responseCode = "201", description = "Autenticação bem-sucedida"),
         @ApiResponse(responseCode = "401", description = "Credenciais inválidas")
     })
-    @PostMapping(value = "/login", consumes = {
-        MediaType.APPLICATION_FORM_URLENCODED_VALUE,
-        MediaType.APPLICATION_JSON_VALUE
-    })
+    @PostMapping(value = "/login", consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE)
     public ResponseEntity<AuthResponse> login(
             @Parameter(description = "Nome de usuário (e-mail)", required = true)
             @RequestParam(value = "username", required = true) String username,
@@ -57,30 +57,16 @@ public class AuthController {
             authRequest.setUsername(username);
             authRequest.setPassword(password);
             
+            log.debug("Enviando credenciais para o serviço de autenticação");
             AuthResponse response = authService.authenticate(authRequest);
+            log.info("Autenticação bem-sucedida para o usuário: {}", username);
+            
             return ResponseEntity.status(HttpStatus.CREATED).body(response);
         } catch (GlobalException e) {
-            log.error("Erro de autenticação: {}", e.getMessage());
+            log.error("Erro de autenticação para usuário {}: {}", username, e.getMessage());
             return ResponseEntity.status(e.getHttpStatus()).build();
         } catch (Exception e) {
-            log.error("Erro inesperado durante autenticação: {}", e.getMessage(), e);
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
-        }
-    }
-    
-    // Adicionando um método alternativo que aceita JSON para mais flexibilidade
-    @PostMapping(value = "/login/json", consumes = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<AuthResponse> loginJson(@RequestBody AuthRequest authRequest) {
-        log.info("Requisição de login JSON para o usuário: {}", authRequest.getUsername());
-        
-        try {
-            AuthResponse response = authService.authenticate(authRequest);
-            return ResponseEntity.status(HttpStatus.CREATED).body(response);
-        } catch (GlobalException e) {
-            log.error("Erro de autenticação: {}", e.getMessage());
-            return ResponseEntity.status(e.getHttpStatus()).build();
-        } catch (Exception e) {
-            log.error("Erro inesperado durante autenticação: {}", e.getMessage(), e);
+            log.error("Erro inesperado durante autenticação para usuário {}: {}", username, e.getMessage(), e);
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
     }
