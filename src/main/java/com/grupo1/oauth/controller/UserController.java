@@ -9,12 +9,14 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import jakarta.validation.Valid;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.*;
 
+@Slf4j
 @RestController
 @RequestMapping("/api")
 public class UserController {
@@ -87,6 +89,7 @@ public class UserController {
     })
     @PostMapping("/login")
     public ResponseEntity<Object> login(@RequestBody @Valid LoginRequest loginRequest) {
+        log.info("Login request received for user: {}", loginRequest.getUsername());
         TokenResponse token = keycloakService.login(loginRequest);
         return ResponseEntity.status(HttpStatus.CREATED).body(token);
     }

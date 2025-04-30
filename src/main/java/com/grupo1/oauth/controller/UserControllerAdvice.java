@@ -1,6 +1,7 @@
 package com.grupo1.oauth.controller;
 
 import com.grupo1.oauth.dto.ErrorResponse;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -10,6 +11,7 @@ import org.springframework.web.reactive.function.client.WebClientResponseExcepti
 
 import java.util.*;
 
+@Slf4j
 @RestControllerAdvice(basePackages = "com.grupo1.oauth.controller")
 public class UserControllerAdvice {
 
@@ -25,41 +27,49 @@ public class UserControllerAdvice {
 
     @ExceptionHandler(WebClientResponseException.BadRequest.class)
     public ResponseEntity<ErrorResponse> handleBadRequest(WebClientResponseException.BadRequest ex) {
+        log.error("Bad request: {}", ex.getMessage(), ex);
         return ResponseEntity.badRequest().body(buildErrorResponse("400", MSG_BAD_REQUEST, ex));
     }
 
     @ExceptionHandler(WebClientResponseException.Unauthorized.class)
     public ResponseEntity<ErrorResponse> handleUnauthorized(WebClientResponseException.Unauthorized ex) {
+        log.error("Unauthorized: {}", ex.getMessage(), ex);
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(buildErrorResponse("401", MSG_UNAUTHORIZED, ex));
     }
 
     @ExceptionHandler(WebClientResponseException.Forbidden.class)
     public ResponseEntity<ErrorResponse> handleForbidden(WebClientResponseException.Forbidden ex) {
+        log.error("Forbidden: {}", ex.getMessage(), ex);
         return ResponseEntity.status(HttpStatus.FORBIDDEN).body(buildErrorResponse("403", MSG_FORBIDDEN, ex));
     }
 
     @ExceptionHandler(WebClientResponseException.NotFound.class)
     public ResponseEntity<ErrorResponse> handleNotFound(WebClientResponseException.NotFound ex) {
+        log.error("Not found: {}", ex.getMessage(), ex);
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(buildErrorResponse("404", MSG_NOT_FOUND, ex));
     }
 
     @ExceptionHandler(WebClientResponseException.Conflict.class)
     public ResponseEntity<ErrorResponse> handleConflict(WebClientResponseException.Conflict ex) {
+        log.error("Conflict: {}", ex.getMessage(), ex);
         return ResponseEntity.status(HttpStatus.CONFLICT).body(buildErrorResponse("409", MSG_CONFLICT, ex));
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<ErrorResponse> handleValidationErrors(MethodArgumentNotValidException ex) {
+        log.error("Validation error: {}", ex.getMessage(), ex);
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(buildErrorResponse("400", MSG_VALIDATION_ERROR, ex));
     }
 
     @ExceptionHandler(WebClientResponseException.class)
     public ResponseEntity<ErrorResponse> handleOtherWebClientErrors(WebClientResponseException ex) {
+        log.error("WebClient error: {}", ex.getMessage(), ex);
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(buildErrorResponse("500", MSG_KEYCLOAK_ERROR, ex));
     }
 
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ErrorResponse> handleUnexpected(Exception ex) {
+        log.error("Unexpected error: {}", ex.getMessage(), ex);
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(buildErrorResponse("500", MSG_UNEXPECTED_ERROR, ex));
     }
 
