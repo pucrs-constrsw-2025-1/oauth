@@ -1,12 +1,80 @@
-Wrapper de autenticação e autorização com o Keycloak
+Serviço wrapper para autenticação e autorização com o Keycloak utilizando o Spring Boot.
+
+## Instruções de uso
+
+Sempre rode os comandos de compose abaixo no diretório raiz do projeto.
+
+### Rodar localmente com volumes externos
+
+Para rodar o projeto localmente, crie os volumes externos com os seguintes comandos:
+
+```bash
+docker volume create constrsw-keycloak-data
+docker volume create constrsw-postgresql-data
+docker volume create constrsw-mongodb-data
+```
+
+Em seguida, execute o comando abaixo:
+
+```bash
+docker-compose up
+```
+
+### Rodar localmente sem volumes externos
+
+Para rodar o projeto localmente, sem precisar criar os volumes externos, basta rodar o comando abaixo:
+
+```bash
+docker-compose -f docker-compose.yml -f docker-compose.local.yml up
+```
+### Rodar localmente com suporte a debug remoto
+
+Para adicionar suporte a debug para o serviço OAuth, primeiro, rode o comando abaixo:
+
+```bash
+docker-compose -f docker-compose.yml -f docker-compose.local.yml -f docker-compose.debug.yml up
+```
+
+Depois, utilize o fluxo de debug remoto da sua IDE favorita para conectar ao serviço OAuth no port de debug 9230. Estes são os argumentos para a configuração Remote JVM Debug do IntelliJ IDEA:
+
+```code
+-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:9230
+```
+
+## URLs padrões
 
 URL para o Swagger: http://localhost:8080/swagger-ui/index.html
 URL para o keycloak admin console: http://localhost:8090/admin/master/console
 
+## Postman
+
+A collection do Postman está localizada no arquivo `oauth.postman_collection.json`.
+
+## Autenticação do administrador
+
 Usuário root: admin@pucrs.br
+
 Senha root: a12345678
 
-O realm, client, client secret, roles e permissões são criados automaticamente no seed RealmSeed.
+## Arquitetura
+
+A arquitetura adotada é uma versão simplificada do padrão MVC prescrito pelo Spring Boot. As responsabilidades são divididas de forma vertical entre cada controller. Serviços agnósticos de tecnologia como o serviço de autorização estão separados dos adapters específicos de tecnologia (controllers e Feign client para as APIs do Keycloak)
+
+## Clients
+
+Foram criados os seguintes clientes (localizados em `backend/clients/oauth`) gerados automaticamente a partir da especificação OpenAPI do serviço OAuth:
+- oauth-client-spring: cliente Spring Boot que utiliza clients Feign para acessar as APIs do serviço
+- oauth-client-ts: cliente TypeScript Node que utiliza axios para acessar as APIs do serviço
+
+Ambos os clientes possuem exemplos de uso em seus respectivos diretórios.
+
+Para utilizar ambos os clients, não esqueça de configurar as seguintes variáveis de ambiente:
+- `OAUTH_HOST`
+- `OAUTH_PORT`
+
+Ambos os clients são completamente type-safe.
+
+## Tarefas
 
 - [X] Use client roles instead of realm roles
 - [X] Double-check if roles are correctly configured (Santiago)
