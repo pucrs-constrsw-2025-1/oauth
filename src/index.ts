@@ -1,8 +1,9 @@
-import express from 'express';
+// Em index.ts
+import app from './app'; // Importar o app configurado do app.ts
 
-const app = express();
 const port = process.env.PORT || 3000;
 
+// Opcional: Mantenha a rota /health se desejar, ela será adicionada ao app principal
 app.get('/health', (req, res) => {
   res.send('OAuth service is healthy');
 });
