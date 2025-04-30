@@ -31,6 +31,7 @@ public class SecurityConfig {
         private static final String RESOURCE_ACCESS_CLAIM = "resource_access";
         private static final String ROLES_CLAIM = "roles";
 
+        @Value("${KEYCLOAK_CLIENT_ID}")
         private String clientId;
 
         private static final String[] ENDPOINTS_WITHOUT_AUTH = {
