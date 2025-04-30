@@ -1,4 +1,4 @@
-FROM maven:3.9.9-amazoncorretto-24 AS build
+FROM maven:3.9.4-amazoncorretto-21 AS build
 
 WORKDIR /oauth
 
