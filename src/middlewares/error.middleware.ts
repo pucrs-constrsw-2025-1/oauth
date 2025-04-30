@@ -1,3 +1,6 @@
+//error.middleware.ts
+
+
 import { Request, Response, NextFunction } from 'express';
 import { AppError } from '../utils/error.util';
 import axios from 'axios'; // Keep axios import

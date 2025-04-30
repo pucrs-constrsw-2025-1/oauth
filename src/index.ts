@@ -1,4 +1,4 @@
-// Em index.ts
+// index.ts
 import app from './app'; // Importar o app configurado do app.ts
 
 const port = process.env.PORT || 3000;

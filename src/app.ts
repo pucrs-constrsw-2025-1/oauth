@@ -1,28 +1,31 @@
+// src/app.ts
+
 import express from 'express';
 import { authRouter } from './routes/auth.routes';
 import { usersRouter } from './routes/users.routes';
-// import { rolesRouter } from './routes/roles.routes'; // Removido
-// import { validateRouter } from './routes/validate.routes'; // Removido
+import { rolesRouter } from './routes/roles.routes';
+import { validateRouter } from './routes/validate.routes';
+import { setupSwagger } from './swagger';
 import { errorMiddleware } from './middlewares/error.middleware';
 
 const app = express();
 
 app.use(express.json());
-app.use(express.urlencoded({ extended: true })); // Adicionado para suportar x-www-form-urlencoded se necessário
+app.use(express.urlencoded({ extended: true }));
 
-// Montar authRouter na raiz para ter /login e /refresh
+// Mount your routers
 app.use('/', authRouter);
 app.use('/users', usersRouter);
-// app.use('/roles', rolesRouter); // Removido
-// app.use('/auth', validateRouter); // Removido - rota /validate removida
+app.use('/roles', rolesRouter);
+app.use('/auth', validateRouter);
 
-// Rota de health check movida do index.ts para cá
-app.get('/health', (req, res) => {
-  res.send('OAuth service is healthy');
-});
+// Serve Swagger docs
+setupSwagger(app);
 
-// Middleware de erro deve ser o último
+// Healthcheck
+app.get('/health', (req, res) => res.send('OAuth service is healthy'));
+
+// Error handler
 app.use(errorMiddleware);
 
-export default app; // esta linha para exportar o app configurado
-
+export default app;

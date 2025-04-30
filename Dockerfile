@@ -1,33 +1,33 @@
-# Etapa 1: Build da aplicação
-FROM node:20-alpine AS build
-
-# Cria o diretório de trabalho
+# ─── Stage 1: builder (com devDependencies) ────────────────────────────────
+FROM node:20-alpine AS builder
 WORKDIR /app
 
-# Copia apenas os arquivos de dependência primeiro para cache eficiente
-COPY package*.json ./
+# Copia só o package.json e o lockfile, para cache de dependências
+COPY package.json package-lock.json ./
 
-# Instala dependências
-RUN npm install
+# Instala TODAS as deps, incluindo dev (typescript, etc)
+RUN npm ci
 
-# Copia o restante dos arquivos
+# Copia o restante do código (sem node_modules/dist graças ao .dockerignore)
 COPY . .
 
-# Compila o código TypeScript
+# Compila o TypeScript
 RUN npm run build
 
-# Etapa 2: Imagem final, mais leve
-FROM node:20-alpine
 
+
+# ─── Stage 2: produção (só dependencies e build result) ───────────────────
+FROM node:20-alpine AS production
 WORKDIR /app
 
-# Copia apenas os arquivos necessários da etapa anterior
-COPY --from=build /app/package*.json ./
-COPY --from=build /app/dist ./dist
-COPY --from=build /app/node_modules ./node_modules
+# Copia só o package.json e lockfile
+COPY package.json package-lock.json ./
 
-# Expõe a porta (ajuste conforme sua aplicação)
+# Instala apenas as deps de produção
+RUN npm ci --omit=dev
+
+# Traz o build compilado do builder
+COPY --from=builder /app/dist ./dist
+
 EXPOSE 3000
-
-# Comando para iniciar o servidor
 CMD ["node", "dist/index.js"]
