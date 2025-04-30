@@ -5,13 +5,13 @@ spring:
     oauth2:
       resource server:
         jwt:
-          issuer-uri: http://${KEYCLOAK_INTERNAL_HOST:localhost}:${KEYCLOAK_INTERNAL_PORT:8090}/realms/${KEYCLOAK_REALM:constrsw}
+          issuer-uri: http://${KEYCLOAK_INTERNAL_HOST}:${KEYCLOAK_INTERNAL_PORT}/realms/${KEYCLOAK_REALM}
 
 server:
   port: 8080
 
 keycloak:
-  realm: ${KEYCLOAK_REALM:constrsw}
-  url: http://${KEYCLOAK_INTERNAL_HOST:localhost}:${KEYCLOAK_INTERNAL_PORT:8090}
-  client-id: ${KEYCLOAK_CLIENT_ID:oauth}
-  client-secret: ${KEYCLOAK_CLIENT_SECRET:04bfUatIDO6ipwg1TF2mTzHrX8UZD02Z}
+  realm: ${KEYCLOAK_REALM}
+  url: http://${KEYCLOAK_INTERNAL_HOST}:${KEYCLOAK_INTERNAL_PORT}
+  client-id: ${KEYCLOAK_CLIENT_ID}
+  client-secret: ${KEYCLOAK_CLIENT_SECRET}
