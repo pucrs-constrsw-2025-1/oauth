@@ -1,6 +1,7 @@
 package com.constrsw.oauth.usecases.user;
 
 import com.constrsw.oauth.exception.GlobalExceptionHandler;
+import com.constrsw.oauth.exception.custom_exceptions.UserNotFoundException;
 import com.constrsw.oauth.model.UserResponse;
 import com.constrsw.oauth.service.KeycloakUserService;
 import com.constrsw.oauth.usecases.interfaces.IGetUserByIdUseCase;
@@ -21,7 +22,11 @@ public class GetUserByIdUseCase implements IGetUserByIdUseCase {
             UserRepresentation user = keycloakUserService.getUserById(userId);
 
             return UserResponse.fromUserRepresentation(user);
-        } catch (RuntimeException e) {
+        }
+        catch (NotFoundException e) {
+            throw new UserNotFoundException();
+        }
+        catch (RuntimeException e) {
             GlobalExceptionHandler.handleKeycloakException(e, "users");
 
             return null;

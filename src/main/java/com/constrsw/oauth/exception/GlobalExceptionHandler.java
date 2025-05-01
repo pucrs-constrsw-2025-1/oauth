@@ -1,7 +1,6 @@
 package com.constrsw.oauth.exception;
 
 import jakarta.ws.rs.*;
-import org.keycloak.admin.client.resource.RoleResource;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.AuthenticationException;
@@ -10,7 +9,6 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.servlet.NoHandlerFoundException;
 
 import java.util.ArrayList;
-import java.util.List;
 
 @ControllerAdvice
 public class GlobalExceptionHandler {
@@ -74,7 +72,7 @@ public class GlobalExceptionHandler {
         if (e instanceof BadRequestException) {
             throw (BadRequestException) e;
         } else if (e instanceof NotFoundException) {
-            throw new NotFoundException("Recurso " + resourceName + " não encontrado");
+            throw (NotFoundException) e;
         } else if (e instanceof ForbiddenException) {
             throw (ForbiddenException) e;
         } else if (e instanceof ClientErrorException) {

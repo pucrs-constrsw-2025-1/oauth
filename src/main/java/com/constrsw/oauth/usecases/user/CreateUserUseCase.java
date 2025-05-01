@@ -29,7 +29,6 @@ public class CreateUserUseCase implements ICreateUserUseCase {
 
     @Override
     public String execute(UserRequest userRequest, boolean isTemporary) {
-        try {
             List<UserRepresentation> existingUsers = keycloakUserService.getUserByUsername(userRequest.getUsername());
 
             if (!existingUsers.isEmpty()) {
@@ -42,9 +41,6 @@ public class CreateUserUseCase implements ICreateUserUseCase {
             Object entity = response.readEntity(String.class);
 
             return processUserCreationResponse(response);
-        } catch (RuntimeException e) {
-            throw e;
-        }
     }
 
     private void validateUserRequest(UserRequest userRequest) {

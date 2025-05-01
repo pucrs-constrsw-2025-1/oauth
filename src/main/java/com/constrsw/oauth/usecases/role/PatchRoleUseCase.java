@@ -1,7 +1,12 @@
 package com.constrsw.oauth.usecases.role;
 
 import com.constrsw.oauth.exception.GlobalExceptionHandler;
+import com.constrsw.oauth.exception.custom_exceptions.AlreadyExistsRoleWithSameName;
+import com.constrsw.oauth.exception.custom_exceptions.RoleDecriptionIsRequired;
+import com.constrsw.oauth.exception.custom_exceptions.RoleNameIsRequiredException;
+import com.constrsw.oauth.model.RoleResponse;
 import com.constrsw.oauth.service.KeycloakRoleService;
+import com.constrsw.oauth.usecases.interfaces.IGetRoleByIdUseCase;
 import com.constrsw.oauth.usecases.interfaces.IPatchRoleUseCase;
 import jakarta.ws.rs.BadRequestException;
 import jakarta.ws.rs.NotFoundException;
@@ -15,19 +20,20 @@ import java.util.Map;
 @RequiredArgsConstructor
 public class PatchRoleUseCase implements IPatchRoleUseCase {
 
+    private final IGetRoleByIdUseCase getRoleByIdUseCase;
     private final KeycloakRoleService keycloakRoleService;
 
     @Override
     public void execute(String roleId, Map<String, Object> updates) {
         try {
-            RoleRepresentation role = keycloakRoleService.getRoleById(roleId);
+            if (updates.get("name") == null) {
+                throw new RoleNameIsRequiredException();
+            }
 
-            if (updates.containsKey("name")) {
-                String newName = (String) updates.get("name");
-                if (!newName.equals(role.getName()) &&
-                        keycloakRoleService.getRoleById(newName) != null) {
-                    throw new BadRequestException("Já existe uma role com o nome: " + newName);
-                }
+            RoleResponse role = getRoleByIdUseCase.execute(roleId);
+
+            if (updates.get("name").equals(role.getName())) {
+                throw new AlreadyExistsRoleWithSameName();
             }
 
             keycloakRoleService.patchRole(role.getName(), updates);

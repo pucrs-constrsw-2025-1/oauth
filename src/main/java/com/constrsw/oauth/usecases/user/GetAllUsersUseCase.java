@@ -23,10 +23,6 @@ public class GetAllUsersUseCase implements IGetAllUsersUseCase {
         try {
             List<UserRepresentation> users = keycloakUserService.getAllUsers();
 
-            if (users == null || users.isEmpty()) {
-                return Collections.emptyList();
-            }
-
             if (enabled != null) {
                 users = users.stream()
                         .filter(user -> user.isEnabled() == enabled)

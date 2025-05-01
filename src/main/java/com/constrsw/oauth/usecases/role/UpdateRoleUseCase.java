@@ -1,8 +1,13 @@
 package com.constrsw.oauth.usecases.role;
 
 import com.constrsw.oauth.exception.GlobalExceptionHandler;
+import com.constrsw.oauth.exception.custom_exceptions.AlreadyExistsRoleWithSameName;
+import com.constrsw.oauth.exception.custom_exceptions.RoleDecriptionIsRequired;
+import com.constrsw.oauth.exception.custom_exceptions.RoleNameIsRequiredException;
 import com.constrsw.oauth.model.RoleRequest;
+import com.constrsw.oauth.model.RoleResponse;
 import com.constrsw.oauth.service.KeycloakRoleService;
+import com.constrsw.oauth.usecases.interfaces.IGetRoleByIdUseCase;
 import com.constrsw.oauth.usecases.interfaces.IUpdateRoleUseCase;
 import jakarta.ws.rs.BadRequestException;
 import jakarta.ws.rs.NotFoundException;
@@ -14,23 +19,24 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class UpdateRoleUseCase implements IUpdateRoleUseCase {
 
+    private final IGetRoleByIdUseCase getRoleByIdUseCase;
     private final KeycloakRoleService keycloakRoleService;
 
     @Override
     public void execute(String roleId, RoleRequest roleRequest) {
         try {
             if (roleRequest.getName() == null || roleRequest.getName().trim().isEmpty()) {
-                throw new BadRequestException("O nome da role é obrigatório");
+                throw new RoleNameIsRequiredException();
+            }
+
+            if (roleRequest.getDescription() == null) {
+                throw new RoleDecriptionIsRequired();
             }
             
-            RoleRepresentation role = keycloakRoleService.getRoleById(roleId);
-            if (role == null) {
-                throw new NotFoundException("Role não encontrada com o ID: " + roleId);
-            }
-            
-            if (!roleRequest.getName().equals(role.getName()) &&
-                keycloakRoleService.getRoleById(roleRequest.getName()) != null) {
-                throw new BadRequestException("Já existe uma role com o nome: " + roleRequest.getName());
+            RoleResponse role = getRoleByIdUseCase.execute(roleId);
+
+            if (roleRequest.getName().equals(role.getName())) {
+                throw new AlreadyExistsRoleWithSameName();
             }
             
             keycloakRoleService.updateRole(

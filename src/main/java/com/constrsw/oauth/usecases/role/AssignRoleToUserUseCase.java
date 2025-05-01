@@ -1,13 +1,15 @@
 package com.constrsw.oauth.usecases.role;
 
 import com.constrsw.oauth.exception.GlobalExceptionHandler;
+import com.constrsw.oauth.exception.custom_exceptions.UserAlreadyHaveRole;
+import com.constrsw.oauth.model.RoleResponse;
+import com.constrsw.oauth.model.UserResponse;
 import com.constrsw.oauth.service.KeycloakRoleService;
-import com.constrsw.oauth.service.KeycloakUserService;
 import com.constrsw.oauth.usecases.interfaces.IAssignRoleToUserUseCase;
-import jakarta.ws.rs.NotFoundException;
+import com.constrsw.oauth.usecases.user.GetUserByIdUseCase;
+
 import lombok.RequiredArgsConstructor;
 import org.keycloak.representations.idm.RoleRepresentation;
-import org.keycloak.representations.idm.UserRepresentation;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -17,27 +19,23 @@ import java.util.List;
 public class AssignRoleToUserUseCase implements IAssignRoleToUserUseCase {
 
     private final KeycloakRoleService keycloakRoleService;
-    private final KeycloakUserService keycloakUserService;
+    private final GetRoleByIdUseCase getRoleByIdUseCase;
+    private final GetUserByIdUseCase getUserByIdUseCase;
+    private final GetRolesFromUser getRolesFromUser;
 
     @Override
     public void execute(String userId, String roleId) {
         try {
-            UserRepresentation user = keycloakUserService.getUserById(userId);
-            if (user == null) {
-                throw new NotFoundException("Usuário não encontrado com o ID: " + userId);
-            }
+            UserResponse user = getUserByIdUseCase.execute(userId);
+            RoleResponse role = getRoleByIdUseCase.execute(roleId);
 
-            RoleRepresentation role = keycloakRoleService.getRoleById(roleId);
-            if (role == null) {
-                throw new NotFoundException("Role não encontrada com o ID: " + roleId);
-            }
+            List<RoleRepresentation> userRoles = getRolesFromUser.execute(userId);
 
-            List<RoleRepresentation> userRoles = keycloakRoleService.getUserRoles(userId);
-            boolean hasRole = userRoles.stream()
+            Boolean hasRole = userRoles.stream()
                     .anyMatch(r -> r.getName().equals(role.getName()));
 
             if (hasRole) {
-                return;
+                throw new UserAlreadyHaveRole();
             }
 
             keycloakRoleService.assignRoleToUser(userId, role.getName());

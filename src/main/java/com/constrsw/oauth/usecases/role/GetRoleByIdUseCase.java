@@ -1,6 +1,7 @@
 package com.constrsw.oauth.usecases.role;
 
 import com.constrsw.oauth.exception.GlobalExceptionHandler;
+import com.constrsw.oauth.exception.custom_exceptions.RoleNotFoundException;
 import com.constrsw.oauth.model.RoleResponse;
 import com.constrsw.oauth.service.KeycloakRoleService;
 import com.constrsw.oauth.usecases.interfaces.IGetRoleByIdUseCase;
@@ -19,14 +20,19 @@ public class GetRoleByIdUseCase implements IGetRoleByIdUseCase {
     public RoleResponse execute(String roleId) {
         try {
             RoleRepresentation role = keycloakRoleService.getRoleById(roleId);
-            
+
             if (role == null) {
-                throw new NotFoundException("Role não encontrada com o ID: " + roleId);
+                throw new RoleNotFoundException(roleId);
             }
             
             return RoleResponse.fromRoleRepresentation(role);
-        } catch (RuntimeException e) {
+        }
+        catch (RoleNotFoundException e) {
+            throw e;
+        }
+        catch (RuntimeException e) {
             GlobalExceptionHandler.handleKeycloakException(e, "roles");
+
             return null;
         }
     }

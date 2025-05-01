@@ -84,22 +84,4 @@ public class KeycloakRoleService {
     public List<RoleRepresentation> getUserRoles(String userId) {
         return usersResource.get(userId).roles().realmLevel().listAll();
     }
-
-    public void assignRolesToUser(String userId, List<String> roleNames) {
-            List<RoleRepresentation> roles = roleNames.stream()
-                    .map(name -> rolesResource.get(name).toRepresentation())
-                    .filter(Objects::nonNull)
-                    .collect(Collectors.toList());
-
-            usersResource.get(userId).roles().realmLevel().add(roles);
-    }
-
-    public void removeRolesFromUser(String userId, List<String> roleNames) {
-        List<RoleRepresentation> roles = roleNames.stream()
-                .map(name -> rolesResource.get(name).toRepresentation())
-                .filter(Objects::nonNull)
-                .collect(Collectors.toList());
-
-        usersResource.get(userId).roles().realmLevel().remove(roles);
-    }
 }

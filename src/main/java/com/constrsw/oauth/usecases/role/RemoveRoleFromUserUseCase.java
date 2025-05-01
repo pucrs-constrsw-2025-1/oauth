@@ -1,8 +1,14 @@
 package com.constrsw.oauth.usecases.role;
 
 import com.constrsw.oauth.exception.GlobalExceptionHandler;
+import com.constrsw.oauth.exception.custom_exceptions.UserDontHaveSelectedRole;
+import com.constrsw.oauth.model.RoleResponse;
+import com.constrsw.oauth.model.UserResponse;
 import com.constrsw.oauth.service.KeycloakRoleService;
 import com.constrsw.oauth.service.KeycloakUserService;
+import com.constrsw.oauth.usecases.interfaces.IGetRoleByIdUseCase;
+import com.constrsw.oauth.usecases.interfaces.IGetRolesFromUser;
+import com.constrsw.oauth.usecases.interfaces.IGetUserByIdUseCase;
 import com.constrsw.oauth.usecases.interfaces.IRemoveRoleFromUserUseCase;
 import jakarta.ws.rs.NotFoundException;
 import lombok.RequiredArgsConstructor;
@@ -17,24 +23,23 @@ import java.util.List;
 public class RemoveRoleFromUserUseCase implements IRemoveRoleFromUserUseCase {
 
     private final KeycloakRoleService keycloakRoleService;
-    private final KeycloakUserService keycloakUserService;
+    private final IGetRoleByIdUseCase getRoleByIdUseCase;
+    private final IGetUserByIdUseCase getUserByIdUseCase;
+    private final IGetRolesFromUser getRolesFromUser;
 
     @Override
     public void execute(String userId, String roleId) {
         try {
-            UserRepresentation user = keycloakUserService.getUserById(userId);
+            UserResponse user = getUserByIdUseCase.execute(userId);
+            RoleResponse role = getRoleByIdUseCase.execute(roleId);
 
-            RoleRepresentation role = keycloakRoleService.getRoleById(roleId);
-            if (role == null) {
-                throw new NotFoundException("Role não encontrada com o ID: " + roleId);
-            }
+            List<RoleRepresentation> userRoles = getRolesFromUser.execute(userId);
 
-            List<RoleRepresentation> userRoles = keycloakRoleService.getUserRoles(userId);
-            boolean hasRole = userRoles.stream()
+            Boolean hasRole = userRoles.stream()
                     .anyMatch(r -> r.getName().equals(role.getName()));
 
             if (!hasRole) {
-                return;
+                throw new UserDontHaveSelectedRole();
             }
 
             keycloakRoleService.removeRoleFromUser(userId, roleId);
