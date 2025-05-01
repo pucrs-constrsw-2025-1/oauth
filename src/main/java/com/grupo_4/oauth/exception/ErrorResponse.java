@@ -1,19 +1,38 @@
 package com.grupo_4.oauth.exception;
 
-import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
-public record ErrorResponse(
-    String status,
-    int statusCode,
-    String message,
-    String path,
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
+@Data
+@AllArgsConstructor
+@NoArgsConstructor
+public class ErrorResponse {
+    @JsonProperty("error_code")
+    private String errorCode;
     
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
-    LocalDateTime timestamp
-) {
-    public ErrorResponse(String status, int statusCode, String message, String path) {
-        this(status, statusCode, message, path, LocalDateTime.now());
+    @JsonProperty("error_description")
+    private String errorDescription;
+    
+    @JsonProperty("error_source")
+    private String errorSource;
+    
+    @JsonProperty("error_stack")
+    private List<ErrorStackEntry> errorStack = new ArrayList<>();
+    
+    public void addToErrorStack(ErrorStackEntry entry) {
+        if (this.errorStack == null) {
+            this.errorStack = new ArrayList<>();
+        }
+        this.errorStack.add(entry);
+    }
+    
+    public void addToErrorStack(String errorCode, String errorDescription, String errorSource) {
+        addToErrorStack(new ErrorStackEntry(errorCode, errorDescription, errorSource));
     }
 } 
