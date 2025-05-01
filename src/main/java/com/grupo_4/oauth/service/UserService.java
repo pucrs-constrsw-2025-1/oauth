@@ -16,6 +16,7 @@ import com.grupo_4.oauth.exception.UserFetchException;
 import com.grupo_4.oauth.exception.UserNotFoundException;
 import com.grupo_4.oauth.model.UserRequest;
 import com.grupo_4.oauth.model.UserResponse;
+import com.grupo_4.oauth.model.UpdateUserRequest;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -164,6 +165,54 @@ public class UserService {
         }
     }
     
+    public void updateUser(String userId, UpdateUserRequest updateRequest, String accessToken) {
+        if (userId == null || userId.isEmpty()) {
+            throw new UserFetchException("User ID cannot be null or empty");
+        }
+        
+        if (updateRequest == null) {
+            throw new UserCreationException("User data cannot be null");
+        }
+        
+        validateUpdateUserRequest(updateRequest);
+        
+        log.info("Updating user with ID: {}", userId);
+        
+        String adminUrl = keycloakConfig.getUsersAdminUrl() + "/" + userId;
+        
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+        headers.set("Authorization", "Bearer " + accessToken);
+        
+        Map<String, Object> userRequestMap = createUpdateRequestMap(updateRequest);
+        
+        HttpEntity<Map<String, Object>> requestEntity = new HttpEntity<>(userRequestMap, headers);
+        
+        try {
+            ResponseEntity<Void> response = restTemplate.exchange(
+                    adminUrl,
+                    HttpMethod.PUT,
+                    requestEntity,
+                    Void.class);
+            
+            if (response.getStatusCode().is2xxSuccessful()) {
+                log.info("Successfully updated user with ID: {}", userId);
+            } else {
+                log.error("Failed to update user. Status code: {}", response.getStatusCode());
+                throw new UserCreationException("Failed to update user: " + response.getStatusCode());
+            }
+        } catch (HttpClientErrorException.NotFound ex) {
+            log.error("User not found with ID: {}", userId);
+            throw new UserNotFoundException("User not found with ID: " + userId);
+        } catch (HttpClientErrorException ex) {
+            log.error("HTTP client error during user update: {}", ex.getMessage(), ex);
+            throw new UserCreationException("User update failed: " + ex.getStatusCode() + " " + ex.getResponseBodyAsString(), ex);
+        } catch (RestClientException ex) {
+            log.error("Error connecting to Keycloak: {}", ex.getMessage(), ex);
+            throw new UserCreationException("Unable to connect to authentication service", ex);
+        }
+    }
+    
     private void validateUserRequest(UserRequest userRequest) {
         if (userRequest.getUsername() == null || userRequest.getUsername().isEmpty()) {
             throw new UserCreationException("Username is required");
@@ -197,4 +246,37 @@ public class UserService {
         
         return userRequestMap;
     }
+
+    private void validateUpdateUserRequest(UpdateUserRequest updateRequest) {
+        if (updateRequest.getUsername() == null || updateRequest.getUsername().isEmpty()) {
+            throw new UserCreationException("Username is required");
+        }
+        
+        if (updateRequest.getEmail() == null || updateRequest.getEmail().isEmpty()) {
+            throw new UserCreationException("Email is required");
+        }
+        
+        // Additional validation for email format
+        if (!updateRequest.getEmail().matches("^[A-Za-z0-9+_.-]+@(.+)$")) {
+            throw new UserCreationException("Invalid email format");
+        }
+        
+        // Additional validation for username length
+        if (updateRequest.getUsername().length() < 3) {
+            throw new UserCreationException("Username must be at least 3 characters long");
+        }
+    }
+    
+    private Map<String, Object> createUpdateRequestMap(UpdateUserRequest updateRequest) {
+        Map<String, Object> updateRequestMap = new HashMap<>();
+        updateRequestMap.put("username", updateRequest.getUsername());
+        updateRequestMap.put("email", updateRequest.getEmail());
+        updateRequestMap.put("firstName", updateRequest.getFirstName());
+        updateRequestMap.put("lastName", updateRequest.getLastName());
+        updateRequestMap.put("enabled", updateRequest.isEnabled());
+        updateRequestMap.put("emailVerified", updateRequest.isEmailVerified());
+        
+        return updateRequestMap;
+    }
+
 } 

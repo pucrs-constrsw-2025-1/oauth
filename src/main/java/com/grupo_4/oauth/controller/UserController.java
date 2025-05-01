@@ -7,11 +7,13 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.grupo_4.oauth.model.UserRequest;
 import com.grupo_4.oauth.model.UserResponse;
+import com.grupo_4.oauth.model.UpdateUserRequest;
 import com.grupo_4.oauth.service.UserService;
 
 import lombok.RequiredArgsConstructor;
@@ -67,4 +69,21 @@ public class UserController {
         UserResponse user = userService.getUserById(userId, accessToken);
         return ResponseEntity.ok(user);
     }
+
+    @PutMapping("/{userId}")
+    public ResponseEntity<Void> updateUser(
+            @PathVariable String userId,
+            @RequestBody UpdateUserRequest updateRequest,
+            @RequestHeader("Authorization") String authorizationHeader) {
+        
+        log.info("Received request to update user with ID: {}", userId);
+        
+        // Extract token from Authorization header
+        String accessToken = authorizationHeader.replace("Bearer ", "");
+        
+        userService.updateUser(userId, updateRequest, accessToken);
+        return ResponseEntity.ok().build();
+    }
+
+    
 }
