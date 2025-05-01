@@ -17,6 +17,7 @@ import com.grupo_4.oauth.exception.UserNotFoundException;
 import com.grupo_4.oauth.model.UserRequest;
 import com.grupo_4.oauth.model.UserResponse;
 import com.grupo_4.oauth.model.UpdateUserRequest;
+import com.grupo_4.oauth.model.UpdatePasswordRequest;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -277,6 +278,98 @@ public class UserService {
         updateRequestMap.put("emailVerified", updateRequest.isEmailVerified());
         
         return updateRequestMap;
+    }
+
+    public void deleteUser(String userId, String accessToken) {
+        if (userId == null || userId.isEmpty()) {
+            throw new UserFetchException("User ID cannot be null or empty");
+        }
+        
+        log.info("Deleting user with ID: {}", userId);
+        
+        String adminUrl = keycloakConfig.getUsersAdminUrl() + "/" + userId;
+        
+        HttpHeaders headers = new HttpHeaders();
+        headers.set("Authorization", "Bearer " + accessToken);
+        
+        // Create a request to disable the user
+        Map<String, Object> disableRequest = new HashMap<>();
+        disableRequest.put("enabled", false);
+        
+        HttpEntity<Map<String, Object>> requestEntity = new HttpEntity<>(disableRequest, headers);
+        
+        try {
+            ResponseEntity<Void> response = restTemplate.exchange(
+                    adminUrl,
+                    HttpMethod.PUT,
+                    requestEntity,
+                    Void.class);
+            
+            if (response.getStatusCode().is2xxSuccessful()) {
+                log.info("Successfully disabled user with ID: {}", userId);
+            } else {
+                log.error("Failed to disable user. Status code: {}", response.getStatusCode());
+                throw new UserCreationException("Failed to disable user: " + response.getStatusCode());
+            }
+        } catch (HttpClientErrorException.NotFound ex) {
+            log.error("User not found with ID: {}", userId);
+            throw new UserNotFoundException("User not found with ID: " + userId);
+        } catch (HttpClientErrorException ex) {
+            log.error("HTTP client error during user deletion: {}", ex.getMessage(), ex);
+            throw new UserCreationException("User deletion failed: " + ex.getStatusCode() + " " + ex.getResponseBodyAsString(), ex);
+        } catch (RestClientException ex) {
+            log.error("Error connecting to Keycloak: {}", ex.getMessage(), ex);
+            throw new UserCreationException("Unable to connect to authentication service", ex);
+        }
+    }
+
+    public void updatePassword(String userId, UpdatePasswordRequest updateRequest, String accessToken) {
+        if (userId == null || userId.isEmpty()) {
+            throw new UserFetchException("User ID cannot be null or empty");
+        }
+        
+        if (updateRequest == null || updateRequest.getPassword() == null || updateRequest.getPassword().isEmpty()) {
+            throw new UserCreationException("Password cannot be null or empty");
+        }
+        
+        log.info("Updating password for user with ID: {}", userId);
+        
+        String adminUrl = keycloakConfig.getUsersAdminUrl() + "/" + userId + "/reset-password";
+        
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+        headers.set("Authorization", "Bearer " + accessToken);
+        
+        Map<String, Object> passwordRequest = new HashMap<>();
+        passwordRequest.put("type", "password");
+        passwordRequest.put("value", updateRequest.getPassword());
+        passwordRequest.put("temporary", false);
+        
+        HttpEntity<Map<String, Object>> requestEntity = new HttpEntity<>(passwordRequest, headers);
+        
+        try {
+            ResponseEntity<Void> response = restTemplate.exchange(
+                    adminUrl,
+                    HttpMethod.PUT,
+                    requestEntity,
+                    Void.class);
+            
+            if (response.getStatusCode().is2xxSuccessful()) {
+                log.info("Successfully updated password for user with ID: {}", userId);
+            } else {
+                log.error("Failed to update password. Status code: {}", response.getStatusCode());
+                throw new UserCreationException("Failed to update password: " + response.getStatusCode());
+            }
+        } catch (HttpClientErrorException.NotFound ex) {
+            log.error("User not found with ID: {}", userId);
+            throw new UserNotFoundException("User not found with ID: " + userId);
+        } catch (HttpClientErrorException ex) {
+            log.error("HTTP client error during password update: {}", ex.getMessage(), ex);
+            throw new UserCreationException("Password update failed: " + ex.getStatusCode() + " " + ex.getResponseBodyAsString(), ex);
+        } catch (RestClientException ex) {
+            log.error("Error connecting to Keycloak: {}", ex.getMessage(), ex);
+            throw new UserCreationException("Unable to connect to authentication service", ex);
+        }
     }
 
 } 
