@@ -1,15 +1,18 @@
 package com.constrsw.oauth.config;
 
-import org.keycloak.admin.client.Keycloak;
-import org.keycloak.admin.client.KeycloakBuilder;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.keycloak.OAuth2Constants;
+import org.springframework.web.client.RestTemplate;
+
+import lombok.Getter;
+
 /**
- * Configuração do Keycloak
+ * Configuração simplificada para acesso ao Keycloak
+ * Apenas obtém as configurações necessárias para acessar a API REST do Keycloak
  */
 @Configuration
+@Getter
 public class KeycloakConfig {
 
     @Value("${keycloak.auth-server-url}")
@@ -18,7 +21,7 @@ public class KeycloakConfig {
     @Value("${keycloak.realm}")
     private String realm;
     
-    @Value("${keycloak.resource.client-id}")
+    @Value("${keycloak.resource}")
     private String clientId;
     
     @Value("${keycloak.credentials.secret}")
@@ -29,17 +32,21 @@ public class KeycloakConfig {
     
     @Value("${keycloak.admin.password}")
     private String adminPassword;
+    
+    @Value("${keycloak.grant-type:password}")
+    private String grantType;
+    
+    @Value("${keycloak.external-host:${KEYCLOAK_EXTERNAL_HOST:localhost}}")
+    private String externalHost;
+    
+    @Value("${keycloak.external-console-port:${KEYCLOAK_EXTERNAL_CONSOLE_PORT:8090}}")
+    private String externalConsolePort;
 
+    /**
+     * RestTemplate para chamadas HTTP
+     */
     @Bean
-    public Keycloak keycloakAdminClient() {
-        return KeycloakBuilder.builder()
-                .serverUrl(serverUrl)
-                .realm(realm)
-                .clientId(clientId)
-                .clientSecret(clientSecret)
-                .username(adminUsername)
-                .password(adminPassword)
-                .grantType(OAuth2Constants.PASSWORD)
-                .build();
+    public RestTemplate restTemplate() {
+        return new RestTemplate();
     }
 }

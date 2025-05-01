@@ -2,16 +2,21 @@ package com.constrsw.oauth.dto;
 
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 /**
  * DTO para requisição de criação/atualização de usuário
  */
 @Data
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class UserRequest {
     @NotBlank(message = "Username é obrigatório")
-    @Email(message = "Email deve ser válido",
-           regexp = "^[-!#-'+/-9=?A-Z^-~]+(\\.[-!#-'+/-9=?A-Z^-~]+)|\"([]!#-[^-~ \\t]|(\\\\[\\t -~]))+\")@([-!#-'+/-9=?A-Z^-~]+(\\.[-!#-'+/-9=?A-Z^-~]+)|\\[[\\t -Z^-~]*\\])")
+    @Email(message = "Email deve ser válido")
     private String username;
 
     @NotBlank(message = "Password é obrigatório")

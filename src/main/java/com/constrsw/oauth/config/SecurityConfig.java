@@ -1,6 +1,6 @@
 package com.constrsw.oauth.config;
 
-import org.springframework.beans.factory.annotation.Value;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -22,14 +22,12 @@ import org.springframework.security.web.SecurityFilterChain;
 @EnableWebSecurity
 public class SecurityConfig {
 
-    @Value("${spring.security.user.name}")
-    private String username;
-
-    @Value("${spring.security.user.password}")
-    private String password;
+    @Autowired
+    private KeycloakConfig keycloakConfig;
 
     private static final String[] PUBLIC_URLS = {
         "/login",
+        "/auth/**",  // Adicionado para permitir endpoints de autenticação
         "/health",
         "/manage/**",
         "/v3/api-docs/**",
@@ -61,13 +59,14 @@ public class SecurityConfig {
     }
 
     /**
-     * Define um usuário em memória para evitar a senha gerada automaticamente
+     * Define um usuário em memória usando dados do KeycloakConfig
+     * em vez de depender das propriedades spring.security.user.*
      */
     @Bean
     public UserDetailsService userDetailsService() {
         UserDetails user = User.builder()
-                .username(username)
-                .password(passwordEncoder().encode(password))
+                .username(keycloakConfig.getAdminUsername())
+                .password(passwordEncoder().encode(keycloakConfig.getAdminPassword()))
                 .roles("ADMIN")
                 .build();
         

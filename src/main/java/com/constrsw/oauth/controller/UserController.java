@@ -3,119 +3,135 @@ package com.constrsw.oauth.controller;
 import com.constrsw.oauth.dto.UserRequest;
 import com.constrsw.oauth.dto.UserResponse;
 import com.constrsw.oauth.service.UserService;
-
-import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.Parameter;
-import io.swagger.v3.oas.annotations.responses.ApiResponse;
-import io.swagger.v3.oas.annotations.responses.ApiResponses;
-import io.swagger.v3.oas.annotations.security.SecurityRequirement;
-import io.swagger.v3.oas.annotations.tags.Tag;
-
 import jakarta.validation.Valid;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PatchMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
 /**
- * Controller para gerenciamento de usuários
+ * Controller para operações relacionadas a usuários
  */
 @RestController
 @RequestMapping("/users")
-@RequiredArgsConstructor
-@SecurityRequirement(name = "bearerAuth")
-@Tag(name = "Users", description = "Endpoints para gerenciamento de usuários")
 @Slf4j
+@Validated
 public class UserController {
 
     private final UserService userService;
 
-    @Operation(summary = "Criar um novo usuário")
-    @ApiResponses(value = {
-        @ApiResponse(responseCode = "201", description = "Usuário criado com sucesso"),
-        @ApiResponse(responseCode = "400", description = "Requisição inválida"),
-        @ApiResponse(responseCode = "409", description = "Usuário já existe")
-    })
-    @PostMapping
-    public ResponseEntity<UserResponse> createUser(@Valid @RequestBody UserRequest userRequest) {
-        log.info("Criando usuário com username: {}", userRequest.getUsername());
-        UserResponse user = userService.createUser(userRequest);
-        return ResponseEntity.status(HttpStatus.CREATED).body(user);
+    public UserController(UserService userService) {
+        this.userService = userService;
     }
 
-    @Operation(summary = "Listar todos os usuários")
-    @ApiResponses(value = {
-        @ApiResponse(responseCode = "200", description = "Operação bem-sucedida")
-    })
+    /**
+     * Cria um novo usuário - aceita parâmetros via URL ou JSON
+     */
+    @PostMapping
+    public ResponseEntity<UserResponse> createUser(
+            @RequestParam(required = false) String username,
+            @RequestParam(required = false) String password,
+            @RequestParam(required = false) String firstName,
+            @RequestParam(required = false) String lastName,
+            @Valid @RequestBody(required = false) UserRequest userRequestBody) {
+        
+        UserRequest userRequest;
+        
+        // Verifica se os dados vieram via parâmetros da URL ou via corpo da requisição
+        if (username != null && password != null && firstName != null && lastName != null) {
+            // Dados vieram como parâmetros da URL
+            userRequest = UserRequest.builder()
+                    .username(username)
+                    .password(password)
+                    .firstName(firstName)
+                    .lastName(lastName)
+                    .build();
+        } else if (userRequestBody != null) {
+            // Dados vieram no corpo da requisição
+            userRequest = userRequestBody;
+        } else {
+            // Dados insuficientes
+            return ResponseEntity.badRequest().build();
+        }
+        
+        log.info("Recebida requisição para criar usuário: {}", userRequest.getUsername());
+        UserResponse response = userService.createUser(userRequest);
+        return ResponseEntity.status(HttpStatus.CREATED).body(response);
+    }
+
+    /**
+     * Recupera todos os usuários, com filtro opcional por status
+     */
     @GetMapping
     public ResponseEntity<List<UserResponse>> getAllUsers(
-            @Parameter(description = "Filtrar por status (ativo/inativo)")
-            @RequestParam(required = false) Boolean enabled) {
-        log.info("Listando todos os usuários. Filtro enabled: {}", enabled);
-        return ResponseEntity.ok(userService.getAllUsers(enabled));
+            @RequestParam(required = false) Boolean enabled,
+            @RequestParam(required = false) String username) {
+        
+        if (username != null && !username.isEmpty()) {
+            log.info("Recebida requisição para buscar usuário por username: {}", username);
+            List<UserResponse> users = userService.getUserByUsername(username);
+            return ResponseEntity.ok(users);
+        } else {
+            log.info("Recebida requisição para listar usuários. Filtro enabled: {}", enabled);
+            List<UserResponse> users = enabled != null ? 
+                userService.getAllUsers(enabled) : 
+                userService.getAllUsers();
+            return ResponseEntity.ok(users);
+        }
     }
 
-    @Operation(summary = "Obter usuário por ID")
-    @ApiResponses(value = {
-        @ApiResponse(responseCode = "200", description = "Operação bem-sucedida"),
-        @ApiResponse(responseCode = "404", description = "Usuário não encontrado")
-    })
+    /**
+     * Recupera um usuário pelo ID
+     */
     @GetMapping("/{id}")
     public ResponseEntity<UserResponse> getUserById(@PathVariable String id) {
-        log.info("Buscando usuário com ID: {}", id);
-        return ResponseEntity.ok(userService.getUserById(id));
+        log.info("Recebida requisição para buscar usuário por ID: {}", id);
+        UserResponse user = userService.getUserById(id);
+        return ResponseEntity.ok(user);
     }
 
-    @Operation(summary = "Atualizar usuário")
-    @ApiResponses(value = {
-        @ApiResponse(responseCode = "200", description = "Usuário atualizado com sucesso"),
-        @ApiResponse(responseCode = "404", description = "Usuário não encontrado")
-    })
+    /**
+     * Atualiza os dados de um usuário
+     */
     @PutMapping("/{id}")
     public ResponseEntity<Void> updateUser(
-            @PathVariable String id, 
+            @PathVariable String id,
             @Valid @RequestBody UserRequest userRequest) {
-        log.info("Atualizando usuário com ID: {}", id);
+        log.info("Recebida requisição para atualizar usuário: {}", id);
         userService.updateUser(id, userRequest);
-        return ResponseEntity.ok().build();
+        return ResponseEntity.noContent().build();
     }
 
-    @Operation(summary = "Atualizar senha de usuário")
-    @ApiResponses(value = {
-        @ApiResponse(responseCode = "200", description = "Senha atualizada com sucesso"),
-        @ApiResponse(responseCode = "404", description = "Usuário não encontrado")
-    })
-    @PatchMapping("/{id}")
+    /**
+     * Atualiza a senha de um usuário
+     */
+    @PutMapping("/{id}/password")
     public ResponseEntity<Void> updatePassword(
             @PathVariable String id,
-            @RequestBody String newPassword) {
-        log.info("Atualizando senha do usuário com ID: {}", id);
-        userService.updatePassword(id, newPassword);
-        return ResponseEntity.ok().build();
+            @RequestBody PasswordRequest passwordRequest) {
+        log.info("Recebida requisição para atualizar senha do usuário: {}", id);
+        userService.updatePassword(id, passwordRequest.getPassword());
+        return ResponseEntity.noContent().build();
     }
 
-    @Operation(summary = "Desativar usuário")
-    @ApiResponses(value = {
-        @ApiResponse(responseCode = "204", description = "Usuário desativado com sucesso"),
-        @ApiResponse(responseCode = "404", description = "Usuário não encontrado")
-    })
+    /**
+     * Desativa um usuário
+     */
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> disableUser(@PathVariable String id) {
-        log.info("Desativando usuário com ID: {}", id);
+        log.info("Recebida requisição para desativar usuário: {}", id);
         userService.disableUser(id);
         return ResponseEntity.noContent().build();
+    }
+    
+    /**
+     * DTO para requisição de alteração de senha
+     */
+    @lombok.Data
+    private static class PasswordRequest {
+        private String password;
     }
 }

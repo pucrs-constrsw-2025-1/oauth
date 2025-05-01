@@ -1,31 +1,28 @@
 server:
-  port: ${OAUTH_EXTERNAL_API_PORT:8088}
+  port: ${OAUTH_INTERNAL_API_PORT:8080}
   servlet:
     context-path: /
 
+# Configuração simplificada do Keycloak
 keycloak:
-  # Use different configurations based on environment (container vs local)
-  auth-server-url: ${OAUTH_INTERNAL_PROTOCOL:http}://${KEYCLOAK_EXTERNAL_HOST:localhost}:${KEYCLOAK_EXTERNAL_CONSOLE_PORT:8090}/
-  # For local testing outside container, override with:
-  # auth-server-url: ${OAUTH_INTERNAL_PROTOCOL:http}://${KEYCLOAK_EXTERNAL_HOST:localhost}:${KEYCLOAK_EXTERNAL_CONSOLE_PORT:8090}/
+  auth-server-url: ${OAUTH_INTERNAL_PROTOCOL:http}://${KEYCLOAK_INTERNAL_HOST:keycloak}:${KEYCLOAK_INTERNAL_API_PORT:8080}/
   realm: ${KEYCLOAK_REALM:constrsw}
-  resource:
-    client-id: ${KEYCLOAK_CLIENT_ID:oauth}
+  resource: ${KEYCLOAK_CLIENT_ID:oauth}
   credentials:
     secret: ${KEYCLOAK_CLIENT_SECRET:wsNXUxaupU9X6jCncsn3rOEy6PDt7oJO}
-  grant-type: ${KEYCLOAK_GRANT_TYPE:password}
+  grant-type: password
+  # Para ambiente de desenvolvimento local
+  external-host: ${KEYCLOAK_EXTERNAL_HOST:localhost}
+  external-console-port: ${KEYCLOAK_EXTERNAL_CONSOLE_PORT:8090}
   admin:
     username: ${KEYCLOAK_ADMIN:admin}
     password: ${KEYCLOAK_ADMIN_PASSWORD:a12345678}
+
 spring:
   application:
     name: oauth-service
   main:
     allow-bean-definition-overriding: true
-  security:
-    user:
-      name: ${KEYCLOAK_ADMIN:admin}
-      password: ${KEYCLOAK_ADMIN_PASSWORD:a12345678}
 
 springdoc:
   swagger-ui:
@@ -33,28 +30,26 @@ springdoc:
   api-docs:
     path: /v3/api-docs
 
+# Configuração do endpoint de health
 management:
   endpoints:
     web:
       exposure:
-        include: health
-      base-path: /manage
+        include: health,info
+      base-path: /
   endpoint:
     health:
       show-details: always
       enabled: true
+      path: /health
       probes:
         enabled: true
 
 logging:
   level:
     root: INFO
-    org.springframework: INFO
-    org.keycloak: WARN
+    org.springframework.security: INFO
+    org.springframework.web: INFO
     com.constrsw: DEBUG
-  file:
-    name: /var/log/oauth/application.log
-    max-size: 10MB
-    max-history: 7
   pattern:
     console: "%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %highlight(%-5level) %logger{36} - %msg%n"

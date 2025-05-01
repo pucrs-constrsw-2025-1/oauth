@@ -1,18 +1,17 @@
 package com.constrsw.oauth.service;
 
+import com.constrsw.oauth.config.KeycloakConfig;
 import com.constrsw.oauth.dto.UserRequest;
 import com.constrsw.oauth.dto.UserResponse;
 import com.constrsw.oauth.exception.GlobalException;
 import jakarta.ws.rs.NotFoundException;
 import jakarta.ws.rs.core.Response;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.keycloak.admin.client.Keycloak;
 import org.keycloak.admin.client.resource.UserResource;
 import org.keycloak.admin.client.resource.UsersResource;
 import org.keycloak.representations.idm.CredentialRepresentation;
 import org.keycloak.representations.idm.UserRepresentation;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
@@ -23,14 +22,16 @@ import java.util.stream.Collectors;
  * Serviço para gerenciamento de usuários no Keycloak
  */
 @Service
-@RequiredArgsConstructor
 @Slf4j
 public class UserService {
 
     private final Keycloak keycloak;
+    private final String realm;
 
-    @Value("${keycloak.realm}")
-    private String realm;
+    public UserService(Keycloak keycloak, KeycloakConfig keycloakConfig) {
+        this.keycloak = keycloak;
+        this.realm = keycloakConfig.getRealm();
+    }
 
     /**
      * Cria um novo usuário
@@ -127,6 +128,15 @@ public class UserService {
     }
 
     /**
+     * Recupera todos os usuários sem filtragem
+     * 
+     * @return Lista de usuários
+     */
+    public List<UserResponse> getAllUsers() {
+        return getAllUsers(null);
+    }
+
+    /**
      * Recupera um usuário pelo ID
      *
      * @param id ID do usuário
@@ -210,6 +220,32 @@ public class UserService {
                 "Usuário não encontrado com id: " + id,
                 "UserService",
                 HttpStatus.NOT_FOUND
+            );
+        }
+    }
+    /**
+     * Busca usuários pelo nome de usuário
+     *
+     * @param username Nome de usuário (email)
+     * @return Lista de usuários encontrados
+     */
+    public List<UserResponse> getUserByUsername(String username) {
+        try {
+            UsersResource usersResource = getUsersResource();
+            List<UserRepresentation> users = usersResource.search(username, true);
+            
+            log.info("Encontrados {} usuários com username: {}", users.size(), username);
+            
+            return users.stream()
+                    .map(this::mapToUserResponse)
+                    .collect(Collectors.toList());
+        } catch (Exception e) {
+            log.error("Erro ao buscar usuário por username {}: {}", username, e.getMessage(), e);
+            throw new GlobalException(
+                "GET_USER_ERROR",
+                "Erro ao buscar usuário: " + e.getMessage(),
+                "UserService",
+                HttpStatus.INTERNAL_SERVER_ERROR
             );
         }
     }
