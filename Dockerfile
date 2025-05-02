@@ -32,7 +32,7 @@ CMD if [ -n "$OAUTH_INTERNAL_DEBUG_PORT" ]; then \
     exec java ${JAVA_OPTS} ${DEBUG_OPTS} -jar app.jar
 
 # Expose ports
-EXPOSE ${OAUTH_INTERNAL_PORT}
+EXPOSE ${OAUTH_INTERNAL_API_PORT}
 EXPOSE ${OAUTH_INTERNAL_DEBUG_PORT}
 
 # Health check with increased timeout for startup
