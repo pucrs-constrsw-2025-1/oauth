@@ -3,53 +3,55 @@ server:
   servlet:
     context-path: /
 
-# Configuração simplificada do Keycloak
-keycloak:
-  auth-server-url: ${OAUTH_INTERNAL_PROTOCOL:http}://${KEYCLOAK_INTERNAL_HOST:keycloak}:${KEYCLOAK_INTERNAL_API_PORT:8080}/
-  realm: ${KEYCLOAK_REALM:constrsw}
-  resource: ${KEYCLOAK_CLIENT_ID:oauth}
-  credentials:
-    secret: ${KEYCLOAK_CLIENT_SECRET:wsNXUxaupU9X6jCncsn3rOEy6PDt7oJO}
-  grant-type: password
-  # Para ambiente de desenvolvimento local
-  external-host: ${KEYCLOAK_EXTERNAL_HOST:localhost}
-  external-console-port: ${KEYCLOAK_EXTERNAL_CONSOLE_PORT:8090}
-  admin:
-    username: ${KEYCLOAK_ADMIN:admin}
-    password: ${KEYCLOAK_ADMIN_PASSWORD:a12345678}
-
 spring:
   application:
     name: oauth-service
-  main:
-    allow-bean-definition-overriding: true
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          issuer-uri: ${OAUTH_INTERNAL_PROTOCOL:http}://${KEYCLOAK_INTERNAL_HOST:keycloak}:${KEYCLOAK_INTERNAL_API_PORT:8080}/realms/${KEYCLOAK_REALM:constrsw}
+          jwk-set-uri: ${OAUTH_INTERNAL_PROTOCOL:http}://${KEYCLOAK_INTERNAL_HOST:keycloak}:${KEYCLOAK_INTERNAL_API_PORT:8080}/realms/${KEYCLOAK_REALM:constrsw}/protocol/openid-connect/certs
 
-springdoc:
-  swagger-ui:
-    path: /swagger-ui.html
-  api-docs:
-    path: /v3/api-docs
+# Configurações do Keycloak
+keycloak:
+  # URL do servidor Keycloak - usada para autenticação e operações de administração
+  auth-server-url: ${OAUTH_INTERNAL_PROTOCOL:http}://${KEYCLOAK_INTERNAL_HOST:keycloak}:${KEYCLOAK_INTERNAL_API_PORT:8080}
+  
+  # Realm para operações de usuário final
+  realm: ${KEYCLOAK_REALM:constrsw}
+  
+  # Configurações do cliente OAuth2
+  resource: ${KEYCLOAK_CLIENT_ID:oauth}
+  credentials:
+    secret: ${KEYCLOAK_CLIENT_SECRET:wsNXUxaupU9X6jCncsn3rOEy6PDt7oJO}
+  
+  # Tipo de concessão para autenticação
+  grant-type: ${KEYCLOAK_GRANT_TYPE:password}
+  
+  # Configurações para autenticação administrativa
+  # IMPORTANTE: Estas credenciais são usadas para operações de administração
+  admin:
+    username: ${KEYCLOAK_ADMIN:admin@pucrs.br}
+    password: ${KEYCLOAK_ADMIN_PASSWORD:a12345678}
+  
+  # Configurações para ambiente local (fora do Docker)
+  external-host: ${KEYCLOAK_EXTERNAL_HOST:localhost}
+  external-console-port: ${KEYCLOAK_EXTERNAL_CONSOLE_PORT:8090}
 
-# Configuração do endpoint de health
-management:
-  endpoints:
-    web:
-      exposure:
-        include: health,info
-      base-path: /
-  endpoint:
-    health:
-      show-details: always
-      enabled: true
-      path: /health
-      probes:
-        enabled: true
-
+# Configurações de logging
 logging:
   level:
     root: INFO
+    com.constrsw.oauth: DEBUG
+    org.keycloak: INFO
     org.springframework.security: INFO
     org.springframework.web: INFO
-    com.constrsw: DEBUG
-  pattern:
-    console: "%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %highlight(%-5level) %logger{36} - %msg%n"
+
+# Configurações do Swagger/OpenAPI
+springdoc:
+  api-docs:
+    path: /v3/api-docs
+  swagger-ui:
+    path: /swagger-ui.html
+    enabled: true

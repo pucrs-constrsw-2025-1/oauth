@@ -1,37 +1,49 @@
-# Serviço de Autenticação e Autorização OAuth
+# OAuth Service
 
-Este projeto implementa um serviço de autenticação e autorização baseado em OAuth 2.0, integrado com Keycloak para gerenciamento de identidades e acesso.
+Este serviço implementa uma API REST para autenticação OAuth e gerenciamento de usuários/roles usando Keycloak.
 
 ## Arquitetura
 
-O projeto é composto por dois contêineres Docker principais:
+A aplicação segue os princípios de Arquitetura Limpa e SOLID:
 
-1. **Keycloak** - Servidor de identidade e acesso
-2. **OAuth API** - Serviço de autenticação personalizado
+1. **Domain Layer**: Contém entidades de domínio, interfaces de repositório e serviços do domínio.
+2. **Application Layer**: Contém os serviços de aplicação, DTOs e casos de uso.
+3. **Infrastructure Layer**: Contém implementações concretas de repositórios, configurações e adaptadores.
+4. **Interfaces Layer**: Contém controladores REST, mapeadores e manipulação de requisições.
 
-### Diagrama de Arquitetura
-
+### Diagrama da Arquitetura
 ```
-+------------------+     +------------------+
-|     Cliente      |     |  Aplicação Web   |
-|    (Externo)     |     |     (Externo)    |
-+--------+---------+     +---------+--------+
-         |                         |
-         v                         v
-+--------------------------------------------+
-|                Rede Externa                |
-+---------------------+----------------------+
-                      |
-          +-----------+-----------+
-          |     Docker Network    |
-          |       (constrsw)      |
-          |                       |
-+---------+---------+  +----------+----------+
-|                   |  |                     |
-|  OAuth API (8081) |  |  Keycloak (8080)    |
-|  Porta Ext: 8091  |  |  Porta Ext: 8090    |
-|                   |  |                     |
-+-------------------+  +---------------------+
+┌────────────────────────────────────────────────────────┐
+│                     Interfaces Layer                   │
+│ ┌─────────────────┐ ┌─────────────────┐ ┌────────────┐ │
+│ │ AuthController  │ │ UserController  │ │ RoleContr. │ │
+│ └────────┬────────┘ └────────┬────────┘ └─────┬──────┘ │
+└──────────┼─────────────────┬─┼────────────────┼────────┘
+           │                 │ │                │
+┌──────────▼─────────────────▼─▼────────────────▼────────┐
+│                     Application Layer                  │
+│ ┌─────────────────┐ ┌─────────────────┐ ┌────────────┐ │
+│ │  AuthService    │ │  UserService    │ │ RoleService│ │
+│ └────────┬────────┘ └────────┬────────┘ └─────┬──────┘ │
+└──────────┼─────────────────┬─┼────────────────┼────────┘
+           │                 │ │                │
+┌──────────▼─────────────────▼─▼────────────────▼────────┐
+│                       Domain Layer                     │
+│ ┌─────────────────┐ ┌─────────────────┐ ┌────────────┐ │
+│ │AuthenticationSvc│ │UserManagementSvc│ │RoleManag.Sv│ │
+│ └────────┬────────┘ └────────┬────────┘ └─────┬──────┘ │
+└──────────┼─────────────────┬─┼────────────────┼────────┘
+           │                 │ │                │
+┌──────────▼─────────────────▼─▼────────────────▼────────┐
+│                   Infrastructure Layer                 │
+│ ┌─────────────────┐ ┌─────────────────┐ ┌────────────┐ │
+│ │KeycloakAuthAdapt│ │KeycloakUserAdapt│ │KeycloakRole│ │
+│ └────────┬────────┘ └────────┬────────┘ └─────┬──────┘ │
+└──────────┼─────────────────┬─┼────────────────┼────────┘
+           │                 │ │                │
+┌──────────▼─────────────────▼─▼────────────────▼────────┐
+│                       Keycloak API                     │
+└────────────────────────────────────────────────────────┘
 ```
 
 ## Tecnologias Utilizadas
@@ -69,32 +81,54 @@ docker volume create constrsw-mongodb-data
 
 As configurações são definidas através de variáveis de ambiente no arquivo `.env`:
 
-```
-# Docker Compose
-COMPOSE_PROJECT_NAME=constrsw-2025-1
+## Endpoints da API
 
-# Keycloak
-KC_HEALTH_ENABLED=true
-KEYCLOAK_REALM=constrsw
-KEYCLOAK_INTERNAL_HOST=keycloak
-KEYCLOAK_EXTERNAL_HOST=localhost
-KEYCLOAK_INTERNAL_API_PORT=8080
-KEYCLOAK_EXTERNAL_API_PORT=8081
-KEYCLOAK_INTERNAL_CONSOLE_PORT=8080
-KEYCLOAK_EXTERNAL_CONSOLE_PORT=8090
-KEYCLOAK_ADMIN=admin
-KEYCLOAK_ADMIN_PASSWORD=a12345678
-KEYCLOAK_CLIENT_ID=oauth
-KEYCLOAK_CLIENT_SECRET=wsNXUxaupU9X6jCncsn3rOEy6PDt7oJO
-KEYCLOAK_GRANT_TYPE=password,client_credentials
+### Autenticação
 
-# OAuth API
-OAUTH_INTERNAL_PROTOCOL=http
-OAUTH_INTERNAL_HOST=oauth
-OAUTH_INTERNAL_API_PORT=8080
-OAUTH_EXTERNAL_API_PORT=8091
-OAUTH_INTERNAL_DEBUG_PORT=9230
-```
+- `POST /login`: Autenticação de usuário (acesso público)
+
+### Usuários
+
+- `POST /users`: Criar um novo usuário
+- `GET /users`: Listar todos os usuários (com filtro opcional de `enabled=[true|false]`)
+- `GET /users/{id}`: Obter um usuário específico
+- `PUT /users/{id}`: Atualizar um usuário
+- `PATCH /users/{id}`: Atualizar a senha de um usuário
+- `DELETE /users/{id}`: Desabilitar um usuário (exclusão lógica)
+- `POST /users/{userId}/roles/{roleId}`: Adicionar um role a um usuário
+- `DELETE /users/{userId}/roles/{roleId}`: Remover um role de um usuário
+
+### Roles
+
+- `POST /roles`: Criar um novo role
+- `GET /roles`: Listar todos os roles
+- `GET /roles/{id}`: Obter um role específico
+- `PUT /roles/{id}`: Atualizar um role
+- `PATCH /roles/{id}`: Atualizar parcialmente um role
+- `DELETE /roles/{id}`: Excluir um role
+
+### Saúde/Monitoramento
+
+- `GET /health`: Status de saúde da API
+
+## Documentação da API
+
+- Swagger UI: `http://localhost:8088/swagger-ui.html`
+- OpenAPI JSON: `http://localhost:8088/v3/api-docs`
+
+## Pré-requisitos
+
+- Java 21
+- Docker e Docker Compose
+
+## Como executar
+
+1. Certifique-se de que os volumes necessários estejam criados:
+
+```bash
+docker volume create constrsw-keycloak-data
+docker volume create constrsw-postgresql-data
+docker volume create constrsw-mongodb-data
 
 ### Iniciar o Sistema
 
@@ -145,29 +179,88 @@ docker-compose ps
 ## Estrutura do Projeto
 
 ```
-/
-├── backend/
-│   ├── oauth/                 # Serviço OAuth
-│   │   ├── src/
-│   │   │   ├── main/
-│   │   │   │   ├── java/com/constrsw/oauth/
-│   │   │   │   │   ├── config/          # Configurações Spring
-│   │   │   │   │   ├── controller/      # Controladores REST
-│   │   │   │   │   ├── dto/             # Objetos de transferência de dados
-│   │   │   │   │   ├── exception/       # Manipulação de exceções
-│   │   │   │   │   ├── service/         # Lógica de negócios
-│   │   │   │   │   └── OAuthApplication.java
-│   │   │   │   └── resources/
-│   │   │   │       └── application.yml  # Configuração da aplicação
-│   │   │   └── test/                    # Testes automatizados
-│   │   ├── Dockerfile                   # Definição do container
-│   │   └── pom.xml                      # Dependências Maven
-│   └── utils/
-│       └── keycloak/                    # Configuração do Keycloak
-│           ├── realm-export.json        # Configuração do Realm
-│           └── Dockerfile               # Definição do container
-├── docker-compose.yml                   # Orquestração dos serviços
-└── .env                                 # Variáveis de ambiente
+Estrutura de Pastas
+oauth/
+├── src/
+│   ├── main/
+│   │   ├── java/
+│   │   │   └── com/
+│   │   │       └── constrsw/
+│   │   │           └── oauth/
+│   │   │               ├── OAuthApplication.java
+│   │   │               │
+│   │   │               ├── domain/
+│   │   │               │   ├── entity/
+│   │   │               │   │   ├── User.java
+│   │   │               │   │   └── Role.java
+│   │   │               │   ├── exception/
+│   │   │               │   │   └── DomainException.java
+│   │   │               │   ├── repository/
+│   │   │               │   │   ├── UserRepository.java
+│   │   │               │   │   └── RoleRepository.java
+│   │   │               │   └── service/
+│   │   │               │       ├── AuthenticationService.java
+│   │   │               │       ├── UserManagementService.java
+│   │   │               │       └── RoleManagementService.java
+│   │   │               │
+│   │   │               ├── application/
+│   │   │               │   ├── service/
+│   │   │               │   │   ├── AuthService.java
+│   │   │               │   │   ├── UserService.java
+│   │   │               │   │   └── RoleService.java
+│   │   │               │   └── dto/
+│   │   │               │       ├── auth/
+│   │   │               │       │   ├── AuthRequest.java
+│   │   │               │       │   └── AuthResponse.java
+│   │   │               │       ├── user/
+│   │   │               │       │   ├── UserRequest.java
+│   │   │               │       │   └── UserResponse.java
+│   │   │               │       └── role/
+│   │   │               │           ├── RoleRequest.java
+│   │   │               │           └── RoleResponse.java
+│   │   │               │
+│   │   │               ├── infrastructure/
+│   │   │               │   ├── config/
+│   │   │               │   │   ├── KeycloakConfig.java
+│   │   │               │   │   └── SecurityConfig.java
+│   │   │               │   ├── exception/
+│   │   │               │   │   ├── GlobalExceptionHandler.java
+│   │   │               │   │   └── GlobalException.java
+│   │   │               │   └── adapter/
+│   │   │               │       ├── keycloak/
+│   │   │               │       │   ├── KeycloakAuthAdapter.java
+│   │   │               │       │   ├── KeycloakUserAdapter.java
+│   │   │               │       │   └── KeycloakRoleAdapter.java
+│   │   │               │       └── rest/
+│   │   │               │           └── HealthCheckAdapter.java
+│   │   │               │
+│   │   │               └── interfaces/
+│   │   │                   ├── rest/
+│   │   │                   │   ├── AuthController.java
+│   │   │                   │   ├── UserController.java
+│   │   │                   │   ├── RoleController.java
+│   │   │                   │   └── HealthController.java
+│   │   │                   └── mapper/
+│   │   │                       ├── UserMapper.java
+│   │   │                       └── RoleMapper.java
+│   │   │
+│   │   └── resources/
+│   │       ├── application.yml
+│   │       └── logback.xml
+│   │
+│   └── test/
+│       └── java/
+│           └── com/
+│               └── constrsw/
+│                   └── oauth/
+│                       ├── domain/
+│                       ├── application/
+│                       ├── infrastructure/
+│                       └── interfaces/
+│
+├── Dockerfile
+├── pom.xml
+└── README.md                         
 ```
 
 ## Integração com Keycloak
