@@ -152,30 +152,6 @@ docker-compose ps
 
 ### Autenticação
 
-- **POST /auth/login**: Autenticar usuário e obter token
-  ```bash
-  curl -X 'POST' 'http://localhost:8091/auth/login?username=admin@pucrs.br&password=a12345678' -H 'accept: */*'
-  ```
-
-- **GET /auth/config**: Verificar configuração do Keycloak
-  ```bash
-  curl -X 'GET' 'http://localhost:8091/auth/config' -H 'accept: */*'
-  ```
-
-### Debugging
-
-- **POST /auth/debug/token**: Endpoint para debug de autenticação
-  ```bash
-  curl -X 'POST' 'http://localhost:8091/auth/debug/token?username=admin@pucrs.br&password=a12345678' -H 'accept: */*'
-  ```
-
-### Health Check
-
-- **GET /health**: Verificar a saúde da aplicação
-  ```bash
-  curl -X 'GET' 'http://localhost:8091/health' -H 'accept: */*'
-  ```
-
 ## Estrutura do Projeto
 
 ```
