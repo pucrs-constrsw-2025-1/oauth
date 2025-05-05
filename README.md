@@ -144,9 +144,9 @@ docker-compose ps
 
 ### Acessar Interfaces
 
-- **Keycloak Admin Console**: http://localhost:8090/admin
-- **OAuth API**: http://localhost:8091
-- **Swagger UI**: http://localhost:8091/swagger-ui.html
+- **Keycloak Admin Console**: http://localhost:8080/admin
+- **OAuth API**: http://localhost:8080
+- **Swagger UI**: http://localhost:8080/swagger-ui.html
 
 ## Endpoints da API
 
