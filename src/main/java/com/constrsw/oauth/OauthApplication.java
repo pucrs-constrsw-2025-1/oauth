@@ -27,9 +27,9 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
         scheme = "bearer",
         bearerFormat = "JWT"
 )
-public class OAuthApplication {
+public class OauthApplication {
     
     public static void main(String[] args) {
-        SpringApplication.run(OAuthApplication.class, args);
+        SpringApplication.run(OauthApplication.class, args);
     }
 }
