@@ -1,8 +1,8 @@
 [tool.poetry]
-name = "learning-project"
-version = "0.1.0"
-description = "A FastAPI backend learning project using Keycloak for authentication"
-authors = ["Filipe Giroleti <filipe.fuentes@edu.pucrs.br>"]
+name = "oauth-api"
+version = "1.0.0"
+description = "A FastAPI backend project using Keycloak for authentication"
+authors = ["Filipe Giroleti <filipe.fuentes@edu.pucrs.br>", "Matheus Melo"] # add os nomes de vcs aqui
 readme = "README.md"
 packages = [{ include = "app" }]
 

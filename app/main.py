@@ -3,5 +3,4 @@ from app.users import controller as user_controller
 
 app = FastAPI()
 
-# Register routers
 app.include_router(user_controller.router, prefix="/users", tags=["users"])
