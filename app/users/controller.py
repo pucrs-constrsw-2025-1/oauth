@@ -26,11 +26,6 @@ async def create_user_endpoint(
     # extract raw token
     access_token = authorization.split(" ", 1)[1]
 
-    # role check
-    if "admin" not in token_payload["realm_access"]["roles"]:
-        # spec says 403 when token lacks permission
-        raise HTTPException(status_code=403, detail="Forbidden")
-
     return await create_user(user_in, access_token)
 
 
@@ -45,8 +40,6 @@ async def list_users_endpoint(
     token_payload=Depends(verify_token),
     authorization: str = Header(..., alias="Authorization"),
 ):
-    if "admin" not in token_payload["realm_access"]["roles"]:
-        raise HTTPException(status_code=403, detail="Forbidden")
 
     access_token = authorization.split(" ", 1)[1]
     return await get_users(access_token, enabled)

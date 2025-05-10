@@ -8,13 +8,13 @@ class UserCreate(BaseModel):
         str,
         StringConstraints(min_length=6),
     ]
-    first_name: str = Field(alias="first-name")
-    last_name: str = Field(alias="last-name")
+    first_name: str
+    last_name: str
 
 
 class UserOut(BaseModel):
     id: str
     username: str
-    first_name: str = Field(alias="first-name")
-    last_name: str = Field(alias="last-name")
+    first_name: str
+    last_name: str
     enabled: bool = True

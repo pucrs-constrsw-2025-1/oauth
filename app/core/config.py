@@ -40,6 +40,12 @@ class Settings(BaseSettings):
         )
 
     @cached_property
+    def admin_url(self) -> str:
+        return (
+            f"{settings.keycloak_base_url}/admin/realms/{settings.keycloak_realm}"
+        )
+
+    @cached_property
     def jwks_url(self) -> str:
         return (
             f"{self.keycloak_base_url}/realms/{self.keycloak_realm}"

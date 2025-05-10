@@ -1,3 +1,4 @@
+import logging
 import httpx
 from fastapi import HTTPException, status
 from typing import List
@@ -40,7 +41,7 @@ async def create_user_in_keycloak(
     Returns the new Keycloak user_id (UUID) on success.
     Raises HTTPException otherwise.
     """
-    url = f"{settings.keycloak_base_url}/admin/realms/{settings.keycloak_realm}/users"
+    url = f"{settings.admin_url}/users"
     headers = {"Authorization": f"Bearer {token}"}
     payload = {
         "username": username,
@@ -73,10 +74,8 @@ async def list_users_in_keycloak(token: str, enabled: bool | None = None) -> Lis
     Returns the raw list of KC user dicts.
     Optional `enabled` filter maps to KC query ?enabled=true/false.
     """
-    base_url = (
-        f"{settings.keycloak_base_url}/admin/realms/"
-        f"{settings.keycloak_realm}/users"
-    )
+    url = f"{settings.admin_url}/users"
+    print(token)
     params = {}
     if enabled is not None:
         params["enabled"] = str(enabled).lower()  # "true" | "false"
@@ -84,7 +83,7 @@ async def list_users_in_keycloak(token: str, enabled: bool | None = None) -> Lis
     headers = {"Authorization": f"Bearer {token}"}
 
     async with httpx.AsyncClient() as client:
-        resp = await client.get(base_url, headers=headers, params=params)
+        resp = await client.get(url, headers=headers, params=params)
 
     if resp.status_code == 200:
         return resp.json()
@@ -92,7 +91,7 @@ async def list_users_in_keycloak(token: str, enabled: bool | None = None) -> Lis
     if resp.status_code == 401:
         raise HTTPException(status_code=401, detail="Invalid access token")
     if resp.status_code == 403:
-        raise HTTPException(status_code=403, detail="Forbidden")
+        raise HTTPException(status_code=403, detail=f"Forbidden")
 
     # Unexpected
     raise HTTPException(status_code=502, detail="Keycloak user‑list failed")

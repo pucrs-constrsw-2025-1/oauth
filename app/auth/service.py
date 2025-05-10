@@ -46,9 +46,10 @@ def verify_token(token: str = Depends(oauth2_scheme)):
             key=key,
             algorithms=[settings.algorithm],
             issuer=settings.issuer,
-            audience=settings.keycloak_client_id
+            options={"verify_aud": False, "verify_signature": True}
         )
         return payload
 
     except JWTError as e:
+        print(e)
         raise HTTPException(status_code=401, detail="Invalid token")
