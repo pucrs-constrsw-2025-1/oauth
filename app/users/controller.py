@@ -62,7 +62,7 @@ async def get_user_endpoint(
 
 
 @router.put(
-    "/users/{user_id}",
+    "/{user_id}",
     status_code=status.HTTP_200_OK,
     summary="Update an existing user",
 )
