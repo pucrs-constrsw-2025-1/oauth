@@ -28,6 +28,6 @@ class UserUpdate(BaseModel):
             StringConstraints(min_length=6),
         ]
     ] = None
-    first_name: Optional[str]
-    last_name: Optional[str]
+    first_name: Optional[str] = None
+    last_name: Optional[str] = None
     enabled: Optional[bool] = None
