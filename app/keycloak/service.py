@@ -75,7 +75,6 @@ async def list_users_in_keycloak(token: str, enabled: bool | None = None) -> Lis
     Optional `enabled` filter maps to KC query ?enabled=true/false.
     """
     url = f"{settings.admin_url}/users"
-    print(token)
     params = {}
     if enabled is not None:
         params["enabled"] = str(enabled).lower()  # "true" | "false"

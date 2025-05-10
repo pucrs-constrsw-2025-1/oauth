@@ -2,6 +2,8 @@ from fastapi import FastAPI
 from app.users.controller import router as user_router
 from app.auth.controller import router as auth_router
 
+from fastapi import status
+from fastapi.responses import JSONResponse, RedirectResponse
 from starlette.middleware.cors import CORSMiddleware
 
 app = FastAPI()
@@ -17,6 +19,13 @@ app.add_middleware(
 app.include_router(user_router)
 app.include_router(auth_router)
 
-@app.get("/")
+@app.get("/", include_in_schema=False)
 async def root():
-    return {"message": "THE LOATHSOME DUNGEATER"}
+    return RedirectResponse(url="/docs")
+
+@app.get("/health", tags=["Internal"])
+async def health():
+    return JSONResponse(
+        status_code=status.HTTP_200_OK,
+        content={"status": "up"},
+    )
