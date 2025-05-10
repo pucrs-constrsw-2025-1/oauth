@@ -1,5 +1,5 @@
 from typing import List
-from app.keycloak.service import (create_user_in_keycloak, list_users_in_keycloak)
+from app.keycloak.service import (create_user_in_keycloak, get_user_in_keycloak, list_users_in_keycloak)
 from app.users.schema import UserCreate, UserOut
 
 
@@ -20,6 +20,7 @@ async def create_user(user_in: UserCreate, token: str) -> UserOut:
         enabled=True
     )
 
+
 async def get_users(access_token: str, enabled: bool | None = None) -> List[UserOut]:
     kc_users = await list_users_in_keycloak(access_token, enabled)
     return [
@@ -32,3 +33,14 @@ async def get_users(access_token: str, enabled: bool | None = None) -> List[User
         )
         for u in kc_users
     ]
+
+
+async def get_user(user_id: str, access_token: str) -> UserOut:
+    kc_user = await get_user_in_keycloak(user_id, access_token)
+    return UserOut(
+        id=kc_user["id"],
+        username=kc_user["username"],
+        first_name=kc_user.get("firstName", ""),
+        last_name=kc_user.get("lastName", ""),
+        enabled=kc_user.get("enabled", True),
+    )

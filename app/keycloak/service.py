@@ -1,4 +1,5 @@
 import logging
+from uuid import UUID
 import httpx
 from fastapi import HTTPException, status
 from typing import List
@@ -95,3 +96,31 @@ async def list_users_in_keycloak(token: str, enabled: bool | None = None) -> Lis
     # Unexpected
     raise HTTPException(status_code=502, detail="Keycloak user‑list failed")
 
+
+async def get_user_in_keycloak(user_id: str, token: str) -> dict:
+    """
+    Fetch a single user by id from Keycloak Admin REST.
+    Raises HTTPException on 401, 403, 404.
+    """
+    try:
+        # quick UUID sanity‑check → 400 if invalid
+        UUID(user_id)
+    except ValueError:
+        raise HTTPException(status_code=400, detail="Malformed user id")
+
+    url = f"{settings.admin_url}/users/{user_id}"
+    headers = {"Authorization": f"Bearer {token}"}
+
+    async with httpx.AsyncClient() as client:
+        resp = await client.get(url, headers=headers)
+
+    if resp.status_code == 200:
+        return resp.json()
+    if resp.status_code == 401:
+        raise HTTPException(401, "Invalid access token")
+    if resp.status_code == 403:
+        raise HTTPException(403, "Forbidden")
+    if resp.status_code == 404:
+        raise HTTPException(404, "User not found")
+
+    raise HTTPException(502, "Keycloak user‑read failed")

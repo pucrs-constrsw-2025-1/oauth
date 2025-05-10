@@ -1,5 +1,4 @@
-from fastapi import APIRouter, Depends, Form, status
-from app.auth.service import verify_token
+from fastapi import APIRouter, status
 from app.auth.schema import LoginResponse, LoginRequest
 from app.keycloak.service import exchange_password_grant
 
