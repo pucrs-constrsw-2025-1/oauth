@@ -37,7 +37,9 @@ async def list_users_endpoint(
     enabled: bool | None = Query(default=None, description="Filter by enabled status"),
     authorization: str = Header(..., alias="Authorization"),
 ):
-
+    """
+    Requires `Authorization: Bearer <access_token>` header.
+    """
     access_token = authorization.split(" ", 1)[1]
     return await get_users(access_token, enabled)
 
@@ -52,6 +54,8 @@ async def get_user_endpoint(
     user_id: str = Path(..., description="Keycloak user UUID"),
     authorization: str = Header(..., alias="Authorization"),
 ):
-
+    """
+    Requires `Authorization: Bearer <access_token>` header.
+    """
     access_token = authorization.split(" ", 1)[1]
     return await get_user(user_id, access_token)
