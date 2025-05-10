@@ -71,7 +71,7 @@ async def update_user_endpoint(
     patch: UserUpdate = ...,
     authorization: str = Header(..., alias="Authorization"),
 ):
-    
+
     access_token = authorization.split(" ", 1)[1]
     await update_user(user_id, patch, access_token)
-    return {}   # empty body, 200 OK
+    return {}  # empty body, 200 OK

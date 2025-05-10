@@ -161,7 +161,7 @@ async def update_user_in_keycloak(user_id: str, patch: UserUpdate, token: str) -
     async with httpx.AsyncClient() as client:
         resp = await client.put(url, json=payload, headers=headers)
 
-    if resp.status_code == 204:           # Keycloak returns 204 No Content on success
+    if resp.status_code == 204:  # Keycloak returns 204 No Content on success
         return
     if resp.status_code == 401:
         raise HTTPException(401, "Invalid access token")

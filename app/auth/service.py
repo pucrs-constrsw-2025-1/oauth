@@ -46,7 +46,7 @@ def verify_token(token: str = Depends(oauth2_scheme)):
             key=key,
             algorithms=[settings.algorithm],
             issuer=settings.issuer,
-            options={"verify_aud": False, "verify_signature": True}
+            options={"verify_aud": False, "verify_signature": True},
         )
         return payload
 

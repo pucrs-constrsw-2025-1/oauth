@@ -1,5 +1,10 @@
 from typing import List
-from app.keycloak.service import (create_user_in_keycloak, get_user_in_keycloak, list_users_in_keycloak, update_user_in_keycloak)
+from app.keycloak.service import (
+    create_user_in_keycloak,
+    get_user_in_keycloak,
+    list_users_in_keycloak,
+    update_user_in_keycloak,
+)
 from app.users.schema import UserCreate, UserOut, UserUpdate
 
 
@@ -9,15 +14,15 @@ async def create_user(user_in: UserCreate, token: str) -> UserOut:
         password=user_in.password,
         first_name=user_in.first_name,
         last_name=user_in.last_name,
-        token=token
+        token=token,
     )
-    
+
     return UserOut(
         id=user_id,
         username=user_in.username,
         first_name=user_in.first_name,
         last_name=user_in.last_name,
-        enabled=True
+        enabled=True,
     )
 
 

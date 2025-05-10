@@ -19,9 +19,11 @@ app.add_middleware(
 app.include_router(user_router)
 app.include_router(auth_router)
 
+
 @app.get("/", include_in_schema=False)
 async def root():
     return RedirectResponse(url="/docs")
+
 
 @app.get("/health", tags=["Internal"])
 async def health():
