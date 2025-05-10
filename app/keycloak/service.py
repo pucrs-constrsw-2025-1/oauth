@@ -5,6 +5,9 @@ from app.core.config import settings
 
 
 async def exchange_password_grant(username: str, password: str) -> dict:
+    """
+    Exchanges a password grant for an access token.
+    """
     data = {
         "grant_type": settings.keycloak_grant_type,  # "password"
         "client_id": settings.keycloak_client_id,
@@ -34,7 +37,7 @@ async def create_user_in_keycloak(
     username: str, password: str, first_name: str, last_name: str, token: str
 ) -> str:
     """
-    Returns the new Keycloak user‑id (UUID) on success.
+    Returns the new Keycloak user_id (UUID) on success.
     Raises HTTPException otherwise.
     """
     url = f"{settings.keycloak_base_url}/admin/realms/{settings.keycloak_realm}/users"
@@ -62,6 +65,6 @@ async def create_user_in_keycloak(
         raise HTTPException(status_code=403, detail="Forbidden")
     if resp.status_code == 409:
         raise HTTPException(status_code=409, detail="Username already exists")
-
-    # Anything else: propagate as bad gateway
     raise HTTPException(status_code=502, detail="Keycloak user‑creation failed")
+
+
