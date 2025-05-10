@@ -46,6 +46,7 @@ def verify_token(token: str = Depends(oauth2_scheme)):
             key=key,
             algorithms=[settings.algorithm],
             issuer=settings.issuer,
+            audience=settings.keycloak_client_id
         )
         return payload
 

@@ -1,7 +1,8 @@
-from fastapi import APIRouter, Depends, HTTPException, status, Header
+from fastapi import APIRouter, Depends, HTTPException, Query, status, Header
+from typing import List
 from app.auth.service import verify_token
 from app.users.schema import UserCreate, UserOut
-from app.users.service import create_user
+from app.users.service import create_user, get_users
 
 
 router = APIRouter(prefix="/users", tags=["Users"])
@@ -33,6 +34,19 @@ async def create_user_endpoint(
     return await create_user(user_in, access_token)
 
 
-@router.get("/profile")
-def get_profile(user=Depends(verify_token)):
-    return {"message": "You're Authenticated!", "user": user}
+@router.get(
+    "",
+    response_model=List[UserOut],
+    status_code=status.HTTP_200_OK,
+    summary="List all users",
+)
+async def list_users_endpoint(
+    enabled: bool | None = Query(default=None, description="Filter by enabled status"),
+    token_payload=Depends(verify_token),
+    authorization: str = Header(..., alias="Authorization"),
+):
+    if "admin" not in token_payload["realm_access"]["roles"]:
+        raise HTTPException(status_code=403, detail="Forbidden")
+
+    access_token = authorization.split(" ", 1)[1]
+    return await get_users(access_token, enabled)

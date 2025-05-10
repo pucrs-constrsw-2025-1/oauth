@@ -1,4 +1,5 @@
-from app.keycloak.service import create_user_in_keycloak
+from typing import List
+from app.keycloak.service import (create_user_in_keycloak, list_users_in_keycloak)
 from app.users.schema import UserCreate, UserOut
 
 
@@ -11,3 +12,16 @@ async def create_user(user_in: UserCreate, token: str) -> UserOut:
         last_name=user_in.last_name,
         enabled=True,
     )
+
+async def get_users(access_token: str, enabled: bool | None = None) -> List[UserOut]:
+    kc_users = await list_users_in_keycloak(access_token, enabled)
+    return [
+        UserOut(
+            id=u["id"],
+            username=u["username"],
+            first_name=u.get("firstName", ""),
+            last_name=u.get("lastName", ""),
+            enabled=u.get("enabled", True),
+        )
+        for u in kc_users
+    ]
