@@ -7,3 +7,6 @@ env-setup:
 	python3 -m venv .venv
 	.venv/bin/pip install -U pip setuptools
 	.venv/bin/pip install poetry
+
+format:
+	python3 -m black .

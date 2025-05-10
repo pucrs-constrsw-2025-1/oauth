@@ -12,6 +12,7 @@ oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
 # this caches the public keys in memory TODO: check if this is standard?
 _jwks_cache = {}
 
+
 def get_public_key(kid: str) -> dict:
     global _jwks_cache
 
@@ -31,6 +32,7 @@ def get_public_key(kid: str) -> dict:
             return key
 
     raise HTTPException(status_code=401, detail="Public key not found")
+
 
 def verify_token(token: str = Depends(oauth2_scheme)):
     try:

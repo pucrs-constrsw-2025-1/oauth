@@ -4,27 +4,27 @@ from functools import cached_property
 
 BASE_DIR = Path(__file__).resolve().parents[3]
 
+
 class Settings(BaseSettings):
-    kc_health_enabled: bool = True          # KC_HEALTH_ENABLED
-    keycloak_realm: str                     # KEYCLOAK_REALM
+    kc_health_enabled: bool = True  # KC_HEALTH_ENABLED
+    keycloak_realm: str  # KEYCLOAK_REALM
 
-    keycloak_internal_host: str             # KEYCLOAK_INTERNAL_HOST
-    keycloak_internal_port: int             # KEYCLOAK_INTERNAL_PORT
-    keycloak_external_host: str             # KEYCLOAK_EXTERNAL_HOST
-    keycloak_external_port: int             # KEYCLOAK_EXTERNAL_PORT
+    keycloak_internal_host: str  # KEYCLOAK_INTERNAL_HOST
+    keycloak_internal_port: int  # KEYCLOAK_INTERNAL_PORT
+    keycloak_external_host: str  # KEYCLOAK_EXTERNAL_HOST
+    keycloak_external_port: int  # KEYCLOAK_EXTERNAL_PORT
 
-    keycloak_admin: str                     # KEYCLOAK_ADMIN
-    keycloak_admin_password: str            # KEYCLOAK_ADMIN_PASSWORD
+    keycloak_admin: str  # KEYCLOAK_ADMIN
+    keycloak_admin_password: str  # KEYCLOAK_ADMIN_PASSWORD
 
-    keycloak_client_id: str                 # KEYCLOAK_CLIENT_ID
-    keycloak_client_secret: str = ""        # KEYCLOAK_CLIENT_SECRET
-    keycloak_grant_type: str = "password"   # KEYCLOAK_GRANT_TYPE
+    keycloak_client_id: str  # KEYCLOAK_CLIENT_ID
+    keycloak_client_secret: str = ""  # KEYCLOAK_CLIENT_SECRET
+    keycloak_grant_type: str = "password"  # KEYCLOAK_GRANT_TYPE
 
     # generic
     algorithm: str = "RS256"
 
     use_internal_network: bool = True
-
 
     @cached_property
     def keycloak_base_url(self) -> str:
