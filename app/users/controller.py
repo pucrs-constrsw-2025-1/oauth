@@ -1,7 +1,7 @@
 from fastapi import APIRouter, Depends, HTTPException, Path, Query, status, Header
 from typing import List
-from app.users.schema import UserCreate, UserOut
-from app.users.service import create_user, get_user, get_users
+from app.users.schema import UserCreate, UserOut, UserUpdate
+from app.users.service import create_user, get_user, get_users, update_user
 
 
 router = APIRouter(prefix="/users", tags=["Users"])
@@ -59,3 +59,19 @@ async def get_user_endpoint(
     """
     access_token = authorization.split(" ", 1)[1]
     return await get_user(user_id, access_token)
+
+
+@router.put(
+    "/users/{user_id}",
+    status_code=status.HTTP_200_OK,
+    summary="Update an existing user",
+)
+async def update_user_endpoint(
+    user_id: str = Path(..., description="Keycloak user UUID"),
+    patch: UserUpdate = ...,
+    authorization: str = Header(..., alias="Authorization"),
+):
+    
+    access_token = authorization.split(" ", 1)[1]
+    await update_user(user_id, patch, access_token)
+    return {}   # empty body, 200 OK

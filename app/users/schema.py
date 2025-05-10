@@ -1,5 +1,5 @@
 from pydantic import BaseModel, Field, EmailStr, StringConstraints, constr
-from typing import Annotated
+from typing import Annotated, Optional
 
 
 class UserCreate(BaseModel):
@@ -18,3 +18,16 @@ class UserOut(BaseModel):
     first_name: str
     last_name: str
     enabled: bool = True
+
+
+class UserUpdate(BaseModel):
+    username: Optional[EmailStr] = None  # (= email)
+    password: Optional[
+        Annotated[
+            str,
+            StringConstraints(min_length=6),
+        ]
+    ] = None
+    first_name: Optional[str]
+    last_name: Optional[str]
+    enabled: Optional[bool] = None

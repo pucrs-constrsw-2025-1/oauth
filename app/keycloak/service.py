@@ -1,9 +1,9 @@
-import logging
-from uuid import UUID
 import httpx
+from uuid import UUID
 from fastapi import HTTPException, status
 from typing import List
 from app.core.config import settings
+from app.users.schema import UserUpdate
 
 
 async def exchange_password_grant(username: str, password: str) -> dict:
@@ -124,3 +124,50 @@ async def get_user_in_keycloak(user_id: str, token: str) -> dict:
         raise HTTPException(404, "User not found")
 
     raise HTTPException(502, "Keycloak user‑read failed")
+
+
+async def update_user_in_keycloak(user_id: str, patch: UserUpdate, token: str) -> None:
+    """
+    Update a single user by id in Keycloak Admin REST.
+    Raises HTTPException on 401, 403, 404.
+    """
+    try:
+        UUID(user_id)
+    except ValueError:
+        raise HTTPException(status_code=400, detail="Malformed user id")
+
+    url = f"{settings.admin_url}/users/{user_id}"
+    headers = {"Authorization": f"Bearer {token}"}
+
+    # build payload only with provided fields
+    payload: dict = {}
+    if patch.username is not None:
+        payload["username"] = patch.username
+        payload["email"] = patch.username
+    if patch.first_name is not None:
+        payload["firstName"] = patch.first_name
+    if patch.last_name is not None:
+        payload["lastName"] = patch.last_name
+    if patch.enabled is not None:
+        payload["enabled"] = patch.enabled
+    if patch.password is not None:
+        payload["credentials"] = [
+            {"type": "password", "value": patch.password, "temporary": False}
+        ]
+
+    if not payload:
+        raise HTTPException(status_code=400, detail="No fields to update")
+
+    async with httpx.AsyncClient() as client:
+        resp = await client.put(url, json=payload, headers=headers)
+
+    if resp.status_code == 204:           # Keycloak returns 204 No Content on success
+        return
+    if resp.status_code == 401:
+        raise HTTPException(401, "Invalid access token")
+    if resp.status_code == 403:
+        raise HTTPException(403, "Forbidden")
+    if resp.status_code == 404:
+        raise HTTPException(404, "User not found")
+
+    raise HTTPException(502, "Keycloak user‑update failed")
