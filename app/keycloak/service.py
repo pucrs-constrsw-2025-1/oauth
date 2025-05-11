@@ -247,6 +247,9 @@ async def get_client_uuid(client_id: str, token: str) -> str:
     async with httpx.AsyncClient() as client:
         resp = await client.get(url, headers=headers)
 
+    if resp.status_code == 401:
+        raise HTTPException(401, "Invalid access token")
+
     if resp.status_code != 200:
         raise HTTPException(502, "Failed to resolve client uuid")
 
@@ -260,6 +263,9 @@ async def get_client_uuid(client_id: str, token: str) -> str:
 
 
 async def create_client_role(role: RoleCreate, token: str) -> str:
+    """
+    POST /admin/realms/{realm}/clients/{client_uuid}/roles
+    """
     client_uuid = await get_client_uuid(settings.keycloak_client_id, token)
 
     url = f"{settings.admin_url}/clients/{client_uuid}/roles"
@@ -282,3 +288,26 @@ async def create_client_role(role: RoleCreate, token: str) -> str:
         raise HTTPException(409, "Role already exists")
 
     raise HTTPException(502, "Keycloak role‑creation failed")
+
+
+async def list_client_roles(token: str) -> List[dict]:
+    """
+    GET /admin/realms/{realm}/clients/{client_uuid}/roles
+    """
+    client_uuid = await get_client_uuid(settings.keycloak_client_id, token)
+
+    url = f"{settings.admin_url}/clients/{client_uuid}/roles"
+    headers = {"Authorization": f"Bearer {token}"}
+
+    async with httpx.AsyncClient() as client:
+        resp = await client.get(url, headers=headers)
+
+    if resp.status_code == 200:
+        return resp.json()
+
+    if resp.status_code == 401:
+        raise HTTPException(401, "Invalid access token")
+    if resp.status_code == 403:
+        raise HTTPException(403, "Forbidden")
+
+    raise HTTPException(502, "Keycloak role‑list failed")
