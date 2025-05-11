@@ -22,12 +22,6 @@ class UserOut(BaseModel):
 
 class UserUpdate(BaseModel):
     username: Optional[EmailStr] = None  # (= email)
-    password: Optional[
-        Annotated[
-            str,
-            StringConstraints(min_length=6),
-        ]
-    ] = None
     first_name: Optional[str] = None
     last_name: Optional[str] = None
     enabled: Optional[bool] = None

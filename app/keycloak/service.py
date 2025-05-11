@@ -150,10 +150,6 @@ async def update_user_in_keycloak(user_id: str, patch: UserUpdate, token: str) -
         payload["lastName"] = patch.last_name
     if patch.enabled is not None:
         payload["enabled"] = patch.enabled
-    if patch.password is not None:
-        payload["credentials"] = [
-            {"type": "password", "value": patch.password, "temporary": False}
-        ]
 
     if not payload:
         raise HTTPException(status_code=400, detail="No fields to update")
