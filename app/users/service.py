@@ -5,6 +5,7 @@ from app.keycloak.service import (
     disable_user_in_keycloak,
     get_user_in_keycloak,
     list_users_in_keycloak,
+    remove_role_from_user,
     reset_user_password_in_keycloak,
     update_user_in_keycloak,
 )
@@ -70,3 +71,7 @@ async def disable_user(user_id: str, access_token: str) -> None:
 
 async def assign_role(user_id: str, role_id: str, access_token: str) -> None:
     await add_role_to_user(user_id, role_id, access_token)
+
+
+async def unassign_role(user_id: str, role_id: str, access_token: str) -> None:
+    await remove_role_from_user(user_id, role_id, access_token)

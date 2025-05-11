@@ -92,7 +92,7 @@ async def patch_role_endpoint(
 @router.delete(
     "/{role_id}",
     status_code=status.HTTP_204_NO_CONTENT,
-    summary="Logically delete (disable) a role",
+    summary="Delete a role",
 )
 async def delete_role_endpoint(
     role_id: str = Path(..., description="Role UUID"),

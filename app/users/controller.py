@@ -1,7 +1,5 @@
 from fastapi import (
     APIRouter,
-    Depends,
-    HTTPException,
     Path,
     Query,
     Response,
@@ -16,6 +14,7 @@ from app.users.service import (
     disable_user,
     get_user,
     get_users,
+    unassign_role,
     update_password,
     update_user,
 )
@@ -137,4 +136,20 @@ async def assign_role_endpoint(
 
     access_token = authorization.split(" ", 1)[1]
     await assign_role(user_id, role_id, access_token)
+    return Response(status_code=status.HTTP_204_NO_CONTENT)
+
+
+@router.delete(
+    "/{user_id}/roles/{role_id}",
+    status_code=status.HTTP_204_NO_CONTENT,
+    summary="Remove a client role from a user",
+)
+async def unassign_role_endpoint(
+    user_id: str = Path(..., description="User UUID"),
+    role_id: str = Path(..., description="Role UUID"),
+    authorization: str = Header(..., alias="Authorization"),
+):
+
+    access_token = authorization.split(" ", 1)[1]
+    await unassign_role(user_id, role_id, access_token)
     return Response(status_code=status.HTTP_204_NO_CONTENT)
