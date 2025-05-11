@@ -442,3 +442,37 @@ async def hard_delete_role(role_id: str, token: str) -> None:
         raise HTTPException(404, "Role not found")
 
     raise HTTPException(502, "Keycloak delete‑role failed")
+
+
+async def add_role_to_user(user_id: str, role_id: str, token: str) -> None:
+    """
+    Assign a client role to a user.
+    """
+    for _id in (user_id, role_id):
+        try:
+            UUID(_id)
+        except ValueError:
+            raise HTTPException(status_code=400, detail="Malformed id")
+
+    client_uuid = await get_client_uuid(settings.keycloak_client_id, token)
+
+    role_repr = await get_role_by_id(role_id, token)
+
+    url = (
+        f"{settings.admin_url}/users/{user_id}/role-mappings/clients/{client_uuid}"
+    )
+    headers = {"Authorization": f"Bearer {token}"}
+
+    async with httpx.AsyncClient() as client:
+        resp = await client.post(url, json=[role_repr], headers=headers)
+
+    if resp.status_code in (204, 200):
+        return
+    if resp.status_code == 401:
+        raise HTTPException(401, "Invalid access token")
+    if resp.status_code == 403:
+        raise HTTPException(403, "Forbidden")
+    if resp.status_code == 404:
+        raise HTTPException(404, "User or role not found")
+
+    raise HTTPException(502, "Keycloak add‑role failed")

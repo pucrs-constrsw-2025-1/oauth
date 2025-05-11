@@ -11,6 +11,7 @@ from fastapi import (
 from typing import List
 from app.users.schema import PasswordUpdate, UserCreate, UserOut, UserUpdate
 from app.users.service import (
+    assign_role,
     create_user,
     disable_user,
     get_user,
@@ -121,3 +122,19 @@ async def delete_user_endpoint(
 
     access_token = authorization.split(" ", 1)[1]
     return await disable_user(user_id, access_token)
+
+
+@router.post(
+    "/{user_id}/roles/{role_id}",
+    status_code=status.HTTP_204_NO_CONTENT,
+    summary="Assign a client role to a user",
+)
+async def assign_role_endpoint(
+    user_id: str = Path(..., description="User UUID"),
+    role_id: str = Path(..., description="Role UUID"),
+    authorization: str = Header(..., alias="Authorization"),
+):
+
+    access_token = authorization.split(" ", 1)[1]
+    await assign_role(user_id, role_id, access_token)
+    return Response(status_code=status.HTTP_204_NO_CONTENT)

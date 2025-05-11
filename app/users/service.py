@@ -1,5 +1,6 @@
 from typing import List
 from app.keycloak.service import (
+    add_role_to_user,
     create_user_in_keycloak,
     disable_user_in_keycloak,
     get_user_in_keycloak,
@@ -65,3 +66,7 @@ async def update_password(
 
 async def disable_user(user_id: str, access_token: str) -> None:
     await disable_user_in_keycloak(user_id, access_token)
+
+
+async def assign_role(user_id: str, role_id: str, access_token: str) -> None:
+    await add_role_to_user(user_id, role_id, access_token)
