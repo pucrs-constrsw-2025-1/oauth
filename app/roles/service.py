@@ -1,5 +1,5 @@
 from typing import List
-from app.keycloak.service import create_client_role, list_client_roles
+from app.keycloak.service import create_client_role, get_role_by_id, list_client_roles
 from app.roles.schema import RoleCreate, RoleOut
 
 
@@ -24,3 +24,13 @@ async def get_roles(access_token: str) -> List[RoleOut]:
         )
         for r in kc_roles
     ]
+
+
+async def get_role(role_id: str, access_token: str) -> RoleOut:
+    kc_role = await get_role_by_id(role_id, access_token)
+    return RoleOut(
+        id=kc_role["id"],
+        name=kc_role["name"],
+        description=kc_role.get("description"),
+        client_role=kc_role.get("clientRole", True),
+    )

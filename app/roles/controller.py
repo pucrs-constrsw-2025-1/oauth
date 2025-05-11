@@ -1,7 +1,7 @@
 from typing import List
-from fastapi import APIRouter, Header, status
+from fastapi import APIRouter, Header, Path, status
 from app.roles.schema import RoleCreate, RoleOut
-from app.roles.service import create_role, get_roles
+from app.roles.service import create_role, get_role, get_roles
 
 router = APIRouter(prefix="/roles", tags=["Roles"])
 
@@ -33,3 +33,20 @@ async def list_roles_endpoint(
 
     access_token = authorization.split(" ", 1)[1]
     return await get_roles(access_token)
+
+
+@router.get(
+    "/{role_id}",
+    response_model=RoleOut,
+    status_code=status.HTTP_200_OK,
+    summary="Get a client role by id",
+)
+async def get_role_endpoint(
+    role_id: str = Path(..., description="Role UUID"),
+    authorization: str = Header(..., alias="Authorization"),
+):
+    # if "admin" not in token_payload["realm_access"]["roles"]:
+    #     raise HTTPException(status_code=403, detail="Forbidden")
+
+    access_token = authorization.split(" ", 1)[1]
+    return await get_role(role_id, access_token)

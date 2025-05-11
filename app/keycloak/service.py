@@ -311,3 +311,33 @@ async def list_client_roles(token: str) -> List[dict]:
         raise HTTPException(403, "Forbidden")
 
     raise HTTPException(502, "Keycloak role‑list failed")
+
+
+async def get_role_by_id(role_id: str, token: str) -> dict:
+    """
+    Keycloak 21+ exposes *any* role (realm or client) at:
+      GET /admin/realms/{realm}/roles-by-id/{role_id}
+    We use that because it works for client roles too.
+    """
+    try:
+        UUID(role_id)
+    except ValueError:
+        raise HTTPException(status_code=400, detail="Malformed role id")
+
+    url = f"{settings.admin_url}/roles-by-id/{role_id}"
+
+    headers = {"Authorization": f"Bearer {token}"}
+
+    async with httpx.AsyncClient() as client:
+        resp = await client.get(url, headers=headers)
+
+    if resp.status_code == 200:
+        return resp.json()
+    if resp.status_code == 401:
+        raise HTTPException(401, "Invalid access token")
+    if resp.status_code == 403:
+        raise HTTPException(403, "Forbidden")
+    if resp.status_code == 404:
+        raise HTTPException(404, "Role not found")
+
+    raise HTTPException(502, "Keycloak role‑read failed")
