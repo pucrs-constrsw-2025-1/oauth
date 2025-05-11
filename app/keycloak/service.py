@@ -1,6 +1,8 @@
+import uuid
 import httpx
 from uuid import UUID
 from fastapi import HTTPException, status
+from datetime import datetime, timezone
 from typing import List
 from app.core.config import settings
 from app.users.schema import UserUpdate
@@ -412,3 +414,31 @@ async def patch_role_in_keycloak(role_id: str, patch: RoleUpdatePartial, token: 
         raise HTTPException(404, "Role not found")
 
     raise HTTPException(502, "Keycloak partial update failed")
+
+
+async def hard_delete_role(role_id: str, token: str) -> None:
+    """
+    Permanently deletes a client role in Keycloak.
+    """
+    try:
+        UUID(role_id)
+    except ValueError:
+        raise HTTPException(status_code=400, detail="Malformed role id")
+
+    url = f"{settings.admin_url}/roles-by-id/{role_id}"
+    
+    headers = {"Authorization": f"Bearer {token}"}
+
+    async with httpx.AsyncClient() as client:
+        resp = await client.delete(url, headers=headers)
+
+    if resp.status_code in (204, 200):
+        return
+    if resp.status_code == 401:
+        raise HTTPException(401, "Invalid access token")
+    if resp.status_code == 403:
+        raise HTTPException(403, "Forbidden")
+    if resp.status_code == 404:
+        raise HTTPException(404, "Role not found")
+
+    raise HTTPException(502, "Keycloak delete‑role failed")

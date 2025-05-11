@@ -1,7 +1,14 @@
 from typing import List
-from fastapi import APIRouter, Header, Path, status
+from fastapi import APIRouter, Header, Path, Response, status
 from app.roles.schema import RoleCreate, RoleOut, RoleUpdateFull, RoleUpdatePartial
-from app.roles.service import create_role, get_role, get_roles, patch_role, update_role
+from app.roles.service import (
+    create_role,
+    delete_role,
+    get_role,
+    get_roles,
+    patch_role,
+    update_role,
+)
 
 router = APIRouter(prefix="/roles", tags=["Roles"])
 
@@ -80,3 +87,18 @@ async def patch_role_endpoint(
     access_token = authorization.split(" ", 1)[1]
     await patch_role(role_id, patch, access_token)
     return {}  # empty body, 200 OK
+
+
+@router.delete(
+    "/{role_id}",
+    status_code=status.HTTP_204_NO_CONTENT,
+    summary="Logically delete (disable) a role",
+)
+async def delete_role_endpoint(
+    role_id: str = Path(..., description="Role UUID"),
+    authorization: str = Header(..., alias="Authorization"),
+):
+
+    access_token = authorization.split(" ", 1)[1]
+    await delete_role(role_id, access_token)
+    return Response(status_code=status.HTTP_204_NO_CONTENT)

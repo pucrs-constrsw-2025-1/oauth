@@ -2,6 +2,7 @@ from typing import List
 from app.keycloak.service import (
     create_client_role,
     get_role_by_id,
+    hard_delete_role,
     list_client_roles,
     patch_role_in_keycloak,
     update_role_in_keycloak,
@@ -48,3 +49,7 @@ async def update_role(role_id: str, upd: RoleUpdateFull, access_token: str) -> N
 
 async def patch_role(role_id: str, patch: RoleUpdatePartial, access_token: str) -> None:
     await patch_role_in_keycloak(role_id, patch, access_token)
+
+
+async def delete_role(role_id: str, access_token: str) -> None:
+    await hard_delete_role(role_id, access_token)
