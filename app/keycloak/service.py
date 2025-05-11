@@ -4,6 +4,9 @@ from fastapi import HTTPException, status
 from typing import List
 from app.core.config import settings
 from app.users.schema import UserUpdate
+from app.roles.schema import RoleCreate
+
+_client_id_cache: dict[str, str] = {}  # clientId -> uuid
 
 
 async def exchange_password_grant(username: str, password: str) -> dict:
@@ -231,3 +234,51 @@ async def disable_user_in_keycloak(user_id: str, token: str) -> None:
         raise HTTPException(404, "User not found")
 
     raise HTTPException(502, "Keycloak disable-user failed")
+
+
+async def get_client_uuid(client_id: str, token: str) -> str:
+    if client_id in _client_id_cache:
+        return _client_id_cache[client_id]
+
+    url = f"{settings.admin_url}/clients?clientId={client_id}"
+
+    headers = {"Authorization": f"Bearer {token}"}
+
+    async with httpx.AsyncClient() as client:
+        resp = await client.get(url, headers=headers)
+
+    if resp.status_code != 200:
+        raise HTTPException(502, "Failed to resolve client uuid")
+
+    data = resp.json()
+    if not data:
+        raise HTTPException(404, "Client not found")
+
+    uuid = data[0]["id"]
+    _client_id_cache[client_id] = uuid
+    return uuid
+
+
+async def create_client_role(role: RoleCreate, token: str) -> str:
+    client_uuid = await get_client_uuid(settings.keycloak_client_id, token)
+
+    url = f"{settings.admin_url}/clients/{client_uuid}/roles"
+
+    headers = {"Authorization": f"Bearer {token}"}
+    payload = {"name": role.name, "description": role.description}
+
+    async with httpx.AsyncClient() as client:
+        resp = await client.post(url, json=payload, headers=headers)
+
+    if resp.status_code == 201:
+        # KC returns Location header /{id}
+        return resp.headers.get("Location", "").rsplit("/", 1)[-1]
+
+    if resp.status_code == 401:
+        raise HTTPException(401, "Invalid access token")
+    if resp.status_code == 403:
+        raise HTTPException(403, "Forbidden")
+    if resp.status_code == 409:
+        raise HTTPException(409, "Role already exists")
+
+    raise HTTPException(502, "Keycloak role‑creation failed")

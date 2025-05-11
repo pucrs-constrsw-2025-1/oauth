@@ -1,6 +1,7 @@
 from fastapi import FastAPI
 from app.users.controller import router as user_router
 from app.auth.controller import router as auth_router
+from app.roles.controller import router as role_router
 
 from fastapi import status
 from fastapi.responses import JSONResponse, RedirectResponse
@@ -18,6 +19,7 @@ app.add_middleware(
 
 app.include_router(user_router)
 app.include_router(auth_router)
+app.include_router(role_router)
 
 
 @app.get("/", include_in_schema=False)

@@ -1,4 +1,4 @@
-from pydantic import BaseModel, Field, EmailStr, StringConstraints, constr
+from pydantic import BaseModel, EmailStr, StringConstraints, constr
 from typing import Annotated, Optional
 
 
