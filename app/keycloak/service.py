@@ -29,7 +29,7 @@ async def exchange_password_grant(username: str, password: str) -> dict:
             resp.raise_for_status()
             return resp.json()
         except httpx.HTTPStatusError as exc:
-            if exc.response.status_code == 400:
+            if exc.response.status_code == 401:
                 raise HTTPException(
                     status_code=status.HTTP_401_UNAUTHORIZED,
                     detail="Invalid username or password",
