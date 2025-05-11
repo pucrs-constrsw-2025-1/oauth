@@ -78,10 +78,6 @@ backend/
 
 ---
 
-### Tratamento de Erros
-
----
-
 ### Extensibilidade
 
 - **Novas features** podem ser adicionadas através da mesma estrutura das pastas existentes (`schema.py`, `service.py`, `controller.py`)
