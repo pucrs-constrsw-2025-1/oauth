@@ -12,3 +12,8 @@ class RoleOut(BaseModel):
     name: str
     description: str | None = None
     client_role: bool = True
+
+
+class RoleUpdateFull(BaseModel):
+    name: Annotated[str, StringConstraints(strip_whitespace=True, min_length=1)]
+    description: str

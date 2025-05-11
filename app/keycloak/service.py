@@ -4,7 +4,7 @@ from fastapi import HTTPException, status
 from typing import List
 from app.core.config import settings
 from app.users.schema import UserUpdate
-from app.roles.schema import RoleCreate
+from app.roles.schema import RoleCreate, RoleUpdateFull
 
 _client_id_cache: dict[str, str] = {}  # clientId -> uuid
 
@@ -341,3 +341,35 @@ async def get_role_by_id(role_id: str, token: str) -> dict:
         raise HTTPException(404, "Role not found")
 
     raise HTTPException(502, "Keycloak role‑read failed")
+
+
+async def update_role_in_keycloak(
+    role_id: str, upd: RoleUpdateFull, token: str
+) -> None:
+    """
+    PUT  /admin/realms/{realm}/roles-by-id/{role_id}
+    Quarkus Keycloak supports full role update at that URL.
+    """
+    try:
+        UUID(role_id)
+    except ValueError:
+        raise HTTPException(status_code=400, detail="Malformed role id")
+
+    url = f"{settings.admin_url}/roles-by-id/{role_id}"
+
+    headers = {"Authorization": f"Bearer {token}"}
+    payload = {"name": upd.name, "description": upd.description}
+
+    async with httpx.AsyncClient() as client:
+        resp = await client.put(url, json=payload, headers=headers)
+
+    if resp.status_code == 204:  # 204 on success
+        return
+    if resp.status_code == 401:
+        raise HTTPException(401, "Invalid access token")
+    if resp.status_code == 403:
+        raise HTTPException(403, "Forbidden")
+    if resp.status_code == 404:
+        raise HTTPException(404, "Role not found")
+
+    raise HTTPException(502, "Keycloak role‑update failed")

@@ -1,6 +1,11 @@
 from typing import List
-from app.keycloak.service import create_client_role, get_role_by_id, list_client_roles
-from app.roles.schema import RoleCreate, RoleOut
+from app.keycloak.service import (
+    create_client_role,
+    get_role_by_id,
+    list_client_roles,
+    update_role_in_keycloak,
+)
+from app.roles.schema import RoleCreate, RoleOut, RoleUpdateFull
 
 
 async def create_role(role_in: RoleCreate, access_token: str) -> RoleOut:
@@ -34,3 +39,7 @@ async def get_role(role_id: str, access_token: str) -> RoleOut:
         description=kc_role.get("description"),
         client_role=kc_role.get("clientRole", True),
     )
+
+
+async def update_role(role_id: str, upd: RoleUpdateFull, access_token: str) -> None:
+    await update_role_in_keycloak(role_id, upd, access_token)

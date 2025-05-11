@@ -1,7 +1,7 @@
 from typing import List
 from fastapi import APIRouter, Header, Path, status
-from app.roles.schema import RoleCreate, RoleOut
-from app.roles.service import create_role, get_role, get_roles
+from app.roles.schema import RoleCreate, RoleOut, RoleUpdateFull
+from app.roles.service import create_role, get_role, get_roles, update_role
 
 router = APIRouter(prefix="/roles", tags=["Roles"])
 
@@ -45,8 +45,22 @@ async def get_role_endpoint(
     role_id: str = Path(..., description="Role UUID"),
     authorization: str = Header(..., alias="Authorization"),
 ):
-    # if "admin" not in token_payload["realm_access"]["roles"]:
-    #     raise HTTPException(status_code=403, detail="Forbidden")
 
     access_token = authorization.split(" ", 1)[1]
     return await get_role(role_id, access_token)
+
+
+@router.put(
+    "/{role_id}",
+    status_code=status.HTTP_200_OK,
+    summary="Update role name and description",
+)
+async def update_role_endpoint(
+    role_id: str = Path(..., description="Role UUID"),
+    upd: RoleUpdateFull = ...,
+    authorization: str = Header(..., alias="Authorization"),
+):
+
+    access_token = authorization.split(" ", 1)[1]
+    await update_role(role_id, upd, access_token)
+    return {}  # empty body per spec
