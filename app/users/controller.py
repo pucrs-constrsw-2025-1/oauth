@@ -1,8 +1,18 @@
-from fastapi import APIRouter, Depends, HTTPException, Path, Query, status, Header
+from fastapi import (
+    APIRouter,
+    Depends,
+    HTTPException,
+    Path,
+    Query,
+    Response,
+    status,
+    Header,
+)
 from typing import List
 from app.users.schema import PasswordUpdate, UserCreate, UserOut, UserUpdate
 from app.users.service import (
     create_user,
+    disable_user,
     get_user,
     get_users,
     update_password,
@@ -97,3 +107,17 @@ async def update_password_endpoint(
     access_token = authorization.split(" ", 1)[1]
     await update_password(user_id, patch, access_token)
     return {}  # empty body, 200 OK
+
+
+@router.delete(
+    "/{user_id}",
+    status_code=status.HTTP_204_NO_CONTENT,
+    summary="Logically delete (disable) a user",
+)
+async def delete_user_endpoint(
+    user_id: str = Path(..., description="Keycloak user UUID"),
+    authorization: str = Header(..., alias="Authorization"),
+):
+
+    access_token = authorization.split(" ", 1)[1]
+    return await disable_user(user_id, access_token)

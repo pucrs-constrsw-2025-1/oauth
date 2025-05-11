@@ -202,3 +202,32 @@ async def reset_user_password_in_keycloak(
         raise HTTPException(404, "User not found")
 
     raise HTTPException(502, "Keycloak password‑reset failed")
+
+
+async def disable_user_in_keycloak(user_id: str, token: str) -> None:
+    """
+    Logical delete of a user in Keycloak, simply sets its 'enabled' flag to false.
+    """
+    try:
+        UUID(user_id)
+    except ValueError:
+        raise HTTPException(status_code=400, detail="Malformed user id")
+
+    url = f"{settings.admin_url}/users/{user_id}"
+
+    headers = {"Authorization": f"Bearer {token}"}
+    payload = {"enabled": False}
+
+    async with httpx.AsyncClient() as client:
+        resp = await client.put(url, json=payload, headers=headers)
+
+    if resp.status_code == 204:
+        return
+    if resp.status_code == 401:
+        raise HTTPException(401, "Invalid access token")
+    if resp.status_code == 403:
+        raise HTTPException(403, "Forbidden")
+    if resp.status_code == 404:
+        raise HTTPException(404, "User not found")
+
+    raise HTTPException(502, "Keycloak disable-user failed")
