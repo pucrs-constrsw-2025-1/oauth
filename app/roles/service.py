@@ -3,9 +3,10 @@ from app.keycloak.service import (
     create_client_role,
     get_role_by_id,
     list_client_roles,
+    patch_role_in_keycloak,
     update_role_in_keycloak,
 )
-from app.roles.schema import RoleCreate, RoleOut, RoleUpdateFull
+from app.roles.schema import RoleCreate, RoleOut, RoleUpdateFull, RoleUpdatePartial
 
 
 async def create_role(role_in: RoleCreate, access_token: str) -> RoleOut:
@@ -43,3 +44,7 @@ async def get_role(role_id: str, access_token: str) -> RoleOut:
 
 async def update_role(role_id: str, upd: RoleUpdateFull, access_token: str) -> None:
     await update_role_in_keycloak(role_id, upd, access_token)
+
+
+async def patch_role(role_id: str, patch: RoleUpdatePartial, access_token: str) -> None:
+    await patch_role_in_keycloak(role_id, patch, access_token)

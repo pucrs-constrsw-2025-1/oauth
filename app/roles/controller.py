@@ -1,7 +1,7 @@
 from typing import List
 from fastapi import APIRouter, Header, Path, status
-from app.roles.schema import RoleCreate, RoleOut, RoleUpdateFull
-from app.roles.service import create_role, get_role, get_roles, update_role
+from app.roles.schema import RoleCreate, RoleOut, RoleUpdateFull, RoleUpdatePartial
+from app.roles.service import create_role, get_role, get_roles, patch_role, update_role
 
 router = APIRouter(prefix="/roles", tags=["Roles"])
 
@@ -64,3 +64,19 @@ async def update_role_endpoint(
     access_token = authorization.split(" ", 1)[1]
     await update_role(role_id, upd, access_token)
     return {}  # empty body per spec
+
+
+@router.patch(
+    "/{role_id}",
+    status_code=status.HTTP_200_OK,
+    summary="Partially update role (name and/or description)",
+)
+async def patch_role_endpoint(
+    role_id: str = Path(..., description="Role UUID"),
+    patch: RoleUpdatePartial = ...,
+    authorization: str = Header(..., alias="Authorization"),
+):
+
+    access_token = authorization.split(" ", 1)[1]
+    await patch_role(role_id, patch, access_token)
+    return {}  # empty body, 200 OK

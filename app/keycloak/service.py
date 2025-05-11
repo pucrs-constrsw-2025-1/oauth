@@ -4,7 +4,7 @@ from fastapi import HTTPException, status
 from typing import List
 from app.core.config import settings
 from app.users.schema import UserUpdate
-from app.roles.schema import RoleCreate, RoleUpdateFull
+from app.roles.schema import RoleCreate, RoleUpdateFull, RoleUpdatePartial
 
 _client_id_cache: dict[str, str] = {}  # clientId -> uuid
 
@@ -373,3 +373,42 @@ async def update_role_in_keycloak(
         raise HTTPException(404, "Role not found")
 
     raise HTTPException(502, "Keycloak role‑update failed")
+
+
+async def patch_role_in_keycloak(role_id: str, patch: RoleUpdatePartial, token: str):
+    try:
+        UUID(role_id)
+    except ValueError:
+        raise HTTPException(400, "Malformed role id")
+
+    # Step 1 – get current role data
+    current = await get_role_by_id(role_id, token)
+
+    # Step 2 – merge values
+    updated = {
+        "name": patch.name or current["name"],
+        "description": (
+            patch.description
+            if patch.description is not None
+            else current.get("description")
+        ),
+    }
+
+    # Step 3 – send full PUT payload
+    url = f"{settings.admin_url}/roles-by-id/{role_id}"
+
+    headers = {"Authorization": f"Bearer {token}"}
+
+    async with httpx.AsyncClient() as client:
+        resp = await client.put(url, json=updated, headers=headers)
+
+    if resp.status_code == 204:
+        return
+    if resp.status_code == 401:
+        raise HTTPException(401, "Invalid access token")
+    if resp.status_code == 403:
+        raise HTTPException(403, "Forbidden")
+    if resp.status_code == 404:
+        raise HTTPException(404, "Role not found")
+
+    raise HTTPException(502, "Keycloak partial update failed")
