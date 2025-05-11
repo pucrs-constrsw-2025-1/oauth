@@ -3,9 +3,10 @@ from app.keycloak.service import (
     create_user_in_keycloak,
     get_user_in_keycloak,
     list_users_in_keycloak,
+    reset_user_password_in_keycloak,
     update_user_in_keycloak,
 )
-from app.users.schema import UserCreate, UserOut, UserUpdate
+from app.users.schema import PasswordUpdate, UserCreate, UserOut, UserUpdate
 
 
 async def create_user(user_in: UserCreate, token: str) -> UserOut:
@@ -53,3 +54,9 @@ async def get_user(user_id: str, access_token: str) -> UserOut:
 
 async def update_user(user_id: str, patch: UserUpdate, access_token: str) -> None:
     await update_user_in_keycloak(user_id, patch, access_token)
+
+
+async def update_password(
+    user_id: str, patch: PasswordUpdate, access_token: str
+) -> None:
+    await reset_user_password_in_keycloak(user_id, patch.password, access_token)

@@ -167,3 +167,38 @@ async def update_user_in_keycloak(user_id: str, patch: UserUpdate, token: str) -
         raise HTTPException(404, "User not found")
 
     raise HTTPException(502, "Keycloak user‑update failed")
+
+
+async def reset_user_password_in_keycloak(
+    user_id: str, new_password: str, token: str
+) -> None:
+    """
+    Resets the password of a single user by id in Keycloak Admin REST.
+    """
+    try:
+        UUID(user_id)
+    except ValueError:
+        raise HTTPException(status_code=400, detail="Malformed user id")
+
+    url = f"{settings.admin_url}/users/{user_id}/reset-password"
+
+    headers = {"Authorization": f"Bearer {token}"}
+    payload = {
+        "type": "password",
+        "value": new_password,
+        "temporary": False,
+    }
+
+    async with httpx.AsyncClient() as client:
+        resp = await client.put(url, json=payload, headers=headers)
+
+    if resp.status_code == 204:  # KC returns 204 on success
+        return
+    if resp.status_code == 401:
+        raise HTTPException(401, "Invalid access token")
+    if resp.status_code == 403:
+        raise HTTPException(403, "Forbidden")
+    if resp.status_code == 404:
+        raise HTTPException(404, "User not found")
+
+    raise HTTPException(502, "Keycloak password‑reset failed")

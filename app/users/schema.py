@@ -3,7 +3,7 @@ from typing import Annotated, Optional
 
 
 class UserCreate(BaseModel):
-    username: EmailStr  # e‑mail
+    username: EmailStr
     password: Annotated[
         str,
         StringConstraints(min_length=6),
@@ -21,7 +21,14 @@ class UserOut(BaseModel):
 
 
 class UserUpdate(BaseModel):
-    username: Optional[EmailStr] = None  # (= email)
+    username: Optional[EmailStr] = None
     first_name: Optional[str] = None
     last_name: Optional[str] = None
     enabled: Optional[bool] = None
+
+
+class PasswordUpdate(BaseModel):
+    password: Annotated[
+        str,
+        StringConstraints(min_length=6),
+    ]
