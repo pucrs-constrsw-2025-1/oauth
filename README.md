@@ -4,6 +4,8 @@ _Alunos: Filipe Giroleti, Lucca Mazzoccato e Matheus Melo_
 
 Este arquivo contém as instruções para configurar o ambiente de desenvolvimento do projeto do **Grupo 8**. Para os esclarecimentos de decisões arquiteturais, se referir ao arquivo `architecture.md`
 
+A rota para a documentação da API é `/docs`
+
 ---
 
 ## Pré-requisitos
