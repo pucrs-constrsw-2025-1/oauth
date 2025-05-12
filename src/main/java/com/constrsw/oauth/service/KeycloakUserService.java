@@ -1,13 +1,18 @@
 package com.constrsw.oauth.service;
+
 import com.constrsw.oauth.dto.PasswordUpdateDTO;
 import com.constrsw.oauth.dto.UserDTO;
-import org.keycloak.OAuth2Constants;
+import com.constrsw.oauth.exception.KeycloakOperationException;
+import jakarta.ws.rs.core.Response;
+
+import org.keycloak.admin.client.CreatedResponseUtil;
 import org.keycloak.admin.client.Keycloak;
 import org.keycloak.admin.client.KeycloakBuilder;
 import org.keycloak.admin.client.resource.RealmResource;
 import org.keycloak.admin.client.resource.UserResource;
 import org.keycloak.admin.client.resource.UsersResource;
 import org.keycloak.representations.idm.CredentialRepresentation;
+import org.keycloak.representations.idm.RoleRepresentation;
 import org.keycloak.representations.idm.UserRepresentation;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.Authentication;
@@ -22,13 +27,13 @@ import java.util.stream.Collectors;
 @Service
 public class KeycloakUserService {
 
-    @Value("${keycloak.server.url}") // Base URL of Keycloak, e.g., http://keycloak:8080
+    @Value("${keycloak.server.url}")
     private String keycloakServerUrl;
 
     @Value("${keycloak.realm}")
     private String realm;
 
-    @Value("${keycloak.client.id}") // Your application's client ID, e.g., oauth
+    @Value("${keycloak.client.id}")
     private String keycloakClientId;
 
     private String getAccessTokenFromSecurityContext() {
@@ -37,18 +42,21 @@ public class KeycloakUserService {
             Jwt jwt = (Jwt) authentication.getPrincipal();
             return jwt.getTokenValue();
         }
-        throw new IllegalStateException("Não foi possível obter o token de acesso do contexto de segurança.");
+        throw new IllegalStateException("Access token could not be retrieved from security context.");
     }
 
-private Keycloak getKeycloakClientWithUserToken(String accessToken) {
-    return KeycloakBuilder.builder()
-            .serverUrl(keycloakServerUrl)
-            .realm(realm)
-            .clientId(keycloakClientId) // Ainda útil para contexto, embora o token carregue as permissões
-            // Não é necessário .grantType() quando se fornece o token de autorização diretamente
-            .authorization("Bearer " + accessToken) // Forma correta de passar o token
-            .build();
-}
+    private Keycloak getKeycloakClientWithUserToken(String accessToken) {
+        try {
+            return KeycloakBuilder.builder()
+                    .serverUrl(keycloakServerUrl)
+                    .realm(realm)
+                    .clientId(keycloakClientId)
+                    .authorization("Bearer " + accessToken)
+                    .build();
+        } catch (Exception e) {
+            throw new KeycloakOperationException("Failed to create Keycloak client.", e);
+        }
+    }
 
     private UserDTO mapToUserDTO(UserRepresentation userRep) {
         UserDTO dto = new UserDTO();
@@ -58,7 +66,6 @@ private Keycloak getKeycloakClientWithUserToken(String accessToken) {
         dto.setFirstName(userRep.getFirstName());
         dto.setLastName(userRep.getLastName());
         dto.setEnabled(userRep.isEnabled());
-        // Map other fields as needed
         return dto;
     }
 
@@ -66,100 +73,131 @@ private Keycloak getKeycloakClientWithUserToken(String accessToken) {
         String accessToken = getAccessTokenFromSecurityContext();
         Keycloak keycloak = getKeycloakClientWithUserToken(accessToken);
 
-        UserRepresentation userRepresentation = new UserRepresentation();
-        userRepresentation.setUsername(userDto.getUsername());
-        userRepresentation.setEmail(userDto.getEmail());
-        userRepresentation.setFirstName(userDto.getFirstName());
-        userRepresentation.setLastName(userDto.getLastName());
-        userRepresentation.setEnabled(true);
-        userRepresentation.setEmailVerified(true); // Or handle email verification flow
+        UserRepresentation userRep = new UserRepresentation();
+        userRep.setUsername(userDto.getUsername());
+        userRep.setEmail(userDto.getEmail());
+        userRep.setFirstName(userDto.getFirstName());
+        userRep.setLastName(userDto.getLastName());
+        userRep.setEnabled(true);
+        userRep.setEmailVerified(true);
 
         if (userDto.getPassword() != null && !userDto.getPassword().isEmpty()) {
-            CredentialRepresentation passwordCred = new CredentialRepresentation();
-            passwordCred.setTemporary(false);
-            passwordCred.setType(CredentialRepresentation.PASSWORD);
-            passwordCred.setValue(userDto.getPassword());
-            userRepresentation.setCredentials(Collections.singletonList(passwordCred));
+            CredentialRepresentation cred = new CredentialRepresentation();
+            cred.setTemporary(false);
+            cred.setType(CredentialRepresentation.PASSWORD);
+            cred.setValue(userDto.getPassword());
+            userRep.setCredentials(Collections.singletonList(cred));
         }
 
-        UsersResource usersResource = keycloak.realm(realm).users();
-        try (jakarta.ws.rs.core.Response response = usersResource.create(userRepresentation)) {
-            if (response.getStatus() == 201) { // Created
+        try (Response response = keycloak.realm(realm).users().create(userRep)) {
+            if (response.getStatus() == 201) {
                 String createdId = CreatedResponseUtil.getCreatedId(response);
                 userDto.setId(createdId);
-                // You might want to fetch the created user to get all details populated by Keycloak
-                return getUser(createdId); // Return the full DTO of the created user
+                return getUser(createdId);
             } else {
                 String errorDetails = response.readEntity(String.class);
-                throw new RuntimeException("Falha ao criar utilizador no Keycloak: " + response.getStatus() + " - " + errorDetails);
+                throw new KeycloakOperationException("Failed to create user: " + response.getStatus() + " - " + errorDetails);
             }
+        } catch (Exception e) {
+            throw new KeycloakOperationException("Error while creating user.", e);
         }
     }
 
     public List<UserDTO> getAllUsers() {
-        String accessToken = getAccessTokenFromSecurityContext();
-        Keycloak keycloak = getKeycloakClientWithUserToken(accessToken);
-        List<UserRepresentation> userRepresentations = keycloak.realm(realm).users().list();
-        return userRepresentations.stream().map(this::mapToUserDTO).collect(Collectors.toList());
+        try {
+            String accessToken = getAccessTokenFromSecurityContext();
+            Keycloak keycloak = getKeycloakClientWithUserToken(accessToken);
+            return keycloak.realm(realm).users().list()
+                    .stream()
+                    .map(this::mapToUserDTO)
+                    .collect(Collectors.toList());
+        } catch (Exception e) {
+            throw new KeycloakOperationException("Failed to retrieve users.", e);
+        }
     }
 
     public UserDTO getUser(String id) {
-        String accessToken = getAccessTokenFromSecurityContext();
-        Keycloak keycloak = getKeycloakClientWithUserToken(accessToken);
-        UserRepresentation userRepresentation = keycloak.realm(realm).users().get(id).toRepresentation();
-        return mapToUserDTO(userRepresentation);
+        try {
+            String accessToken = getAccessTokenFromSecurityContext();
+            Keycloak keycloak = getKeycloakClientWithUserToken(accessToken);
+            UserRepresentation userRep = keycloak.realm(realm).users().get(id).toRepresentation();
+            return mapToUserDTO(userRep);
+        } catch (Exception e) {
+            throw new KeycloakOperationException("Failed to retrieve user with ID: " + id, e);
+        }
     }
 
     public void updateUser(String id, UserDTO userDto) {
-        String accessToken = getAccessTokenFromSecurityContext();
-        Keycloak keycloak = getKeycloakClientWithUserToken(accessToken);
-        UserResource userResource = keycloak.realm(realm).users().get(id);
-        UserRepresentation userRepresentation = userResource.toRepresentation();
+        try {
+            String accessToken = getAccessTokenFromSecurityContext();
+            Keycloak keycloak = getKeycloakClientWithUserToken(accessToken);
+            UserResource userResource = keycloak.realm(realm).users().get(id);
+            UserRepresentation userRep = userResource.toRepresentation();
 
-        // Update fields from DTO
-        if (userDto.getEmail() != null) userRepresentation.setEmail(userDto.getEmail());
-        if (userDto.getFirstName() != null) userRepresentation.setFirstName(userDto.getFirstName());
-        if (userDto.getLastName() != null) userRepresentation.setLastName(userDto.getLastName());
-        if (userDto.getEnabled() != null) userRepresentation.setEnabled(userDto.getEnabled());
-        // Add other updatable fields as needed
+            if (userDto.getEmail() != null) userRep.setEmail(userDto.getEmail());
+            if (userDto.getFirstName() != null) userRep.setFirstName(userDto.getFirstName());
+            if (userDto.getLastName() != null) userRep.setLastName(userDto.getLastName());
+            if (userDto.getEnabled() != null) userRep.setEnabled(userDto.getEnabled());
 
-        userResource.update(userRepresentation);
+            userResource.update(userRep);
+        } catch (Exception e) {
+            throw new KeycloakOperationException("Failed to update user with ID: " + id, e);
+        }
     }
 
     public void updatePassword(String id, PasswordUpdateDTO passwordDto) {
-        String accessToken = getAccessTokenFromSecurityContext();
-        Keycloak keycloak = getKeycloakClientWithUserToken(accessToken);
-        UserResource userResource = keycloak.realm(realm).users().get(id);
+        try {
+            String accessToken = getAccessTokenFromSecurityContext();
+            Keycloak keycloak = getKeycloakClientWithUserToken(accessToken);
+            UserResource userResource = keycloak.realm(realm).users().get(id);
 
-        CredentialRepresentation passwordCred = new CredentialRepresentation();
-        passwordCred.setTemporary(false); // Set to true if you want user to change it on next login
-        passwordCred.setType(CredentialRepresentation.PASSWORD);
-        passwordCred.setValue(passwordDto.getPassword());
+            CredentialRepresentation passwordCred = new CredentialRepresentation();
+            passwordCred.setTemporary(false);
+            passwordCred.setType(CredentialRepresentation.PASSWORD);
+            passwordCred.setValue(passwordDto.getPassword());
 
-        userResource.resetPassword(passwordCred);
+            userResource.resetPassword(passwordCred);
+        } catch (Exception e) {
+            throw new KeycloakOperationException("Failed to update password for user with ID: " + id, e);
+        }
     }
 
     public void disableUser(String id) {
-        String accessToken = getAccessTokenFromSecurityContext();
-        Keycloak keycloak = getKeycloakClientWithUserToken(accessToken);
-        UserResource userResource = keycloak.realm(realm).users().get(id);
-        UserRepresentation userRepresentation = userResource.toRepresentation();
-        userRepresentation.setEnabled(false);
-        userResource.update(userRepresentation);
+        try {
+            String accessToken = getAccessTokenFromSecurityContext();
+            Keycloak keycloak = getKeycloakClientWithUserToken(accessToken);
+            UserResource userResource = keycloak.realm(realm).users().get(id);
+            UserRepresentation userRep = userResource.toRepresentation();
+            userRep.setEnabled(false);
+            userResource.update(userRep);
+        } catch (Exception e) {
+            throw new KeycloakOperationException("Failed to disable user with ID: " + id, e);
+        }
     }
-}
 
-// Helper class for extracting created ID (place it in a suitable utility package or as a static inner class)
-class CreatedResponseUtil {
-    public static String getCreatedId(jakarta.ws.rs.core.Response response) {
-        String location = response.getHeaderString("Location");
-        if (location == null || location.isEmpty()) {
-            return null;
+    public void addRealmRoleToUser(String userId, String roleName) {
+        try {
+            String accessToken = getAccessTokenFromSecurityContext();
+            Keycloak keycloak = getKeycloakClientWithUserToken(accessToken);
+            RealmResource realmResource = keycloak.realm(realm);
+            RoleRepresentation role = realmResource.roles().get(roleName).toRepresentation();
+            UserResource userResource = realmResource.users().get(userId);
+            userResource.roles().realmLevel().add(List.of(role));
+        } catch (Exception e) {
+            throw new KeycloakOperationException("Failed to add role '" + roleName + "' to user with ID: " + userId, e);
         }
-        int lastSlash = location.lastIndexOf('/');
-        if (lastSlash == -1) {
-            return null;
+    }
+
+    public void removeRealmRoleFromUser(String userId, String roleName) {
+        try {
+            String accessToken = getAccessTokenFromSecurityContext();
+            Keycloak keycloak = getKeycloakClientWithUserToken(accessToken);
+            RealmResource realmResource = keycloak.realm(realm);
+            RoleRepresentation role = realmResource.roles().get(roleName).toRepresentation();
+            UserResource userResource = realmResource.users().get(userId);
+            userResource.roles().realmLevel().remove(List.of(role));
+        } catch (Exception e) {
+            throw new KeycloakOperationException("Failed to remove role '" + roleName + "' from user with ID: " + userId, e);
         }
-        return location.substring(lastSlash + 1);
     }
 }

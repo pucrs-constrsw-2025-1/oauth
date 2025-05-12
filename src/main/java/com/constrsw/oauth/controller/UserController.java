@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.*;
 
 import com.constrsw.oauth.dto.PasswordUpdateDTO;
 import com.constrsw.oauth.dto.UserDTO;
+import com.constrsw.oauth.dto.UserRoleUpdateDTO;
 import com.constrsw.oauth.service.KeycloakUserService;
 
 import io.swagger.v3.oas.annotations.Operation;
@@ -38,43 +39,52 @@ public class UserController {
     }
 
     @GetMapping
-    @Operation(summary = "Exemplo", security = @SecurityRequirement(name = "bearerAuth"))
+    @Operation(summary = "Get all users", security = @SecurityRequirement(name = "bearerAuth"))
     public ResponseEntity<List<UserDTO>> getAllUsers() {
         List<UserDTO> users = userService.getAllUsers();
         return ResponseEntity.ok(users);
     }
 
     @GetMapping("/{id}")
-    @Operation(summary = "Exemplo", security = @SecurityRequirement(name = "bearerAuth"))
+    @Operation(summary = "Get user by id", security = @SecurityRequirement(name = "bearerAuth"))
     public ResponseEntity<UserDTO> getUser(@PathVariable String id) {
         UserDTO user = userService.getUser(id);
         return ResponseEntity.ok(user);
     }
 
     @PutMapping("/{id}")
-    @Operation(summary = "Exemplo", security = @SecurityRequirement(name = "bearerAuth"))
+    @Operation(summary = "Update user", security = @SecurityRequirement(name = "bearerAuth"))
     public ResponseEntity<Void> updateUser(@PathVariable String id, @RequestBody UserDTO userDto) {
         userService.updateUser(id, userDto);
         return ResponseEntity.ok().build();
     }
 
     @PatchMapping("/{id}")
-    @Operation(summary = "Exemplo", security = @SecurityRequirement(name = "bearerAuth"))
+    @Operation(summary = "Update password", security = @SecurityRequirement(name = "bearerAuth"))
     public ResponseEntity<Void> updatePassword(@PathVariable String id, @RequestBody PasswordUpdateDTO passwordDto) {
         userService.updatePassword(id, passwordDto);
         return ResponseEntity.ok().build();
     }
 
     @DeleteMapping("/{id}")
-    @Operation(summary = "Exemplo", security = @SecurityRequirement(name = "bearerAuth"))
+    @Operation(summary = "Disable user", security = @SecurityRequirement(name = "bearerAuth"))
     public ResponseEntity<Void> disableUser(@PathVariable String id) {
         userService.disableUser(id);
         return ResponseEntity.noContent().build();
     }
 
-    @Operation(summary = "Exemplo protegido", security = @SecurityRequirement(name = "bearerAuth"))
-@GetMapping("/api/protegido")
-public ResponseEntity<String> exemplo() {
-    return ResponseEntity.ok("Protegido");
-}   
+@PatchMapping("/{id}/roles/add")
+@Operation(summary = "Add user role", security = @SecurityRequirement(name = "bearerAuth"))
+public ResponseEntity<Void> addRole(@PathVariable String id, @RequestBody UserRoleUpdateDTO roleDto) {
+    userService.addRealmRoleToUser(id, roleDto.getRoleName());
+    return ResponseEntity.ok().build();
+}
+
+@PatchMapping("/{id}/roles/remove")
+@Operation(summary = "Remove user role", security = @SecurityRequirement(name = "bearerAuth"))
+public ResponseEntity<Void> removeRole(@PathVariable String id, @RequestBody UserRoleUpdateDTO roleDto) {
+    userService.removeRealmRoleFromUser(id, roleDto.getRoleName());
+    return ResponseEntity.ok().build();
+}
+
 }
