@@ -4,11 +4,14 @@ com\constrsw\oauth\service\KeycloakAuthService.class
 com\constrsw\oauth\controller\AuthController.class
 com\constrsw\oauth\dto\UserRoleUpdateDTO.class
 com\constrsw\oauth\OauthApiApplication.class
+com\constrsw\oauth\service\KeycloakRoleService.class
 com\constrsw\oauth\config\AppConfig.class
+com\constrsw\oauth\dto\RoleDTO.class
 com\constrsw\oauth\exception\GlobalExceptionHandler.class
 com\constrsw\oauth\config\KeycloakConfig.class
 com\constrsw\oauth\service\KeycloakUserService.class
 com\constrsw\oauth\dto\LoginResponse.class
+com\constrsw\oauth\controller\RoleController.class
 com\constrsw\oauth\controller\UserController.class
 com\constrsw\oauth\controller\TestController.class
 com\constrsw\oauth\dto\PasswordUpdateDTO.class

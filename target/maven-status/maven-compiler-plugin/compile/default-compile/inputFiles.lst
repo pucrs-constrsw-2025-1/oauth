@@ -10,9 +10,12 @@ C:\Users\Ravel\Desktop\base\backend\oauth\src\main\java\com\constrsw\oauth\confi
 C:\Users\Ravel\Desktop\base\backend\oauth\src\main\java\com\constrsw\oauth\service\KeycloakUserService.java
 C:\Users\Ravel\Desktop\base\backend\oauth\src\main\java\com\constrsw\oauth\exception\KeycloakOperationException.java
 C:\Users\Ravel\Desktop\base\backend\oauth\src\main\java\com\constrsw\oauth\dto\LoginRequest.java
+C:\Users\Ravel\Desktop\base\backend\oauth\src\main\java\com\constrsw\oauth\service\KeycloakRoleService.java
 C:\Users\Ravel\Desktop\base\backend\oauth\src\main\java\com\constrsw\oauth\config\OpenApiConfig.java
 C:\Users\Ravel\Desktop\base\backend\oauth\src\main\java\com\constrsw\oauth\config\SecurityConfig.java
 C:\Users\Ravel\Desktop\base\backend\oauth\src\main\java\com\constrsw\oauth\service\KeycloakAuthService.java
+C:\Users\Ravel\Desktop\base\backend\oauth\src\main\java\com\constrsw\oauth\controller\RoleController.java
 C:\Users\Ravel\Desktop\base\backend\oauth\src\main\java\com\constrsw\oauth\dto\LoginResponse.java
 C:\Users\Ravel\Desktop\base\backend\oauth\src\main\java\com\constrsw\oauth\controller\AuthController.java
+C:\Users\Ravel\Desktop\base\backend\oauth\src\main\java\com\constrsw\oauth\dto\RoleDTO.java
 C:\Users\Ravel\Desktop\base\backend\oauth\src\main\java\com\constrsw\oauth\dto\UserRoleUpdateDTO.java
