@@ -1,27 +1,41 @@
 package com.constrsw.oauth.controller;
 
 
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
+import com.constrsw.oauth.dto.KeycloakTokenResponse;
 import com.constrsw.oauth.dto.LoginRequest;
-import com.constrsw.oauth.dto.LoginResponse;
 import com.constrsw.oauth.service.KeycloakAuthService;
 
-
+import lombok.AllArgsConstructor;
 
 @RestController
-@RequestMapping("/login")
+@RequestMapping("/api/auth")
+@AllArgsConstructor
 public class AuthController {
 
-    @Autowired
-    private KeycloakAuthService authService;
+    private final KeycloakAuthService keycloakAuthService;
 
-    @PostMapping
-    public ResponseEntity<LoginResponse> login(@RequestBody LoginRequest request) {
-        System.out.println("tentativa de login");
-        LoginResponse response = authService.authenticate(request);
-        return ResponseEntity.ok(response);
+
+    @PostMapping("/login")
+    public ResponseEntity<?> login(@RequestBody LoginRequest loginRequest) {
+        if (loginRequest.getUsername() == null || loginRequest.getUsername().isEmpty() ||
+            loginRequest.getPassword() == null || loginRequest.getPassword().isEmpty()) {
+            return ResponseEntity.badRequest().body("Utilizador e palavra-passe são obrigatórios.");
+        }
+
+        KeycloakTokenResponse tokenResponse = keycloakAuthService.login(loginRequest.getUsername(), loginRequest.getPassword());
+
+        if (tokenResponse != null && tokenResponse.getAccessToken() != null) {
+            return ResponseEntity.ok(tokenResponse);
+        } else {
+            // A mensagem de erro específica já foi logada no serviço
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Falha na autenticação. Verifique as suas credenciais ou os logs do servidor.");
+        }
     }
 }

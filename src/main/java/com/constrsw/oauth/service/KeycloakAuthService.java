@@ -1,27 +1,27 @@
 package com.constrsw.oauth.service;
 
-
-
-
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-import org.springframework.web.client.RestTemplate;
-
-import com.constrsw.oauth.dto.LoginRequest;
-import com.constrsw.oauth.dto.LoginResponse;
-
-import lombok.RequiredArgsConstructor;
-
-import org.springframework.http.*;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
+import org.springframework.web.client.HttpClientErrorException;
+import org.springframework.web.client.RestTemplate;
+
+import com.constrsw.oauth.dto.KeycloakTokenResponse;
+
+import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 
 @Service
 @RequiredArgsConstructor
 public class KeycloakAuthService {
 
     @Value("${keycloak.server.url}")
-    private String serverUrl;
+    private String authServerUrl;
 
     @Value("${keycloak.realm}")
     private String realm;
@@ -32,23 +32,37 @@ public class KeycloakAuthService {
     @Value("${keycloak.client.secret}")
     private String clientSecret;
 
-    public LoginResponse authenticate(LoginRequest loginRequest) {
-        String url = serverUrl + "/auth/realms/" + realm + "/protocol/openid-connect/token";
-        RestTemplate restTemplate = new RestTemplate();
+    private final RestTemplate restTemplate;
 
-        MultiValueMap<String, String> body = new LinkedMultiValueMap<>();
-        body.add("client_id", clientId);
-        body.add("client_secret", clientSecret);
-        body.add("username", loginRequest.getUsername());
-        body.add("password", loginRequest.getPassword());
-        body.add("grant_type", loginRequest.getGrantType());
-
+    public KeycloakTokenResponse login(String username, String password) {
+        String tokenUrl = String.format("%s/realms/%s/protocol/openid-connect/token", authServerUrl, realm);
+        System.out.println(tokenUrl);
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
 
-        HttpEntity<MultiValueMap<String, String>> requestEntity = new HttpEntity<>(body, headers);
-        ResponseEntity<LoginResponse> response = restTemplate.exchange(url, HttpMethod.POST, requestEntity, LoginResponse.class);
+        System.out.println(clientId);
+        System.out.println(clientSecret);
+        System.out.println(username);
+        System.out.println(password);
 
-        return response.getBody();
+        MultiValueMap<String, String> map = new LinkedMultiValueMap<>();
+        map.add("grant_type", "password");
+        map.add("client_id", clientId);
+        map.add("client_secret", clientSecret);
+        map.add("username", username);
+        map.add("password", password);
+
+        HttpEntity<MultiValueMap<String, String>> request = new HttpEntity<>(map, headers);
+
+        try {
+            ResponseEntity<KeycloakTokenResponse> response = restTemplate.postForEntity(tokenUrl, request, KeycloakTokenResponse.class);
+            return response.getBody();
+        } catch (HttpClientErrorException e) {
+            // Loggar o erro ou lançar uma exceção personalizada
+            System.err.println("Erro ao autenticar com o Keycloak: " + e.getStatusCode() + " " + e.getResponseBodyAsString());
+            // Poderia lançar uma exceção mais específica aqui, por exemplo:
+            // throw new RuntimeException("Falha na autenticação: " + e.getResponseBodyAsString(), e);
+            return null; // Ou uma resposta de erro apropriada
+        }
     }
 }

@@ -37,4 +37,13 @@ public class KeycloakConfig {
             .grantType(OAuth2Constants.CLIENT_CREDENTIALS)
             .build();
     }
+
+    public Keycloak buildKeycloakWithToken(String accessToken) {
+        return KeycloakBuilder.builder()
+                .serverUrl(serverUrl)
+                .realm(realm)
+                .clientId(clientId)
+                .authorization("Bearer " + accessToken)
+                .build();
+    }
 }
