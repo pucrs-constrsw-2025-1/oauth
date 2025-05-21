@@ -15,8 +15,10 @@ import org.springframework.web.client.RestTemplate;
 import com.grupo_4.oauth.config.KeycloakConfig;
 import com.grupo_4.oauth.exception.AuthenticationException;
 import com.grupo_4.oauth.exception.TokenRefreshException;
+import com.grupo_4.oauth.exception.TokenValidationException;
 import com.grupo_4.oauth.model.LoginRequest;
 import com.grupo_4.oauth.model.TokenResponse;
+import com.grupo_4.oauth.model.TokenValidationResponse;
 
 import lombok.RequiredArgsConstructor;
 
@@ -116,6 +118,55 @@ public class KeycloakService {
         } catch (RestClientException ex) {
             logger.error("Error refreshing token: {}", ex.getMessage(), ex);
             throw new TokenRefreshException("Unable to connect to authentication service", ex);
+        }
+    }
+    
+    public TokenValidationResponse validateToken(String accessToken) {
+        if (accessToken == null || accessToken.isEmpty()) {
+            throw new TokenValidationException("Access token cannot be null or empty");
+        }
+        
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
+        
+        MultiValueMap<String, String> map = new LinkedMultiValueMap<>();
+        map.add("client_id", keycloakConfig.getClientId());
+        map.add("client_secret", keycloakConfig.getClientSecret());
+        map.add("token", accessToken);
+        
+        logger.info("Token validation request details:");
+        logger.info("client_id: {}", keycloakConfig.getClientId());
+        logger.info("client_secret: [MASKED]");
+        logger.info("token: [FIRST 10 CHARS] {}", 
+                accessToken.length() > 10 ? accessToken.substring(0, 10) + "..." : "[INVALID TOKEN]");
+        
+        HttpEntity<MultiValueMap<String, String>> request = new HttpEntity<>(map, headers);
+        
+        String introspectUrl = keycloakConfig.getIntrospectUrl();
+        logger.info("Attempting to validate token at: {}", introspectUrl);
+        
+        try {
+            ResponseEntity<TokenValidationResponse> response = restTemplate.postForEntity(
+                    introspectUrl,
+                    request,
+                    TokenValidationResponse.class);
+            
+            TokenValidationResponse validationResponse = response.getBody();
+            if (validationResponse != null && validationResponse.isActive()) {
+                logger.info("Token is valid");
+            } else {
+                logger.info("Token is invalid or expired");
+            }
+            return validationResponse;
+        } catch (HttpClientErrorException.Unauthorized ex) {
+            logger.error("Token validation unauthorized: {}", ex.getMessage(), ex);
+            throw new TokenValidationException("Invalid client credentials", ex);
+        } catch (HttpClientErrorException ex) {
+            logger.error("HTTP client error during token validation: {}", ex.getMessage(), ex);
+            throw new TokenValidationException("Token validation failed: " + ex.getStatusCode() + " " + ex.getResponseBodyAsString(), ex);
+        } catch (RestClientException ex) {
+            logger.error("Error validating token: {}", ex.getMessage(), ex);
+            throw new TokenValidationException("Unable to connect to authentication service", ex);
         }
     }
 } 

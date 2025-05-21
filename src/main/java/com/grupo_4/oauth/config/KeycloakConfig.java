@@ -53,6 +53,11 @@ public class KeycloakConfig {
                 keycloakInternalHost, keycloakInternalPort, realm);
     }
 
+    public String getIntrospectUrl() {
+        return String.format("http://%s:%s/realms/%s/protocol/openid-connect/token/introspect", 
+                keycloakInternalHost, keycloakInternalPort, realm);
+    }
+
     public String getUserInfoUrl() {
         return String.format("http://%s:%s/realms/%s/protocol/openid-connect/userinfo", 
                 keycloakInternalHost, keycloakInternalPort, realm);
