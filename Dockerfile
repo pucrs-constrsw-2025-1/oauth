@@ -20,11 +20,17 @@ RUN npm run build
 FROM node:20-alpine AS production
 WORKDIR /app
 
+# Instala o curl
+RUN apk add --no-cache curl
+
 # Copia só o package.json e lockfile
 COPY package.json package-lock.json ./
 
 # Instala apenas as deps de produção
 RUN npm ci --omit=dev
+RUN npm install --save-dev @types/node
+RUN npm install axios express
+RUN npm install --save-dev @types/express
 
 # Traz o build compilado do builder
 COPY --from=builder /app/dist ./dist
