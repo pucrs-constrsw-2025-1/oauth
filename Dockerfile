@@ -15,9 +15,12 @@ COPY . .
 RUN npm run build
 
 
-
 # ─── Stage 2: produção (só dependencies e build result) ───────────────────
 FROM node:20-alpine AS production
+
+# Instala curl para a healthcheck
+RUN apk add --no-cache curl
+
 WORKDIR /app
 
 # Copia só o package.json e lockfile
