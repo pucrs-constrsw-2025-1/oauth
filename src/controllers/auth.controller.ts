@@ -30,6 +30,17 @@ function isAxiosError(error: any): error is { response?: { status?: number; data
 
 // POST /login
 export const login: RequestHandler = async (req: Request, res: Response, next: NextFunction) => {
+  // Log incoming request details for debugging
+  console.log('Login Request Headers:', req.headers);
+  console.log('Login Request Origin:', req.headers.origin);
+  console.log('Login Request Body:', req.body);
+
+  // Set CORS headers explicitly
+  res.header('Access-Control-Allow-Origin', req.headers.origin || '*');
+  res.header('Access-Control-Allow-Credentials', 'true');
+  res.header('Access-Control-Allow-Methods', 'GET,HEAD,PUT,PATCH,POST,DELETE');
+  res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept, Authorization');
+
   try {
     const { username, password } = req.body;
 
@@ -92,6 +103,17 @@ export const login: RequestHandler = async (req: Request, res: Response, next: N
 
 // POST /refresh
 export const refreshToken: RequestHandler = async (req: Request, res: Response, next: NextFunction) => {
+  // Log incoming request details for debugging
+  console.log('Refresh Token Request Headers:', req.headers);
+  console.log('Refresh Token Request Origin:', req.headers.origin);
+  console.log('Refresh Token Request Body:', req.body);
+
+  // Set CORS headers explicitly
+  res.header('Access-Control-Allow-Origin', req.headers.origin || '*');
+  res.header('Access-Control-Allow-Credentials', 'true');
+  res.header('Access-Control-Allow-Methods', 'GET,HEAD,PUT,PATCH,POST,DELETE');
+  res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept, Authorization');
+
   try {
     const { refresh_token } = req.body;
 
