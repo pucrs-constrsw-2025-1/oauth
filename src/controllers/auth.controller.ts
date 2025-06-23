@@ -49,6 +49,7 @@ export const login: RequestHandler = async (req: Request, res: Response, next: N
     params.append('grant_type', 'password');
     params.append('username', username);
     params.append('password', password);
+    params.append('scope', 'openid');
 
     const response = await axios.post<KeycloakTokenResponse>(
       `${KEYCLOAK_BASE_URL}/realms/${REALM}/protocol/openid-connect/token`,

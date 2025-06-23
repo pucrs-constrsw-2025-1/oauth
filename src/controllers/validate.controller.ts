@@ -17,36 +17,42 @@ export const validateAccess = async (req: Request, res: Response, next: NextFunc
     const { resource } = req.query;
 
     if (!resource) {
-        res.status(400).json({ message: "Resource não informado." });
-        return; // Adicionar um return vazio
-      }
-      
+      res.status(400).json({ message: "Resource não informado." });
+      return;
+    }
 
-    const userInfo = await axios.get<any>(
-        `${KEYCLOAK_BASE_URL}/realms/${REALM}/protocol/openid-connect/userinfo`,
-        getAuthHeaders(token!)
-      );
-      
-      const roles: string[] = userInfo.data.realm_access?.roles || [];
-      
-
-    const permissionsMapping: Record<string, string[]> = {
-      administrator: ['resources', 'rooms', 'professors', 'students'],
-      coordinator: ['courses', 'classes'],
-      professor: ['lessons', 'reservations']
+    const authzRequest = {
+      permissions: [{
+        rsname: resource as string,
+      }]
     };
 
-    const authorized = roles.some((role: string) =>
-        permissionsMapping[role]?.includes(resource as string)
+    try {
+      const formData = new URLSearchParams();
+      formData.append('grant_type', 'urn:ietf:params:oauth:grant-type:uma-ticket');
+      formData.append('audience', 'oauth');
+      formData.append('permissions', JSON.stringify(authzRequest.permissions));
+
+      await axios.post(
+        `${KEYCLOAK_BASE_URL}/realms/${REALM}/protocol/openid-connect/token`,
+        formData,
+        {
+          headers: {
+            ...getAuthHeaders(token!).headers,
+            'Content-Type': 'application/x-www-form-urlencoded'
+          }
+        }
       );
       
-
-    if (authorized) {
       res.status(200).json({ message: "Acesso permitido." });
-    } else {
-      res.status(403).json({ message: "Acesso negado." });
+    } catch (error: any) {
+      if (error.response?.status === 403) {
+        res.status(403).json({ message: "Acesso negado." });
+      } else {
+        throw error;
+      }
     }
   } catch (error) {
     next(error);
   }
-};
+}
